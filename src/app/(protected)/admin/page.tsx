@@ -86,7 +86,7 @@ export default async function OverviewPage() {
     { count: memberCount },
     { data: events },
     { data: announcements },
-    { data: attendances },
+    { data: chapterEvents },
     { data: chapterMembers },
     { data: allEvents },
     activityItems,
@@ -108,9 +108,9 @@ export default async function OverviewPage() {
       .eq("chapter_id", profile.chapter_id)
       .gte("created_at", startOfMonth.toISOString()),
     supabase
-      .from("attendance")
-      .select("event_id, attended")
-      .eq("attended", true),
+      .from("events")
+      .select("id")
+      .eq("chapter_id", profile.chapter_id),
     supabase
       .from("profiles")
       .select("id")
@@ -129,14 +129,19 @@ export default async function OverviewPage() {
       .eq("chapter_id", profile.chapter_id),
   ]);
 
-  // Events that need attendance: past/today, no attendance records yet
-  const { data: attendanceByEvent } = await supabase
-    .from("attendance")
-    .select("event_id")
-    .not("event_id", "is", null);
+  const chapterEventIds = (chapterEvents ?? []).map((e) => e.id);
+  const { data: chapterAttendance } =
+    chapterEventIds.length === 0
+      ? { data: [] as { event_id: string | null; attended: boolean | null }[] }
+      : await supabase
+          .from("attendance")
+          .select("event_id, attended")
+          .in("event_id", chapterEventIds);
+
+  const attendanceRows = chapterAttendance ?? [];
 
   const eventIdsWithAttendance = new Set(
-    (attendanceByEvent ?? []).map((a) => a.event_id)
+    attendanceRows.map((a) => a.event_id).filter(Boolean) as string[]
   );
 
   const eventsNeedingAttendance = (allEvents ?? []).filter(
@@ -147,22 +152,28 @@ export default async function OverviewPage() {
 
   const eventsThisMonth = events?.length ?? 0;
   const announcementsThisMonth = announcements?.length ?? 0;
-  const totalMembers = chapterMembers?.length ?? 1;
+  const totalMembers = chapterMembers?.length ?? 0;
   const competitorIds = new Set(
     (competitionRegs ?? []).map((r: { user_id: string }) => r.user_id)
   );
   const competitorCount = competitorIds.size;
 
-  // Avg attendance: only count events where attendance has been taken
+  // Avg attendance: chapter-scoped only; events with at least one attendance row × members
   const completedEventCount = eventIdsWithAttendance.size;
-  const totalAttendedForCompleted =
-    (attendances ?? []).filter((a) => eventIdsWithAttendance.has(a.event_id))
-      .length;
-  const totalPossibleForCompleted = completedEventCount * totalMembers || 1;
-  const avgAttendanceRate =
-    completedEventCount > 0
-      ? Math.round((totalAttendedForCompleted / totalPossibleForCompleted) * 100)
-      : 0;
+  const totalAttendedForCompleted = attendanceRows.filter(
+    (a) => a.attended === true
+  ).length;
+  const totalPossibleForCompleted = completedEventCount * totalMembers;
+  let avgAttendanceRate = 0;
+  if (
+    chapterEventIds.length > 0 &&
+    attendanceRows.length > 0 &&
+    completedEventCount > 0 &&
+    totalPossibleForCompleted > 0
+  ) {
+    const raw = (totalAttendedForCompleted / totalPossibleForCompleted) * 100;
+    avgAttendanceRate = Math.round(Math.min(100, Math.max(0, raw)));
+  }
 
   return (
     <div className="space-y-4">
