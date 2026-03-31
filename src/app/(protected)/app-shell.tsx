@@ -78,7 +78,7 @@ export function AppShell({
   const isAiChat = pathname === "/ai-chat";
 
   return (
-    <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-[#F8FAFC]">
+    <div className="flex min-h-0 min-w-0 flex-1 flex-row overflow-hidden bg-[#F8FAFC]">
       <Sidebar user={user} profile={profile} />
       <main className={`flex-1 flex flex-col min-w-0 min-h-0 overflow-y-auto pt-14 sm:pt-16 lg:pt-0 ${isAiChat ? "pb-0" : "pb-20 md:pb-20 lg:pb-0"}`}>
         <TopBar user={user} profile={profile} notifications={notifications} chapterName={chapterName} />
