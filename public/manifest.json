@@ -4,13 +4,13 @@
   "description": "Supercharge your DECA chapter's engagement with AI",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F5F7FA",
-  "theme_color": "#004B87",
+  "background_color": "#ffffff",
+  "theme_color": "#003B7B",
   "orientation": "portrait-primary",
   "icons": [
     {
       "src": "/deca-logo.png",
-      "sizes": "any",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     }

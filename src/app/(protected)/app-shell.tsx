@@ -38,7 +38,13 @@ export function AppShell({
       router.replace("/chapter-setup");
       return;
     }
-    if (requireOnboarding && !pathname?.startsWith("/onboarding")) {
+    // Do not send users to onboarding while they are still on chapter/join flows (e.g. entering invite code)
+    if (
+      requireOnboarding &&
+      !pathname?.startsWith("/onboarding") &&
+      !pathname?.startsWith("/chapter-setup") &&
+      !pathname?.startsWith("/join")
+    ) {
       router.replace("/onboarding");
       return;
     }
