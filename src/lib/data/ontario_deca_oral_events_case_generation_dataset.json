@@ -1,0 +1,2933 @@
+{
+  "dataset_name": "Ontario DECA Oral Events - Realistic Case Generation Rules",
+  "generated_on": "2026-03-22",
+  "purpose": "Prompt/input dataset for building a DECA-style case generator that feels structurally authentic without reproducing or lightly paraphrasing protected DECA scenarios.",
+  "scope": {
+    "included_events": [
+      "PBM",
+      "PEN",
+      "PFN",
+      "PHT",
+      "PMK",
+      "ACT",
+      "AAM",
+      "ASM",
+      "BFS",
+      "BSM",
+      "ENT",
+      "FMS",
+      "HLM",
+      "HRM",
+      "MCS",
+      "RFSM",
+      "RMS",
+      "SEM",
+      "BLTDM",
+      "BTDM",
+      "ETDM",
+      "FTDM",
+      "HTDM",
+      "MTDM",
+      "STDM",
+      "TTDM",
+      "PFL",
+      "FCE",
+      "HTPS",
+      "PSE"
+    ],
+    "count": 30,
+    "notes": [
+      "Role-play and case-study events use DECA-style district formatting and current district instructional areas where DECA publishes them.",
+      "Professional Selling/Consulting events are included because they are oral events, but they should be generated as prepared-event buyer meetings rather than district role-plays."
+    ]
+  },
+  "global_rules": {
+    "non_infringement_rules": [
+      "Do not reproduce or lightly paraphrase any published DECA scenario.",
+      "Use only high-level structural observations from official pages and public sample snippets.",
+      "Generate new organization names, contexts, and conflicts."
+    ],
+    "realism_algorithm": [
+      "Choose the event and its correct category.",
+      "Pull the current district instructional area(s) if DECA publishes them for that event.",
+      "Select the correct number of performance indicators for the category.",
+      "Choose a role level, organization type, judge role, and conflict type that fit the event-specific generation profile.",
+      "Write the Event Situation in plain DECA style, not in memo/consulting format.",
+      "End with a clear judge interaction cue."
+    ],
+    "style_guardrails": [
+      "Principles events should be simpler, narrower, and more concrete than Individual Series or Team Decision cases.",
+      "Individual Series cases should feel industry-specific and decision-oriented, but still solvable in a 10-minute presentation.",
+      "Team Decision cases should justify two roles and require a shared recommendation.",
+      "Prepared sales/consulting events should follow the published annual topic instead of pretending to be random district role-plays."
+    ]
+  },
+  "sources_used": {
+    "official_event_directory": "https://www.deca.org/compete",
+    "deca_guide": "https://www.deca.org/guide",
+    "district_instructional_areas_page": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+    "district_instructional_areas_pdf": "https://cdn.prod.website-files.com/635c470cc81318fc3e9c1e0e/68c806881347bec9536e8fba_District-Instructional-Areas_2025-2026.pdf",
+    "pi_source_pages": {
+      "Business Administration Core": "https://www.deca.org/advisor-resources/performance-indicators-business-administration-core",
+      "Marketing": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "Finance": "https://www.deca.org/advisor-resources/performance-indicators-finance",
+      "Business Management and Administration": "https://www.deca.org/advisor-resources/performance-indicators-business-management-and-administration",
+      "Hospitality and Tourism": "https://www.deca.org/advisor-resources/performance-indicators-hospitality-and-tourism",
+      "Entrepreneurship": "https://www.deca.org/advisor-resources/performance-indicators-entrepreneurship",
+      "Personal Financial Literacy": "https://www.deca.org/advisor-resources/performance-indicators-personal-finance"
+    },
+    "pi_source_pdfs": {
+      "Business Administration Core": "https://cdn.prod.website-files.com/635c470cc81318fc3e9c1e0e/639a9c1191e1c3350189654a_HS_Performance_Indicators_Business_Admin_Core.pdf",
+      "Business Management and Administration": "https://cdn.prod.website-files.com/635c470cc81318fc3e9c1e0e/651c637f864ed4ff05340e48_HS_Performance_Indicators_Business_Mgmt.pdf",
+      "Entrepreneurship": "https://cdn.prod.website-files.com/635c470cc81318fc3e9c1e0e/639a9d47350e2e7085edca76_HS_Performance_Indicators_Entrepreneurship.pdf",
+      "Finance": "https://cdn.prod.website-files.com/635c470cc81318fc3e9c1e0e/651c620c61fdcb9b24b114c1_HS_Performance_Indicators_Finance.pdf",
+      "Hospitality and Tourism": "https://cdn.prod.website-files.com/635c470cc81318fc3e9c1e0e/639a9f44bd5b5cd73a758651_HS_Performance_Indicators_Hospitality.pdf",
+      "Marketing": "https://cdn.prod.website-files.com/635c470cc81318fc3e9c1e0e/639a9ef041be243a79771b23_HS_Performance_Indicators_Marketing.pdf",
+      "Personal Financial Literacy": "https://cdn.prod.website-files.com/635c470cc81318fc3e9c1e0e/639a9fad2477fc3c1a9d9bbf_HS_Performance_Indicators_Personal_Finance.pdf"
+    }
+  },
+  "events": [
+    {
+      "code": "PBM",
+      "name": "Principles of Business Management and Administration",
+      "category_key": "principles",
+      "category_name": "Principles of Business Administration",
+      "cluster": "Business Management and Administration",
+      "official_event_page": "https://www.deca.org/compete/principles-of-business-management-and-administration",
+      "district_primary_instructional_areas_2025_2026": [
+        "Customer Relations"
+      ],
+      "pi_cluster_source": "Business Administration Core",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-business-administration-core",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to you through your reading of the 21st Century Skills, Performance Indicators and Event Situation.",
+          "You will have up to 10 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 10 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you demonstrate the 21st Century Skills and meet the performance indicators of this event.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "entry-level employee or first-line supervisor",
+        "org_types": [
+          "city office",
+          "utility provider",
+          "mail/postal location",
+          "small office",
+          "transit office"
+        ],
+        "judge_roles": [
+          "customer",
+          "coworker",
+          "supervisor"
+        ],
+        "issue_types": [
+          "complaint about a policy or change",
+          "confusion about a procedure",
+          "basic team organization or service issue"
+        ],
+        "realism_rules": [
+          "Keep the situation simple and concrete.",
+          "Use exactly one operational or customer-facing problem.",
+          "Avoid strategy, multi-department politics, or advanced finance."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Customer Relations": [
+          "Explain the nature of positive customer relations",
+          "Demonstrate a customer service mindset",
+          "Develop rapport with customers",
+          "Reinforce service orientation through communication",
+          "Respond to customer inquiries",
+          "Adapt communication to the cultural and social differences among clients",
+          "Interpret business policies to customers/clients",
+          "Build and maintain relationships with customers",
+          "Handle difficult customers",
+          "Handle customer/client complaints",
+          "Identify company's brand promise",
+          "Determine ways of reinforcing the company's image through employee performance",
+          "Discuss the nature of customer relationship management",
+          "Explain the role of ethics in customer relationship management",
+          "Describe the use of technology in customer relationship management",
+          "Business Administration Core for 2022-2023 HS DECA Exams (PQ, CS, SP)"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 4 performance indicators from the chosen instructional area."
+    },
+    {
+      "code": "PEN",
+      "name": "Principles of Entrepreneurship",
+      "category_key": "principles",
+      "category_name": "Principles of Business Administration",
+      "cluster": "Entrepreneurship",
+      "official_event_page": "https://www.deca.org/compete/principles-of-entrepreneurship",
+      "district_primary_instructional_areas_2025_2026": [
+        "Information Management"
+      ],
+      "pi_cluster_source": "Business Administration Core",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-business-administration-core",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to you through your reading of the 21st Century Skills, Performance Indicators and Event Situation.",
+          "You will have up to 10 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 10 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you demonstrate the 21st Century Skills and meet the performance indicators of this event.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "employee or junior founder at a small business/startup",
+        "org_types": [
+          "local startup",
+          "small online business",
+          "neighborhood service business",
+          "maker or creator business"
+        ],
+        "judge_roles": [
+          "owner",
+          "coworker",
+          "mentor",
+          "customer"
+        ],
+        "issue_types": [
+          "how to gather and organize customer/business information",
+          "how to document a new process",
+          "how to use information to support a basic business decision"
+        ],
+        "realism_rules": [
+          "Frame the business as small and early-stage.",
+          "Focus on information collection, organization, or recordkeeping.",
+          "Keep the ask practical, not investor-level."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Information Management": [
+          "Assess information needs",
+          "Obtain needed information efficiently",
+          "Evaluate quality and source of information",
+          "Draw conclusions based on information analysis",
+          "Apply information to accomplish a task",
+          "Store information for future use",
+          "Discuss the nature of information management",
+          "Explain the role of ethics in information management",
+          "Explain legal issues associated with information management",
+          "Identify ways that technology impacts business",
+          "Explain the role of information systems",
+          "Discuss principles of computer systems",
+          "Use basic operating systems",
+          "Describe the scope of the Internet",
+          "Demonstrate basic e-mail functions",
+          "Demonstrate personal information management/productivity applications",
+          "Demonstrate basic web-search skills",
+          "Demonstrate basic word processing skills",
+          "Demonstrate basic presentation applications",
+          "Demonstrate basic database applications",
+          "Demonstrate basic spreadsheet applications",
+          "Use an integrated business software application package",
+          "Demonstrate collaborative/groupware applications",
+          "Create and post basic web page",
+          "Collaborate on and aggregate complex internal documents to create a common voice",
+          "Business Administration Core for 2022-2023 HS DECA Exams (PQ, CS, SP)",
+          "Describe the nature of business records",
+          "Maintain customer records",
+          "Describe current business trends",
+          "Monitor internal records for business information",
+          "Conduct an environmental scan to obtain business information",
+          "Interpret statistical findings",
+          "Translate research findings into actionable business recommendations",
+          "Explain the principles of data analysis",
+          "Explain the nature of tools that can be used to access information in the database system (NF:140)",
+          "(SP)",
+          "Access information in the database system",
+          "Discuss the nature of data mining",
+          "Describe data mining tools and techniques",
+          "Discuss the importance of ethics in data mining",
+          "Demonstrate basic data mining techniques",
+          "Interpret data mining findings"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 4 performance indicators from the chosen instructional area."
+    },
+    {
+      "code": "PFN",
+      "name": "Principles of Finance",
+      "category_key": "principles",
+      "category_name": "Principles of Business Administration",
+      "cluster": "Finance",
+      "official_event_page": "https://www.deca.org/compete/principles-of-finance",
+      "district_primary_instructional_areas_2025_2026": [
+        "Operations"
+      ],
+      "pi_cluster_source": "Business Administration Core",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-business-administration-core",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to you through your reading of the 21st Century Skills, Performance Indicators and Event Situation.",
+          "You will have up to 10 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 10 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you demonstrate the 21st Century Skills and meet the performance indicators of this event.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "teller, financial services employee, or junior finance associate",
+        "org_types": [
+          "local bank",
+          "credit union",
+          "insurance office",
+          "small finance department"
+        ],
+        "judge_roles": [
+          "client",
+          "supervisor",
+          "coworker"
+        ],
+        "issue_types": [
+          "basic operating process",
+          "service workflow problem",
+          "routine financial operations question"
+        ],
+        "realism_rules": [
+          "Use practical finance-service contexts.",
+          "Keep calculations or decisions explainable in a short presentation.",
+          "Do not turn it into corporate strategy."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Operations": [
+          "Explain the nature of operations",
+          "Discuss the role of ethics in operations",
+          "Describe the use of technology in operations",
+          "Business Administration Core for 2022-2023 HS DECA Exams (PQ, CS, SP)",
+          "Describe health and safety regulations in business",
+          "Report noncompliance with business health and safety regulations",
+          "Follow instructions for use of equipment, tools, and machinery",
+          "Follow safety precautions",
+          "Maintain a safe work environment",
+          "Explain procedures for handling accidents",
+          "Handle and report emergency situations",
+          "Explain routine security precautions",
+          "Follow established security procedures/policies",
+          "Protect company information and intangibles",
+          "Explain information privacy, security, and confidentiality considerations in business",
+          "Maintain data security",
+          "Explain the nature of project management",
+          "Describe the role of ethics in project management",
+          "Plan project",
+          "Monitor projects and take corrective actions",
+          "Evaluate project success",
+          "Identify resources needed for project",
+          "Develop project plan",
+          "Apply project-management tools to monitor and communicate project progress",
+          "Evaluate project results",
+          "Explain the nature and scope of purchasing",
+          "Place orders/reorders",
+          "Maintain inventory of supplies",
+          "Discuss the importance of utilizing ethical purchasing methods",
+          "Explain the impact of the purchasing process on productivity",
+          "Manage the bid process in purchasing",
+          "Select vendors",
+          "Evaluate vendor performance",
+          "Explain the concept of production",
+          "Identify quality-control measures",
+          "Utilize quality control methods at work",
+          "Describe crucial elements of a quality culture",
+          "Resolve problems with suppliers' quality issues",
+          "Explain the nature of overhead/operating costs",
+          "Explain employee's role in expense control",
+          "Organize and prioritize work",
+          "Coordinate work with that of team members",
+          "Coordinate activities with those of other departments",
+          "Monitor and ensure completion of delegated tasks",
+          "Streamline work processes",
+          "Comply with policies and procedures for use of property and equipment",
+          "Explain the concept of supply chain",
+          "Explain the benefits of supply chain collaboration"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 4 performance indicators from the chosen instructional area."
+    },
+    {
+      "code": "PHT",
+      "name": "Principles of Hospitality and Tourism",
+      "category_key": "principles",
+      "category_name": "Principles of Business Administration",
+      "cluster": "Hospitality and Tourism",
+      "official_event_page": "https://www.deca.org/compete/principles-of-hospitality",
+      "district_primary_instructional_areas_2025_2026": [
+        "Economics"
+      ],
+      "pi_cluster_source": "Business Administration Core",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-business-administration-core",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to you through your reading of the 21st Century Skills, Performance Indicators and Event Situation.",
+          "You will have up to 10 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 10 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you demonstrate the 21st Century Skills and meet the performance indicators of this event.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "front-line hospitality employee",
+        "org_types": [
+          "hotel",
+          "restaurant",
+          "tourism desk",
+          "cruise line",
+          "attraction"
+        ],
+        "judge_roles": [
+          "guest",
+          "customer",
+          "new employee",
+          "manager"
+        ],
+        "issue_types": [
+          "service policy explanation",
+          "price/value question",
+          "guest dissatisfaction tied to an economic constraint"
+        ],
+        "realism_rules": [
+          "Anchor the case in a real guest interaction.",
+          "Keep the location vivid but the conflict simple.",
+          "Make the participant protect guest satisfaction while explaining business reality."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Economics": [
+          "Distinguish between economic goods and services",
+          "Explain the concept of economic resources",
+          "Describe the concepts of economics and economic activities",
+          "Determine economic utilities created by business activities",
+          "Explain the principles of supply and demand",
+          "Describe the functions of prices in markets",
+          "Explain the role of business in society",
+          "Describe types of business activities",
+          "Describe types of business models",
+          "Explain the organizational design of businesses",
+          "Discuss the global environment in which businesses operate",
+          "Describe factors that affect the business environment",
+          "Explain the nature of business ethics",
+          "Explain how organizations adapt to today's markets",
+          "Explain the types of economic systems",
+          "Identify the impact of small business/entrepreneurship on market economies",
+          "Explain the concept of private enterprise",
+          "Identify factors affecting a business's profit",
+          "Determine factors affecting business risk",
+          "Explain the concept of competition",
+          "Determine the relationship between government and business",
+          "Describe the nature of taxes",
+          "Business Administration Core for 2022-2023 HS DECA Exams (PQ, CS, SP)",
+          "Explain the concept of productivity",
+          "Analyze impact of specialization/division of labor on productivity",
+          "Explain the concept of organized labor and business",
+          "Explain the impact of the law of diminishing returns",
+          "Discuss the measure of consumer spending as an economic indicator",
+          "Describe the economic impact of inflation on business",
+          "Explain the concept of Gross Domestic Product (GDP)",
+          "Discuss the impact of a nation's unemployment rates",
+          "Explain the economic impact of interest-rate fluctuations",
+          "Determine the impact of business cycles on business activities",
+          "Explain the nature of global trade",
+          "Discuss the impact of globalization on business",
+          "Describe the determinants of exchange rates and their effects on the domestic economy (EC:100)",
+          "(SP)",
+          "Explain cultural considerations that impact global business relations",
+          "Discuss the impact of cultural and social environments on global trade",
+          "Describe the impact of electronic communication tools (e.g., Internet, video- and computer-",
+          "conferencing, webcasts, email) on global business activities",
+          "Explain the impact of major trade alliances on business activities",
+          "Describe the impact of the political environment on world trade",
+          "Explain the impact of geography on world trade",
+          "Describe the impact of a country's history on world trade",
+          "Explain the impact of a country's economic development on world trade",
+          "Discuss the impact of bribery and foreign monetary payments on business",
+          "Identify requirements for international business travel (e.g., passport, visa, proof of citizenship,",
+          "immunizations, and sponsorship letters)"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 4 performance indicators from the chosen instructional area."
+    },
+    {
+      "code": "PMK",
+      "name": "Principles of Marketing",
+      "category_key": "principles",
+      "category_name": "Principles of Business Administration",
+      "cluster": "Marketing",
+      "official_event_page": "https://www.deca.org/compete/principles-of-marketing",
+      "district_primary_instructional_areas_2025_2026": [
+        "Communication Skills"
+      ],
+      "pi_cluster_source": "Business Administration Core",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-business-administration-core",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to you through your reading of the 21st Century Skills, Performance Indicators and Event Situation.",
+          "You will have up to 10 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 10 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you demonstrate the 21st Century Skills and meet the performance indicators of this event.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "sales associate, promotions assistant, or customer-contact employee",
+        "org_types": [
+          "store",
+          "e-commerce brand",
+          "mall kiosk",
+          "community business"
+        ],
+        "judge_roles": [
+          "customer",
+          "manager",
+          "coworker"
+        ],
+        "issue_types": [
+          "explaining a promotion or policy",
+          "handling a communication problem",
+          "helping a customer understand an offer or product"
+        ],
+        "realism_rules": [
+          "Communication is the center of the scenario.",
+          "Make the participant explain, clarify, or present something succinctly.",
+          "Avoid abstract strategy language."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Communication Skills": [
+          "Identify sources that provide relevant, valid written material",
+          "Extract relevant information from written materials",
+          "Apply written directions to achieve tasks",
+          "Analyze company resources to ascertain policies and procedures",
+          "Explain communication techniques that support and encourage a speaker",
+          "Follow oral directions",
+          "Demonstrate active listening skills",
+          "Explain the nature of effective verbal communications",
+          "Ask relevant questions",
+          "Interpret others' nonverbal cues",
+          "Provide legitimate responses to inquiries",
+          "Give verbal directions",
+          "Employ communication styles appropriate to target audience",
+          "Defend ideas objectively",
+          "Handle telephone calls in a businesslike manner",
+          "Participate in group discussions",
+          "Facilitate (lead) group discussions",
+          "Make oral presentations",
+          "Utilize note-taking strategies",
+          "Organize information",
+          "Select and use appropriate graphic aids",
+          "Business Administration Core for 2022-2023 HS DECA Exams (PQ, CS, SP)",
+          "Explain the nature of effective written communications",
+          "Select and utilize appropriate formats for professional writing",
+          "Edit and revise written work consistent with professional standards",
+          "Write professional emails",
+          "Write business letters",
+          "Write informational messages",
+          "Write inquiries",
+          "Write persuasive messages",
+          "Write executive summaries",
+          "Prepare simple written reports",
+          "Explain how digital communications (e.g., email, text messages, chats) exposes business to risk",
+          "Adapt written correspondence to targeted audiences",
+          "Use data visualization techniques (e.g., infographics, heat-maps, dynamic model outputs) (CO:204)",
+          "(SP)",
+          "Describe the impact of a person's social media brand on the achievement of organizational",
+          "objectives",
+          "Distinguish between using social media for business and personal purposes",
+          "Explain the nature of staff communication",
+          "Choose and use appropriate channel for workplace communication",
+          "Participate in a staff meeting",
+          "Participate in problem-solving groups"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 4 performance indicators from the chosen instructional area."
+    },
+    {
+      "code": "ACT",
+      "name": "Accounting Applications Series",
+      "category_key": "individual_series",
+      "category_name": "Individual Series",
+      "cluster": "Finance",
+      "official_event_page": "https://www.deca.org/compete/accounting-applications-series",
+      "district_primary_instructional_areas_2025_2026": [
+        "Financial Analysis",
+        "Financial Analysis"
+      ],
+      "pi_cluster_source": "Finance",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-finance",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to you through your reading of the Performance Indicators, 21st Century Skills and Event Situation.",
+          "You will have up to 10 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 10 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you meet the performance indicators of this event and demonstrate the 21st Century Skills.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "accounting associate or junior accountant",
+        "org_types": [
+          "small business",
+          "retailer",
+          "coffee shop",
+          "manufacturer"
+        ],
+        "judge_roles": [
+          "owner",
+          "controller",
+          "manager"
+        ],
+        "issue_types": [
+          "accounting cycle question",
+          "transaction classification",
+          "budget or ratio analysis request"
+        ],
+        "realism_rules": [
+          "The judge should want accounting interpretation, not bookkeeping trivia alone.",
+          "Use one clean finance/accounting decision.",
+          "Include at least one concrete figure only when it actually helps the case."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Financial Analysis": [
+          "Calculate stock-related values (e.g., the value of a constant growth stock, the expected value of",
+          "future dividends, the expected rate of return, etc.)",
+          "Calculate bond-related values (e.g., the price of a bond given its yield to maturity, the coupon",
+          "interest payment for a bond, the effects of interest rates on the price of a bond, etc.)",
+          "Discuss types of investment objectives",
+          "Discuss the nature of investment risk",
+          "Describe the nature of diversification strategies",
+          "Explain factors to consider when selecting investments",
+          "Explain information that can be obtained from financial statements",
+          "Describe information that can be obtained from annual reports",
+          "Explain the nature of a mutual fund prospectus",
+          "Explain fundamental analysis used in making investment decisions",
+          "Describe the nature of technical analysis",
+          "Explain strategies for selecting investments",
+          "Interpret financial ratios significant to investors",
+          "Calculate real-estate-related values (e.g., capitalization rate, gross rental multiplier, rate of return,",
+          "etc.)",
+          "Choose investments based on security's technical analysis",
+          "Assess securities' fundamentals",
+          "Choose investments based on security's fundamental analysis",
+          "Conduct qualitative and quantitative analysis of real-estate investments",
+          "Select real-estate investments based on qualitative and quantitative analysis",
+          "Securities and Investments Pathway",
+          "Finance Cluster for 2023-2024 HS DECA Exams (PQ, CS, SP)"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 5 performance indicators. Bias toward the current district instructional areas and keep them coherent with one scenario."
+    },
+    {
+      "code": "AAM",
+      "name": "Apparel and Accessories Marketing Series",
+      "category_key": "individual_series",
+      "category_name": "Individual Series",
+      "cluster": "Marketing",
+      "official_event_page": "https://www.deca.org/compete/apparel-and-accessories-marketing-series",
+      "district_primary_instructional_areas_2025_2026": [
+        "Operations",
+        "Marketing-Information Management"
+      ],
+      "pi_cluster_source": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to you through your reading of the Performance Indicators, 21st Century Skills and Event Situation.",
+          "You will have up to 10 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 10 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you meet the performance indicators of this event and demonstrate the 21st Century Skills.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "assistant manager, merchandise manager, or marketing manager",
+        "org_types": [
+          "apparel chain",
+          "boutique",
+          "athleisure brand",
+          "fashion retailer"
+        ],
+        "judge_roles": [
+          "store manager",
+          "director of merchandising",
+          "director of marketing"
+        ],
+        "issue_types": [
+          "return fraud, assortment, demand research, or clearance planning"
+        ],
+        "realism_rules": [
+          "Use apparel-specific merchandising language.",
+          "Tie the issue to customer behavior, inventory, or research.",
+          "Keep the decision commercial and store-realistic."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Operations": [
+          "Explain the nature and scope of distribution",
+          "Explain the relationship between customer service and distribution"
+        ],
+        "Marketing-Information Management": [
+          "Analyze market information",
+          "Describe the use of target marketing in professional selling"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 5 performance indicators. Bias toward the current district instructional areas and keep them coherent with one scenario."
+    },
+    {
+      "code": "ASM",
+      "name": "Automotive Services Marketing Series",
+      "category_key": "individual_series",
+      "category_name": "Individual Series",
+      "cluster": "Marketing",
+      "official_event_page": "https://www.deca.org/compete/automotive-services-marketing-series",
+      "district_primary_instructional_areas_2025_2026": [
+        "Promotion",
+        "Marketing"
+      ],
+      "pi_cluster_source": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to you through your reading of the Performance Indicators, 21st Century Skills and Event Situation.",
+          "You will have up to 10 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 10 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you meet the performance indicators of this event and demonstrate the 21st Century Skills.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "marketing specialist or service manager",
+        "org_types": [
+          "dealer group",
+          "repair/service brand",
+          "mobility service",
+          "car wash/detailing brand"
+        ],
+        "judge_roles": [
+          "director of marketing",
+          "owner",
+          "general manager"
+        ],
+        "issue_types": [
+          "launch promotion, service adoption, campaign decision, positioning of a new automotive service"
+        ],
+        "realism_rules": [
+          "Make the business unmistakably automotive or mobility-related.",
+          "Promotion and market positioning should feel local or regional.",
+          "Avoid turning it into pure engineering."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Promotion": [
+          "Proof ads",
+          "Plan special events",
+          "Prepare store/department for special event",
+          "Marketing Cluster for 2022-2023 HS DECA Exams (PQ, CS, SP)",
+          "Explain the use of visual merchandising in retailing",
+          "Distinguish between visual merchandising and display",
+          "Place merchandise for impact",
+          "Determine on-floor assortments",
+          "Use cross-merchandising techniques",
+          "Read/Implement planograms",
+          "Explain types of display arrangements",
+          "Maintain displays",
+          "Dismantle/Store displays/display fixtures/forms",
+          "Create promotional signs",
+          "Select and use display fixtures/forms",
+          "Use lighting to highlight products",
+          "Set up point-of-sale displays and handouts",
+          "Create displays",
+          "Develop promotional calendar",
+          "Plan/Schedule displays/themes with management"
+        ],
+        "Marketing": [
+          "Distinguish between retailing and marketing",
+          "Explain the importance of merchandising to retailers"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 5 performance indicators. Bias toward the current district instructional areas and keep them coherent with one scenario."
+    },
+    {
+      "code": "BFS",
+      "name": "Business Finance Series",
+      "category_key": "individual_series",
+      "category_name": "Individual Series",
+      "cluster": "Finance",
+      "official_event_page": "https://www.deca.org/compete/business-finance-series",
+      "district_primary_instructional_areas_2025_2026": [
+        "Financial Analysis",
+        "Financial Analysis"
+      ],
+      "pi_cluster_source": "Finance",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-finance",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to you through your reading of the Performance Indicators, 21st Century Skills and Event Situation.",
+          "You will have up to 10 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 10 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you meet the performance indicators of this event and demonstrate the 21st Century Skills.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "finance manager or financial analyst",
+        "org_types": [
+          "growing company",
+          "manufacturer",
+          "distributor",
+          "service firm"
+        ],
+        "judge_roles": [
+          "controller",
+          "owner",
+          "chief financial officer"
+        ],
+        "issue_types": [
+          "cash flow, working capital, budget, or financial impact analysis"
+        ],
+        "realism_rules": [
+          "Use higher-level finance than ACT, but still one focused management decision.",
+          "The participant should interpret numbers or financial consequences.",
+          "Keep the ask recommendation-oriented."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Financial Analysis": [
+          "Calculate stock-related values (e.g., the value of a constant growth stock, the expected value of",
+          "future dividends, the expected rate of return, etc.)",
+          "Calculate bond-related values (e.g., the price of a bond given its yield to maturity, the coupon",
+          "interest payment for a bond, the effects of interest rates on the price of a bond, etc.)",
+          "Discuss types of investment objectives",
+          "Discuss the nature of investment risk",
+          "Describe the nature of diversification strategies",
+          "Explain factors to consider when selecting investments",
+          "Explain information that can be obtained from financial statements",
+          "Describe information that can be obtained from annual reports",
+          "Explain the nature of a mutual fund prospectus",
+          "Explain fundamental analysis used in making investment decisions",
+          "Describe the nature of technical analysis",
+          "Explain strategies for selecting investments",
+          "Interpret financial ratios significant to investors",
+          "Calculate real-estate-related values (e.g., capitalization rate, gross rental multiplier, rate of return,",
+          "etc.)",
+          "Choose investments based on security's technical analysis",
+          "Assess securities' fundamentals",
+          "Choose investments based on security's fundamental analysis",
+          "Conduct qualitative and quantitative analysis of real-estate investments",
+          "Select real-estate investments based on qualitative and quantitative analysis",
+          "Securities and Investments Pathway",
+          "Finance Cluster for 2023-2024 HS DECA Exams (PQ, CS, SP)"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 5 performance indicators. Bias toward the current district instructional areas and keep them coherent with one scenario."
+    },
+    {
+      "code": "BSM",
+      "name": "Business Services Marketing Series",
+      "category_key": "individual_series",
+      "category_name": "Individual Series",
+      "cluster": "Marketing",
+      "official_event_page": "https://www.deca.org/compete/business-services-marketing-series",
+      "district_primary_instructional_areas_2025_2026": [
+        "Product/Service Management",
+        "Emotional Intelligence"
+      ],
+      "pi_cluster_source": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to you through your reading of the Performance Indicators, 21st Century Skills and Event Situation.",
+          "You will have up to 10 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 10 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you meet the performance indicators of this event and demonstrate the 21st Century Skills.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "marketing manager, sales manager, or general manager",
+        "org_types": [
+          "B2B service firm",
+          "recruitment service",
+          "security service",
+          "office-services company"
+        ],
+        "judge_roles": [
+          "owner",
+          "regional manager",
+          "director"
+        ],
+        "issue_types": [
+          "new service fit, client-building, customer warning/communication, service value proposition"
+        ],
+        "realism_rules": [
+          "The customer is another business or professional buyer.",
+          "Make the solution about service benefits, trust, and relationship management.",
+          "Do not default to consumer retail language."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Product/Service Management": [
+          "Determine the impact of product standards' issues associated with global business",
+          "Obtain samples",
+          "Determine quality of merchandise to offer",
+          "Plan merchandise assortment (e.g., styling, sizes, quantities, colors)",
+          "Explain the nature of merchandise plans (budgets)",
+          "Calculate open-to-buy",
+          "Create/maintain daily sales plan",
+          "Identify emerging trends",
+          "Plan stock",
+          "Plan reductions (e.g., anticipated markdowns, employee/other discounts, stock shortages)",
+          "Plan purchases",
+          "Compare and contrast buying from domestic sources with that of foreign sources",
+          "Determine final cost of purchases from domestic and international sources",
+          "Marketing Cluster for 2022-2023 HS DECA Exams (PQ, CS, SP)",
+          "Write purchase orders",
+          "Analyze the use of central buying",
+          "Determine stock turnover",
+          "Determine what to buy/reorder",
+          "Determine quantities to buy/reorder",
+          "Determine when to buy/reorder",
+          "Establish reorder points",
+          "Evaluate vendors' goods and services",
+          "Choose vendors",
+          "Negotiate terms with suppliers",
+          "Identify components of a retail image"
+        ],
+        "Emotional Intelligence": [
+          "Explain the impact of business customs and practices on global trade",
+          "Describe the nature of business customs and practices in the North American market",
+          "Explain the nature of business customs and practices in Western Europe",
+          "Explain the nature of business customs and practices in Eastern Europe",
+          "Explain the nature of business customs and practices in Latin America",
+          "Describe the nature of business customs and practices in the Pacific Rim",
+          "Discuss the nature of business customs and practices in the Middle East",
+          "Explain the nature of business customs and practices in South Asia",
+          "Describe the nature of business customs and practices in Northern Africa",
+          "Discuss the nature of business customs and practices in Sub-Saharan Africa"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 5 performance indicators. Bias toward the current district instructional areas and keep them coherent with one scenario."
+    },
+    {
+      "code": "ENT",
+      "name": "Entrepreneurship Series",
+      "category_key": "individual_series",
+      "category_name": "Individual Series",
+      "cluster": "Entrepreneurship",
+      "official_event_page": "https://www.deca.org/compete/entrepreneurship-series",
+      "district_primary_instructional_areas_2025_2026": [
+        "Product/Service Management",
+        "Entrepreneurship"
+      ],
+      "pi_cluster_source": "Entrepreneurship",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-entrepreneurship",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to you through your reading of the Performance Indicators, 21st Century Skills and Event Situation.",
+          "You will have up to 10 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 10 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you meet the performance indicators of this event and demonstrate the 21st Century Skills.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "owner, cofounder, or entrepreneurship advisor",
+        "org_types": [
+          "startup",
+          "small business",
+          "creator business",
+          "new local venture"
+        ],
+        "judge_roles": [
+          "potential investor",
+          "mentor",
+          "owner",
+          "partner"
+        ],
+        "issue_types": [
+          "product-market fit, concept improvement, early growth, customer need validation"
+        ],
+        "realism_rules": [
+          "Make the participant think like an entrepreneur, not a corporate employee.",
+          "The scenario should involve opportunity recognition or venture improvement.",
+          "Keep the company small enough that decisions feel immediate."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Product/Service Management": [
+          "Determine initial feasibility of product idea",
+          "Adjust idea to create functional product",
+          "Create processes for ongoing opportunity recognition",
+          "Entrepreneurship (CS, SP, SU, MN, ON)",
+          "Evaluate customer experience",
+          "Explain the concept of product mix",
+          "Plan product mix",
+          "Determine services to provide customers",
+          "Identify internal and external service standards",
+          "Build corporate brands",
+          "Explain the role of customer service in positioning/image",
+          "Identify company's unique selling proposition",
+          "Build product/service brand"
+        ],
+        "Entrepreneurship": [
+          "Describe the nature of entrepreneurship",
+          "Explain the role requirements of entrepreneurs and owners",
+          "Describe the use of business ethics in entrepreneurship",
+          "Describe small-business opportunities in international trade",
+          "Explain the need for entrepreneurial discovery",
+          "Discuss entrepreneurial discovery processes",
+          "Assess global trends and opportunities for business ventures",
+          "Determine opportunities for venture creation",
+          "Assess opportunities for venture creation",
+          "Generate venture ideas",
+          "Determine feasibility of venture ideas",
+          "Describe entrepreneurial planning considerations",
+          "Explain tools used by entrepreneurs for venture planning",
+          "Assess start-up requirements",
+          "Assess risks associated with venture",
+          "Describe external resources useful to entrepreneurs during concept development",
+          "Assess the need to use external resources for concept development",
+          "Describe strategies to protect intellectual property",
+          "Use components of business plan to define venture idea",
+          "Entrepreneurship (CS, SP, SU, MN, ON)",
+          "Describe processes used to acquire adequate financial resources for venture creation/start-up",
+          "Select sources to finance venture creation/start-up",
+          "Explain factors to consider in determining a venture's human-resources needs",
+          "Explain considerations in making the decision to hire staff",
+          "Describe considerations in selecting capital resources",
+          "Identify capital resources needed for the venture",
+          "Assess the costs/benefits associated with resources",
+          "Establish banking procedures",
+          "Use external resources to supplement entrepreneur's expertise",
+          "Explain the complexity of business operations",
+          "Evaluate risk-taking opportunities",
+          "Explain the need for business systems and procedures",
+          "Describe the use of operating procedures",
+          "Explain methods/processes for organizing workflow",
+          "Develop and/or provide product/service",
+          "Use creative problem-solving in business activities/decisions",
+          "Explain the impact of resource productivity on venture success",
+          "Create processes for ongoing opportunity recognition",
+          "Develop plan to invest resources into improving current products or creating new ones (EN:032)",
+          "(ON)",
+          "Adapt to changes in business environment",
+          "Explain the need for continuation planning",
+          "Describe methods of venture harvesting",
+          "Evaluate options for continued venture involvement",
+          "Develop exit strategies"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 5 performance indicators. Bias toward the current district instructional areas and keep them coherent with one scenario."
+    },
+    {
+      "code": "FMS",
+      "name": "Food Marketing Series",
+      "category_key": "individual_series",
+      "category_name": "Individual Series",
+      "cluster": "Marketing",
+      "official_event_page": "https://www.deca.org/compete/food-marketing-series",
+      "district_primary_instructional_areas_2025_2026": [
+        "Market Planning",
+        "Customer Relations"
+      ],
+      "pi_cluster_source": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to you through your reading of the Performance Indicators, 21st Century Skills and Event Situation.",
+          "You will have up to 10 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 10 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you meet the performance indicators of this event and demonstrate the 21st Century Skills.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "brand manager, product manager, or marketing manager",
+        "org_types": [
+          "food brand",
+          "restaurant brand",
+          "grocery brand",
+          "snack/beverage company"
+        ],
+        "judge_roles": [
+          "owner",
+          "director of marketing",
+          "category manager"
+        ],
+        "issue_types": [
+          "new food product plan, customer reaction, merchandising or market planning issue"
+        ],
+        "realism_rules": [
+          "Make the food context matter.",
+          "Consumer taste, convenience, freshness, or menu/product fit should show up.",
+          "Blend marketing with practical food-service or grocery realities."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Market Planning": [
+          "Identify ways to segment markets for marketing communications",
+          "Describe the nature of target marketing in marketing communications"
+        ],
+        "Customer Relations": [
+          "Use digital media to enhance customer post-sales experience"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 5 performance indicators. Bias toward the current district instructional areas and keep them coherent with one scenario."
+    },
+    {
+      "code": "HLM",
+      "name": "Hotel and Lodging Management Series",
+      "category_key": "individual_series",
+      "category_name": "Individual Series",
+      "cluster": "Hospitality and Tourism",
+      "official_event_page": "https://www.deca.org/compete/hotel-and-lodging-management-series",
+      "district_primary_instructional_areas_2025_2026": [
+        "Promotion",
+        "Financial Analysis"
+      ],
+      "pi_cluster_source": "Hospitality and Tourism",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-hospitality-and-tourism",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to you through your reading of the Performance Indicators, 21st Century Skills and Event Situation.",
+          "You will have up to 10 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 10 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you meet the performance indicators of this event and demonstrate the 21st Century Skills.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "reservations manager, sales manager, or front office manager",
+        "org_types": [
+          "hotel",
+          "limited-service hotel",
+          "boutique hotel",
+          "resort"
+        ],
+        "judge_roles": [
+          "general manager",
+          "owner",
+          "director of sales"
+        ],
+        "issue_types": [
+          "occupancy promotion, package design, revenue impact, guest acquisition or retention"
+        ],
+        "realism_rules": [
+          "Hospitality should feel like lodging, not restaurant service.",
+          "Recommendations should reflect rooms, occupancy, reservations, or hotel amenities.",
+          "Balance guest appeal with revenue."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Promotion": [
+          "Explain the purpose of tourism promotion",
+          "Identify communication channels used in travel and tourism promotion",
+          "Explain information points of contact within an overall tourism information system",
+          "Identify types of public-relations activities",
+          "Discuss internal and external audiences for public-relations activities",
+          "Describe promotional displays used in travel and tourism",
+          "Create promotional banners/signs",
+          "Select promotional booth configurations/specifications",
+          "Determine promotional gadgets/participation draws",
+          "Set-up promotional space",
+          "Discuss types of direct mail tactics",
+          "Explain the nature of email marketing tactics",
+          "Explain the role of business websites in digital marketing",
+          "Explain the use of social media for digital marketing",
+          "Describe the use of blogging for marketing communications",
+          "Explain the use of video/images for digital marketing",
+          "Describe mobile marketing tactics",
+          "Explain mobile marketing applications",
+          "Discuss the use of search-engine optimization tactics for digital marketing",
+          "Hospitality and Tourism Cluster for 2022-2023 HS DECA Exams (PQ, CS, SP)",
+          "Identify effective promotional headlines",
+          "Explain the use of storytelling in promoting tourism",
+          "Discuss effective print promotional content",
+          "Describe effective electronic promotional content",
+          "Write promotional content for use on the website",
+          "Write promotional content for use in social media",
+          "Repurpose promotional content for use in multiple platforms",
+          "Participate in community outreach activities",
+          "Support government initiatives for hospitality and tourism",
+          "Explain website-development process",
+          "Identify strategies for attracting targeted audience to website",
+          "Develop promotional brochures for travel and tourism",
+          "Calculate media costs",
+          "Buy ad space/time",
+          "Cultivate media relationships",
+          "Develop community partnerships",
+          "Conduct familiarization (FAM) tours",
+          "Explain considerations in designing sales-promotion materials for use in travel and tourism (PR:443)",
+          "(SP)",
+          "Identify considerations used to evaluate trade show/exposition participation",
+          "Participate in the design of collateral materials to promote special events/tours",
+          "Set up cross-promotions of events/tours",
+          "Participate in trade shows/expositions to showcase tourism assets/services",
+          "Discuss the use of marketing/creative briefs",
+          "Explain the nature of marketing communications calendars",
+          "Develop marketing communications calendars",
+          "Monitor user-generated content (UGC)",
+          "Manage comments on digital channels"
+        ],
+        "Financial Analysis": [
+          "Track expenses",
+          "Identify costs associated with travel/tourism packages and events",
+          "Discuss standard payment terms/fees in travel/tourism"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 5 performance indicators. Bias toward the current district instructional areas and keep them coherent with one scenario."
+    },
+    {
+      "code": "HRM",
+      "name": "Human Resources Management Series",
+      "category_key": "individual_series",
+      "category_name": "Individual Series",
+      "cluster": "Business Management and Administration",
+      "official_event_page": "https://www.deca.org/compete/human-resources-management-series",
+      "district_primary_instructional_areas_2025_2026": [
+        "Emotional Intelligence",
+        "Communication Skills"
+      ],
+      "pi_cluster_source": "Business Management and Administration",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-business-management-and-administration",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to you through your reading of the Performance Indicators, 21st Century Skills and Event Situation.",
+          "You will have up to 10 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 10 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you meet the performance indicators of this event and demonstrate the 21st Century Skills.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "HR specialist, department supervisor, or HR manager",
+        "org_types": [
+          "company HR department",
+          "community organization",
+          "studio or small company"
+        ],
+        "judge_roles": [
+          "owner",
+          "department manager",
+          "coworker"
+        ],
+        "issue_types": [
+          "employee communication, conflict, hiring, morale, confidentiality, coaching"
+        ],
+        "realism_rules": [
+          "The problem should be people-centered.",
+          "Emotional intelligence or communication should be visible in the setup.",
+          "Do not drift into broad legal strategy."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Emotional Intelligence": [
+          "Explain the impact of business customs and practices on global trade",
+          "Describe the nature of business customs and practices in the North American market",
+          "Explain the nature of business customs and practices in Western Europe",
+          "Explain the nature of business customs and practices in Eastern Europe",
+          "Explain the nature of business customs and practices in Latin America",
+          "Describe the nature of business customs and practices in the Pacific Rim",
+          "Discuss the nature of business customs and practices in the Middle East",
+          "Explain the nature of business customs and practices in South Asia",
+          "Describe the nature of business customs and practices in Northern Africa",
+          "Discuss the nature of business customs and practices in Sub-Saharan Africa"
+        ],
+        "Communication Skills": [
+          "Repurpose content for social media"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 5 performance indicators. Bias toward the current district instructional areas and keep them coherent with one scenario."
+    },
+    {
+      "code": "MCS",
+      "name": "Marketing Communications Series",
+      "category_key": "individual_series",
+      "category_name": "Individual Series",
+      "cluster": "Marketing",
+      "official_event_page": "https://www.deca.org/compete/marketing-communications-series",
+      "district_primary_instructional_areas_2025_2026": [
+        "Promotion",
+        "Product/Service Management"
+      ],
+      "pi_cluster_source": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to you through your reading of the Performance Indicators, 21st Century Skills and Event Situation.",
+          "You will have up to 10 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 10 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you meet the performance indicators of this event and demonstrate the 21st Century Skills.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "communications specialist, PR coordinator, or marketing coordinator",
+        "org_types": [
+          "association",
+          "brand",
+          "event business",
+          "community organization"
+        ],
+        "judge_roles": [
+          "executive director",
+          "marketing director",
+          "owner"
+        ],
+        "issue_types": [
+          "awareness message, campaign communication, explaining an offering, launch messaging"
+        ],
+        "realism_rules": [
+          "The core deliverable is the message itself.",
+          "Audience targeting and channel choice should matter.",
+          "Make clarity and consistency central."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Promotion": [
+          "Proof ads",
+          "Plan special events",
+          "Prepare store/department for special event",
+          "Marketing Cluster for 2022-2023 HS DECA Exams (PQ, CS, SP)",
+          "Explain the use of visual merchandising in retailing",
+          "Distinguish between visual merchandising and display",
+          "Place merchandise for impact",
+          "Determine on-floor assortments",
+          "Use cross-merchandising techniques",
+          "Read/Implement planograms",
+          "Explain types of display arrangements",
+          "Maintain displays",
+          "Dismantle/Store displays/display fixtures/forms",
+          "Create promotional signs",
+          "Select and use display fixtures/forms",
+          "Use lighting to highlight products",
+          "Set up point-of-sale displays and handouts",
+          "Create displays",
+          "Develop promotional calendar",
+          "Plan/Schedule displays/themes with management"
+        ],
+        "Product/Service Management": [
+          "Determine the impact of product standards' issues associated with global business",
+          "Obtain samples",
+          "Determine quality of merchandise to offer",
+          "Plan merchandise assortment (e.g., styling, sizes, quantities, colors)",
+          "Explain the nature of merchandise plans (budgets)",
+          "Calculate open-to-buy",
+          "Create/maintain daily sales plan",
+          "Identify emerging trends",
+          "Plan stock",
+          "Plan reductions (e.g., anticipated markdowns, employee/other discounts, stock shortages)",
+          "Plan purchases",
+          "Compare and contrast buying from domestic sources with that of foreign sources",
+          "Determine final cost of purchases from domestic and international sources",
+          "Marketing Cluster for 2022-2023 HS DECA Exams (PQ, CS, SP)",
+          "Write purchase orders",
+          "Analyze the use of central buying",
+          "Determine stock turnover",
+          "Determine what to buy/reorder",
+          "Determine quantities to buy/reorder",
+          "Determine when to buy/reorder",
+          "Establish reorder points",
+          "Evaluate vendors' goods and services",
+          "Choose vendors",
+          "Negotiate terms with suppliers",
+          "Identify components of a retail image"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 5 performance indicators. Bias toward the current district instructional areas and keep them coherent with one scenario."
+    },
+    {
+      "code": "RFSM",
+      "name": "Restaurant and Food Service Management Series",
+      "category_key": "individual_series",
+      "category_name": "Individual Series",
+      "cluster": "Hospitality and Tourism",
+      "official_event_page": "https://www.deca.org/compete/restaurant-and-food-service-management-series",
+      "district_primary_instructional_areas_2025_2026": [
+        "Customer Relations",
+        "Information Management"
+      ],
+      "pi_cluster_source": "Hospitality and Tourism",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-hospitality-and-tourism",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to you through your reading of the Performance Indicators, 21st Century Skills and Event Situation.",
+          "You will have up to 10 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 10 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you meet the performance indicators of this event and demonstrate the 21st Century Skills.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "restaurant manager, service manager, or general manager",
+        "org_types": [
+          "restaurant",
+          "casual dining location",
+          "foodservice venue"
+        ],
+        "judge_roles": [
+          "owner",
+          "general manager",
+          "customer"
+        ],
+        "issue_types": [
+          "service complaint, reservation/info problem, service process confusion, menu/service communication"
+        ],
+        "realism_rules": [
+          "Hospitality and service execution should drive the conflict.",
+          "The participant should manage both guest satisfaction and internal process.",
+          "Avoid hotel-specific framing."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Customer Relations": [
+          "Offer sightseeing advice",
+          "Provide interesting or enlightening information about points of interest",
+          "Provide service to customers with special needs",
+          "Respond to customer feedback",
+          "Adapt customer service to meet the customers\u2019 individual needs",
+          "Organize excursions for visitors/travelers",
+          "Hospitality and Tourism Cluster for 2022-2023 HS DECA Exams (PQ, CS, SP)"
+        ],
+        "Information Management": [
+          "Explain ways that technology impacts the travel and tourism industry",
+          "Discuss the use of RFID technology in travel and tourism",
+          "Explain travel and tourism-related apps for smartphones",
+          "Discuss Global Distribution Systems (GDS)",
+          "Identify sources that provide input into tourism",
+          "Identify issues and trends in travel and tourism",
+          "Follow trends in the popularity of destinations and packages",
+          "Monitor travel patterns",
+          "Create a destination management system to store data"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 5 performance indicators. Bias toward the current district instructional areas and keep them coherent with one scenario."
+    },
+    {
+      "code": "RMS",
+      "name": "Retail Merchandising Series",
+      "category_key": "individual_series",
+      "category_name": "Individual Series",
+      "cluster": "Marketing",
+      "official_event_page": "https://www.deca.org/compete/retail-merchandising-series",
+      "district_primary_instructional_areas_2025_2026": [
+        "Promotion",
+        "Product/Service Management"
+      ],
+      "pi_cluster_source": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to you through your reading of the Performance Indicators, 21st Century Skills and Event Situation.",
+          "You will have up to 10 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 10 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you meet the performance indicators of this event and demonstrate the 21st Century Skills.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "store manager, buyer, or merchandising manager",
+        "org_types": [
+          "retail store",
+          "chain retailer",
+          "specialty store"
+        ],
+        "judge_roles": [
+          "owner",
+          "vice president",
+          "director of merchandising"
+        ],
+        "issue_types": [
+          "in-store promotion, assortment, merchandising, product/service fit, store traffic"
+        ],
+        "realism_rules": [
+          "This should feel like retail.",
+          "Use products, displays, service add-ons, or store experience as levers.",
+          "Recommendations should be visible and tactical."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Promotion": [
+          "Proof ads",
+          "Plan special events",
+          "Prepare store/department for special event",
+          "Marketing Cluster for 2022-2023 HS DECA Exams (PQ, CS, SP)",
+          "Explain the use of visual merchandising in retailing",
+          "Distinguish between visual merchandising and display",
+          "Place merchandise for impact",
+          "Determine on-floor assortments",
+          "Use cross-merchandising techniques",
+          "Read/Implement planograms",
+          "Explain types of display arrangements",
+          "Maintain displays",
+          "Dismantle/Store displays/display fixtures/forms",
+          "Create promotional signs",
+          "Select and use display fixtures/forms",
+          "Use lighting to highlight products",
+          "Set up point-of-sale displays and handouts",
+          "Create displays",
+          "Develop promotional calendar",
+          "Plan/Schedule displays/themes with management"
+        ],
+        "Product/Service Management": [
+          "Determine the impact of product standards' issues associated with global business",
+          "Obtain samples",
+          "Determine quality of merchandise to offer",
+          "Plan merchandise assortment (e.g., styling, sizes, quantities, colors)",
+          "Explain the nature of merchandise plans (budgets)",
+          "Calculate open-to-buy",
+          "Create/maintain daily sales plan",
+          "Identify emerging trends",
+          "Plan stock",
+          "Plan reductions (e.g., anticipated markdowns, employee/other discounts, stock shortages)",
+          "Plan purchases",
+          "Compare and contrast buying from domestic sources with that of foreign sources",
+          "Determine final cost of purchases from domestic and international sources",
+          "Marketing Cluster for 2022-2023 HS DECA Exams (PQ, CS, SP)",
+          "Write purchase orders",
+          "Analyze the use of central buying",
+          "Determine stock turnover",
+          "Determine what to buy/reorder",
+          "Determine quantities to buy/reorder",
+          "Determine when to buy/reorder",
+          "Establish reorder points",
+          "Evaluate vendors' goods and services",
+          "Choose vendors",
+          "Negotiate terms with suppliers",
+          "Identify components of a retail image"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 5 performance indicators. Bias toward the current district instructional areas and keep them coherent with one scenario."
+    },
+    {
+      "code": "SEM",
+      "name": "Sports and Entertainment Marketing Series",
+      "category_key": "individual_series",
+      "category_name": "Individual Series",
+      "cluster": "Marketing",
+      "official_event_page": "https://www.deca.org/compete/sports-and-entertainment-marketing-series",
+      "district_primary_instructional_areas_2025_2026": [
+        "Selling",
+        "Customer Relations"
+      ],
+      "pi_cluster_source": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to you through your reading of the Performance Indicators, 21st Century Skills and Event Situation.",
+          "You will have up to 10 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 10 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you meet the performance indicators of this event and demonstrate the 21st Century Skills.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "marketing manager, partnerships manager, or events manager",
+        "org_types": [
+          "sports team",
+          "arena",
+          "league team",
+          "entertainment venue",
+          "festival promoter"
+        ],
+        "judge_roles": [
+          "owner",
+          "general manager",
+          "sponsor contact",
+          "client"
+        ],
+        "issue_types": [
+          "ticket/package selling, sponsor activation, fan experience, partnership or customer retention"
+        ],
+        "realism_rules": [
+          "The audience is fans, sponsors, or event buyers.",
+          "Entertainment energy should be visible, but the ask still needs business logic.",
+          "Selling and relationship-building should feel commercial, not generic marketing."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Selling": [
+          "Explain the impact of sales and buying cycles",
+          "Describe the impact that digital communication is having on selling",
+          "Identify emerging trends for use in selling",
+          "Differentiate between consumer and organizational buying behavior",
+          "Explain the use of marketing-research information in professional selling",
+          "Prospect for customers",
+          "Conduct preliminary customer/client qualification",
+          "Conduct pre-visit research (e.g., customer's markets/products, customer's competitors, and",
+          "competitors' offerings)",
+          "Determine sales strategies",
+          "Book appointments with prospective clients",
+          "Prepare sales presentation",
+          "Prepare and/or assemble sales materials",
+          "Marketing Cluster for 2022-2023 HS DECA Exams (PQ, CS, SP)",
+          "Build rapport and credibility with prospect",
+          "Respond appropriately to prospect's individual personality type",
+          "Determine prospect's buying motives for use in selling",
+          "Facilitate prospect's buying decisions",
+          "Question/probe to acquire understanding of prospect [priorities, problems, trends, issues,",
+          "corporate aims and objectives, processes, buying process and criteria, and trading preferences]",
+          "Assess prospect's needs in relation to product offering",
+          "Propose solution to prospect's needs/challenges (sales talk, sales proposal presentation) (SE:115)",
+          "(SP)",
+          "Demonstrate product solution for prospect's needs",
+          "Convert customer/client objections into selling points",
+          "Close the sale",
+          "Negotiate sales terms/agreement",
+          "Oversee fulfillment/completion of sale",
+          "Sell good/service/idea to individuals",
+          "Sell good/service/idea to groups",
+          "Calculate miscellaneous charges",
+          "Process special orders",
+          "Process telephone orders",
+          "Process sales documentation",
+          "Write product/service proposal",
+          "Present proposal",
+          "Plan follow-up strategies for use in selling",
+          "Prepare sales reports",
+          "Provide post-sales service",
+          "Gather customer/client feedback to improve service",
+          "Conduct self-assessment of sales performance",
+          "Maintain ongoing relationship with client",
+          "Plan strategies for meeting sales quotas",
+          "Develop strategies to win back former customers",
+          "Explain the nature of key account management"
+        ],
+        "Customer Relations": [
+          "Use digital media to enhance customer post-sales experience"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 5 performance indicators. Bias toward the current district instructional areas and keep them coherent with one scenario."
+    },
+    {
+      "code": "BLTDM",
+      "name": "Business Law and Ethics Team Decision Making",
+      "category_key": "team_decision",
+      "category_name": "Team Decision Making",
+      "cluster": "Business Management and Administration",
+      "official_event_page": "https://www.deca.org/compete/business-law-and-ethics-team-decision-making",
+      "district_primary_instructional_areas_2025_2026": [
+        "Customer Relations"
+      ],
+      "pi_cluster_source": "Business Management and Administration",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-business-management-and-administration",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to your team through your reading of the Performance Indicators, 21st Century Skills and Event Situation.",
+          "You will have up to 30 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 15 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you meet the performance indicators of this event and demonstrate the 21st Century Skills.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "two cross-functional managers",
+        "org_types": [
+          "tech company",
+          "service company",
+          "retailer",
+          "training company"
+        ],
+        "judge_roles": [
+          "owner",
+          "vice president",
+          "president"
+        ],
+        "issue_types": [
+          "customer complaint with legal/ethical implications",
+          "product claim issue",
+          "hiring or employment ethics question",
+          "policy fairness issue"
+        ],
+        "realism_rules": [
+          "Use two roles that make sense together, e.g., HR + operations or PR + product.",
+          "The case must force a judgment call, not just a policy explanation.",
+          "Law/ethics tension should be visible but not require specialist legal doctrine."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Customer Relations": [
+          "Use digital media to enhance customer post-sales experience",
+          "Explain the relationship between customer services and sales",
+          "Process customer returns",
+          "Operations Management Pathway",
+          "Business Management and Administration Cluster for 2023-2024 HS DECA Exams (PQ, CS, SP)"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 7 performance indicators. Anchor the scenario in the district instructional area, but make the recommendation broad enough for a team case."
+    },
+    {
+      "code": "BTDM",
+      "name": "Buying and Merchandising Team Decision Making",
+      "category_key": "team_decision",
+      "category_name": "Team Decision Making",
+      "cluster": "Marketing",
+      "official_event_page": "https://www.deca.org/compete/buying-and-merchandising-team-decision-making",
+      "district_primary_instructional_areas_2025_2026": [
+        "Selling"
+      ],
+      "pi_cluster_source": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to your team through your reading of the Performance Indicators, 21st Century Skills and Event Situation.",
+          "You will have up to 30 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 15 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you meet the performance indicators of this event and demonstrate the 21st Century Skills.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "buyer and merchandising leader",
+        "org_types": [
+          "retailer",
+          "department store",
+          "specialty shop",
+          "e-commerce retailer"
+        ],
+        "judge_roles": [
+          "owner",
+          "merchandising director",
+          "vice president"
+        ],
+        "issue_types": [
+          "assortment choice, vendor issue, pricing/selling strategy, merchandising decision"
+        ],
+        "realism_rules": [
+          "Retail buying and customer appeal must both matter.",
+          "Make inventory/assortment tradeoffs explicit.",
+          "The recommendation should show what to buy/sell and why."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Selling": [
+          "Explain the impact of sales and buying cycles",
+          "Describe the impact that digital communication is having on selling",
+          "Identify emerging trends for use in selling",
+          "Differentiate between consumer and organizational buying behavior",
+          "Explain the use of marketing-research information in professional selling",
+          "Prospect for customers",
+          "Conduct preliminary customer/client qualification",
+          "Conduct pre-visit research (e.g., customer's markets/products, customer's competitors, and",
+          "competitors' offerings)",
+          "Determine sales strategies",
+          "Book appointments with prospective clients",
+          "Prepare sales presentation",
+          "Prepare and/or assemble sales materials",
+          "Marketing Cluster for 2022-2023 HS DECA Exams (PQ, CS, SP)",
+          "Build rapport and credibility with prospect",
+          "Respond appropriately to prospect's individual personality type",
+          "Determine prospect's buying motives for use in selling",
+          "Facilitate prospect's buying decisions",
+          "Question/probe to acquire understanding of prospect [priorities, problems, trends, issues,",
+          "corporate aims and objectives, processes, buying process and criteria, and trading preferences]",
+          "Assess prospect's needs in relation to product offering",
+          "Propose solution to prospect's needs/challenges (sales talk, sales proposal presentation) (SE:115)",
+          "(SP)",
+          "Demonstrate product solution for prospect's needs",
+          "Convert customer/client objections into selling points",
+          "Close the sale",
+          "Negotiate sales terms/agreement",
+          "Oversee fulfillment/completion of sale",
+          "Sell good/service/idea to individuals",
+          "Sell good/service/idea to groups",
+          "Calculate miscellaneous charges",
+          "Process special orders",
+          "Process telephone orders",
+          "Process sales documentation",
+          "Write product/service proposal",
+          "Present proposal",
+          "Plan follow-up strategies for use in selling",
+          "Prepare sales reports",
+          "Provide post-sales service",
+          "Gather customer/client feedback to improve service",
+          "Conduct self-assessment of sales performance",
+          "Maintain ongoing relationship with client",
+          "Plan strategies for meeting sales quotas",
+          "Develop strategies to win back former customers",
+          "Explain the nature of key account management"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 7 performance indicators. Anchor the scenario in the district instructional area, but make the recommendation broad enough for a team case."
+    },
+    {
+      "code": "ETDM",
+      "name": "Entrepreneurship Team Decision Making",
+      "category_key": "team_decision",
+      "category_name": "Team Decision Making",
+      "cluster": "Entrepreneurship",
+      "official_event_page": "https://www.deca.org/compete/entrepreneurship-team-decision-making",
+      "district_primary_instructional_areas_2025_2026": [
+        "Product/Service Management"
+      ],
+      "pi_cluster_source": "Entrepreneurship",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-entrepreneurship",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to your team through your reading of the Performance Indicators, 21st Century Skills and Event Situation.",
+          "You will have up to 30 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 15 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you meet the performance indicators of this event and demonstrate the 21st Century Skills.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "founder pair or startup leadership pair",
+        "org_types": [
+          "startup",
+          "new venture",
+          "small business"
+        ],
+        "judge_roles": [
+          "mentor",
+          "investor",
+          "owner"
+        ],
+        "issue_types": [
+          "product/service concept refinement, launch decision, new opportunity evaluation"
+        ],
+        "realism_rules": [
+          "Keep the business in venture mode.",
+          "Use ambiguity, but keep one primary opportunity/problem.",
+          "The pair should behave like entrepreneurs making a growth decision."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Product/Service Management": [
+          "Determine initial feasibility of product idea",
+          "Adjust idea to create functional product",
+          "Create processes for ongoing opportunity recognition",
+          "Entrepreneurship (CS, SP, SU, MN, ON)",
+          "Evaluate customer experience",
+          "Explain the concept of product mix",
+          "Plan product mix",
+          "Determine services to provide customers",
+          "Identify internal and external service standards",
+          "Build corporate brands",
+          "Explain the role of customer service in positioning/image",
+          "Identify company's unique selling proposition",
+          "Build product/service brand"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 7 performance indicators. Anchor the scenario in the district instructional area, but make the recommendation broad enough for a team case."
+    },
+    {
+      "code": "FTDM",
+      "name": "Financial Services Team Decision Making",
+      "category_key": "team_decision",
+      "category_name": "Team Decision Making",
+      "cluster": "Finance",
+      "official_event_page": "https://www.deca.org/compete/financial-services-team-decision-making",
+      "district_primary_instructional_areas_2025_2026": [
+        "Financial Analysis"
+      ],
+      "pi_cluster_source": "Finance",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-finance",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to your team through your reading of the Performance Indicators, 21st Century Skills and Event Situation.",
+          "You will have up to 30 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 15 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you meet the performance indicators of this event and demonstrate the 21st Century Skills.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "two financial-services advisors or managers",
+        "org_types": [
+          "bank",
+          "financial advisory firm",
+          "small business finance service"
+        ],
+        "judge_roles": [
+          "client",
+          "bank president",
+          "owner"
+        ],
+        "issue_types": [
+          "business finance decision, financial statement interpretation, educational finance communication"
+        ],
+        "realism_rules": [
+          "The finance explanation must be client-usable.",
+          "At least one recommendation should flow from the analysis.",
+          "Do not make it purely computational."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Financial Analysis": [
+          "Calculate stock-related values (e.g., the value of a constant growth stock, the expected value of",
+          "future dividends, the expected rate of return, etc.)",
+          "Calculate bond-related values (e.g., the price of a bond given its yield to maturity, the coupon",
+          "interest payment for a bond, the effects of interest rates on the price of a bond, etc.)",
+          "Discuss types of investment objectives",
+          "Discuss the nature of investment risk",
+          "Describe the nature of diversification strategies",
+          "Explain factors to consider when selecting investments",
+          "Explain information that can be obtained from financial statements",
+          "Describe information that can be obtained from annual reports",
+          "Explain the nature of a mutual fund prospectus",
+          "Explain fundamental analysis used in making investment decisions",
+          "Describe the nature of technical analysis",
+          "Explain strategies for selecting investments",
+          "Interpret financial ratios significant to investors",
+          "Calculate real-estate-related values (e.g., capitalization rate, gross rental multiplier, rate of return,",
+          "etc.)",
+          "Choose investments based on security's technical analysis",
+          "Assess securities' fundamentals",
+          "Choose investments based on security's fundamental analysis",
+          "Conduct qualitative and quantitative analysis of real-estate investments",
+          "Select real-estate investments based on qualitative and quantitative analysis",
+          "Securities and Investments Pathway",
+          "Finance Cluster for 2023-2024 HS DECA Exams (PQ, CS, SP)"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 7 performance indicators. Anchor the scenario in the district instructional area, but make the recommendation broad enough for a team case."
+    },
+    {
+      "code": "HTDM",
+      "name": "Hospitality Services Team Decision Making",
+      "category_key": "team_decision",
+      "category_name": "Team Decision Making",
+      "cluster": "Hospitality and Tourism",
+      "official_event_page": "https://www.deca.org/compete/hospitality-services-team-decision-making",
+      "district_primary_instructional_areas_2025_2026": [
+        "Customer Relations"
+      ],
+      "pi_cluster_source": "Hospitality and Tourism",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-hospitality-and-tourism",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to your team through your reading of the Performance Indicators, 21st Century Skills and Event Situation.",
+          "You will have up to 30 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 15 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you meet the performance indicators of this event and demonstrate the 21st Century Skills.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "two hospitality managers",
+        "org_types": [
+          "hotel",
+          "resort",
+          "conference venue",
+          "restaurant group"
+        ],
+        "judge_roles": [
+          "general manager",
+          "owner",
+          "client"
+        ],
+        "issue_types": [
+          "guest experience problem, service recovery, occupancy/booking challenge, hospitality offer decision"
+        ],
+        "realism_rules": [
+          "The pair should balance service and business outcomes.",
+          "Customer relations should be explicit.",
+          "Recommendations should feel like something a hotel/venue team could actually implement."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Customer Relations": [
+          "Offer sightseeing advice",
+          "Provide interesting or enlightening information about points of interest",
+          "Provide service to customers with special needs",
+          "Respond to customer feedback",
+          "Adapt customer service to meet the customers\u2019 individual needs",
+          "Organize excursions for visitors/travelers",
+          "Hospitality and Tourism Cluster for 2022-2023 HS DECA Exams (PQ, CS, SP)"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 7 performance indicators. Anchor the scenario in the district instructional area, but make the recommendation broad enough for a team case."
+    },
+    {
+      "code": "MTDM",
+      "name": "Marketing Management Team Decision Making",
+      "category_key": "team_decision",
+      "category_name": "Team Decision Making",
+      "cluster": "Marketing",
+      "official_event_page": "https://www.deca.org/compete/marketing-management-team-decision-making",
+      "district_primary_instructional_areas_2025_2026": [
+        "Economics"
+      ],
+      "pi_cluster_source": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to your team through your reading of the Performance Indicators, 21st Century Skills and Event Situation.",
+          "You will have up to 30 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 15 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you meet the performance indicators of this event and demonstrate the 21st Century Skills.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "two marketing decision-makers",
+        "org_types": [
+          "community business",
+          "consumer brand",
+          "experience business",
+          "service business"
+        ],
+        "judge_roles": [
+          "owner",
+          "executive director",
+          "vice president"
+        ],
+        "issue_types": [
+          "economics-informed marketing decision, demand/pricing/value question, campaign recommendation"
+        ],
+        "realism_rules": [
+          "The scenario should require marketing judgment informed by basic economics.",
+          "The team should present a plan, not just explain a concept.",
+          "Keep the business context accessible and realistic."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Economics": [
+          "Identify the effects of global trade on retailing",
+          "Explain current retail trends driven by global trade"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 7 performance indicators. Anchor the scenario in the district instructional area, but make the recommendation broad enough for a team case."
+    },
+    {
+      "code": "STDM",
+      "name": "Sports and Entertainment Marketing Team Decision Making",
+      "category_key": "team_decision",
+      "category_name": "Team Decision Making",
+      "cluster": "Marketing",
+      "official_event_page": "https://www.deca.org/compete/sports-and-entertainment-marketing-team-decision-making",
+      "district_primary_instructional_areas_2025_2026": [
+        "Promotion"
+      ],
+      "pi_cluster_source": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to your team through your reading of the Performance Indicators, 21st Century Skills and Event Situation.",
+          "You will have up to 30 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 15 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you meet the performance indicators of this event and demonstrate the 21st Century Skills.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "two sports/entertainment marketing staff",
+        "org_types": [
+          "team",
+          "arena",
+          "sports complex",
+          "entertainment business"
+        ],
+        "judge_roles": [
+          "general manager",
+          "owner",
+          "sponsor"
+        ],
+        "issue_types": [
+          "promotion, event activation, fan engagement, sponsor program, attendance driver"
+        ],
+        "realism_rules": [
+          "Promotion is the dominant engine.",
+          "The recommendation should feel event-centric and audience-aware.",
+          "Keep the energy high but commercially grounded."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Promotion": [
+          "Proof ads",
+          "Plan special events",
+          "Prepare store/department for special event",
+          "Marketing Cluster for 2022-2023 HS DECA Exams (PQ, CS, SP)",
+          "Explain the use of visual merchandising in retailing",
+          "Distinguish between visual merchandising and display",
+          "Place merchandise for impact",
+          "Determine on-floor assortments",
+          "Use cross-merchandising techniques",
+          "Read/Implement planograms",
+          "Explain types of display arrangements",
+          "Maintain displays",
+          "Dismantle/Store displays/display fixtures/forms",
+          "Create promotional signs",
+          "Select and use display fixtures/forms",
+          "Use lighting to highlight products",
+          "Set up point-of-sale displays and handouts",
+          "Create displays",
+          "Develop promotional calendar",
+          "Plan/Schedule displays/themes with management"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 7 performance indicators. Anchor the scenario in the district instructional area, but make the recommendation broad enough for a team case."
+    },
+    {
+      "code": "TTDM",
+      "name": "Travel and Tourism Team Decision Making",
+      "category_key": "team_decision",
+      "category_name": "Team Decision Making",
+      "cluster": "Hospitality and Tourism",
+      "official_event_page": "https://www.deca.org/compete/travel-and-tourism-team-decision-making",
+      "district_primary_instructional_areas_2025_2026": [
+        "Customer Relations"
+      ],
+      "pi_cluster_source": "Hospitality and Tourism",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-hospitality-and-tourism",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to your team through your reading of the Performance Indicators, 21st Century Skills and Event Situation.",
+          "You will have up to 30 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 15 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you meet the performance indicators of this event and demonstrate the 21st Century Skills.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "two tourism or travel managers",
+        "org_types": [
+          "tourism bureau",
+          "attraction",
+          "travel service",
+          "destination brand"
+        ],
+        "judge_roles": [
+          "client",
+          "executive director",
+          "general manager"
+        ],
+        "issue_types": [
+          "visitor complaint, package/service issue, destination service recovery, tourism communication"
+        ],
+        "realism_rules": [
+          "The scenario should revolve around visitor experience.",
+          "Customer relations should be visible in the judge interaction.",
+          "Keep it destination/travel specific, not generic hospitality."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Customer Relations": [
+          "Offer sightseeing advice",
+          "Provide interesting or enlightening information about points of interest",
+          "Provide service to customers with special needs",
+          "Respond to customer feedback",
+          "Adapt customer service to meet the customers\u2019 individual needs",
+          "Organize excursions for visitors/travelers",
+          "Hospitality and Tourism Cluster for 2022-2023 HS DECA Exams (PQ, CS, SP)"
+        ]
+      },
+      "pi_selection_rule": "Select exactly 7 performance indicators. Anchor the scenario in the district instructional area, but make the recommendation broad enough for a team case."
+    },
+    {
+      "code": "PFL",
+      "name": "Personal Financial Literacy",
+      "category_key": "personal_financial_literacy",
+      "category_name": "Personal Financial Literacy",
+      "cluster": "Personal Financial Literacy",
+      "official_event_page": "https://www.deca.org/compete/personal-financial-literacy",
+      "district_primary_instructional_areas_2025_2026": [
+        "Managing Credit"
+      ],
+      "pi_cluster_source": "Personal Financial Literacy",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-personal-finance",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "The event will be presented to you through your reading of the Performance Indicators, 21st Century Skills and Event Situation.",
+          "You will have up to 10 minutes to review this information and prepare your presentation. You may make notes to use during your presentation.",
+          "You will have up to 10 minutes to make your presentation to the judge (you may have more than one judge).",
+          "You will be evaluated on how well you meet the performance indicators of this event and demonstrate the 21st Century Skills.",
+          "Turn in all of your notes and event materials when you have completed the event."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "financial advisor or financial counselor",
+        "org_types": [
+          "bank branch",
+          "community financial counseling center",
+          "youth financial literacy program"
+        ],
+        "judge_roles": [
+          "client"
+        ],
+        "issue_types": [
+          "credit card choice",
+          "credit score concern",
+          "debt management question",
+          "student loan or financing tradeoff"
+        ],
+        "realism_rules": [
+          "Keep it client-facing and advisory.",
+          "The client should have a believable life goal or purchase in mind.",
+          "The advice should be educational, not salesy."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {
+        "Managing Credit": [
+          "Describe how credit card grace periods, methods of interest calculation, and fees affect borrowing costs.",
+          "Compare the cost of borrowing $1,000 using consumer credit options that differ in rates and fees.",
+          "Give examples of unsecured and secured loans.",
+          "Explain why lenders charge lower interest rates on secured loans than on unsecured loans.",
+          "Compare what happens if a borrower fails to make required payments on a secured loan versus a credit card account.",
+          "Identify the primary organizations that maintain and provide consumer credit reports.",
+          "Explain how a person can get a free copy of their credit report and why this is advisable.",
+          "Identify the main factors that are included in credit score calculations.",
+          "Explain how a borrower\u2019s credit score can impact their cost of credit and their ability to get credit.",
+          "Recommend ways that a person can increase their credit score.",
+          "Describe how failing to repay a loan can negatively impact a person\u2019s finances and life.",
+          "Create a plan for a person who is having difficulty repaying debt."
+        ]
+      },
+      "pi_selection_rule": "Select 4 client-facing standards/outcomes from Managing Credit that fit the client problem."
+    },
+    {
+      "code": "FCE",
+      "name": "Financial Consulting",
+      "category_key": "professional_selling_consulting",
+      "category_name": "Professional Selling and Consulting",
+      "cluster": "Finance",
+      "official_event_page": "https://www.deca.org/compete/financial-consulting",
+      "district_primary_instructional_areas_2025_2026": [],
+      "pi_cluster_source": "Finance",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-finance",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "This event is built around the current annual topic published by DECA.",
+          "The participant prepares in advance and delivers a 15-minute consultation or sales presentation to the judge.",
+          "The case generator should not imitate an on-site district role-play for these events; it should imitate a prepared-event brief and buyer meeting.",
+          "For Ontario, include a companion PDF/report/presentation requirement note because Ontario requires a submitted component."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "financial consultant",
+        "org_types": [
+          "consulting practice"
+        ],
+        "judge_roles": [
+          "potential new client"
+        ],
+        "issue_types": [
+          "small-business growth, funding, cash-flow, business structure or risk questions"
+        ],
+        "realism_rules": [
+          "This is a prepared consultation, not a role-play scenario drop.",
+          "Use the current annual topic as the anchor.",
+          "The participant should diagnose and advise, not sell a generic product."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {},
+      "pi_selection_rule": "Use consultative-selling/cluster-relevant indicators only as supporting design input; this event should follow the annual prepared-event topic, not district role-play logic.",
+      "prepared_event_topic_2025_2026": "2025-2026 annual topic: advise a local artist with a successful online business on strategies for managing rapid growth.",
+      "ontario_override": "Ontario requires a submitted report/research notes/presentation PDF even though US guidelines do not require a standardized written component."
+    },
+    {
+      "code": "HTPS",
+      "name": "Hospitality and Tourism Professional Selling",
+      "category_key": "professional_selling_consulting",
+      "category_name": "Professional Selling and Consulting",
+      "cluster": "Hospitality and Tourism",
+      "official_event_page": "https://www.deca.org/compete/hospitality-and-tourism-professional-selling",
+      "district_primary_instructional_areas_2025_2026": [],
+      "pi_cluster_source": "Hospitality and Tourism",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-hospitality-and-tourism",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "This event is built around the current annual topic published by DECA.",
+          "The participant prepares in advance and delivers a 15-minute consultation or sales presentation to the judge.",
+          "The case generator should not imitate an on-site district role-play for these events; it should imitate a prepared-event brief and buyer meeting.",
+          "For Ontario, include a companion PDF/report/presentation requirement note because Ontario requires a submitted component."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "director of sales",
+        "org_types": [
+          "agency or service company"
+        ],
+        "judge_roles": [
+          "vice president of marketing at a convention and visitors bureau"
+        ],
+        "issue_types": [
+          "selling an influencer partnership strategy to drive destination awareness and occupancy"
+        ],
+        "realism_rules": [
+          "This is a prepared sales presentation, not an on-site district scenario.",
+          "The presentation should sell one defined hospitality/tourism service.",
+          "It should sound like consultative selling, not a random hospitality role-play."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {},
+      "pi_selection_rule": "Use consultative-selling/cluster-relevant indicators only as supporting design input; this event should follow the annual prepared-event topic, not district role-play logic.",
+      "prepared_event_topic_2025_2026": "2025-2026 annual topic: sell an influencer partnership strategy to a local convention and visitors bureau to drive awareness, hotel occupancy and authentic visitor engagement.",
+      "ontario_override": "Ontario requires a submitted report/research notes/presentation PDF even though US guidelines do not require a standardized written component."
+    },
+    {
+      "code": "PSE",
+      "name": "Professional Selling",
+      "category_key": "professional_selling_consulting",
+      "category_name": "Professional Selling and Consulting",
+      "cluster": "Marketing",
+      "official_event_page": "https://www.deca.org/compete/professional-selling",
+      "district_primary_instructional_areas_2025_2026": [],
+      "pi_cluster_source": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "format_profile": {
+        "output_document_sections": [
+          "CAREER CLUSTER",
+          "INSTRUCTIONAL AREA",
+          "EVENT NAME",
+          "PARTICIPANT INSTRUCTIONS",
+          "21st CENTURY SKILLS",
+          "PERFORMANCE INDICATORS",
+          "EVENT SITUATION"
+        ],
+        "event_situation_style": [
+          "No subheaders inside the Event Situation.",
+          "Open with \"You are to assume the role...\" or \"You are to assume the roles...\"",
+          "Use 1-3 short paragraphs, not a consulting memo.",
+          "End with a judge trigger sentence such as \"The customer (judge) will begin...\" or \"The owner (judge) wants...\"",
+          "Keep the conflict tightly matched to the selected instructional area."
+        ],
+        "participant_instructions_template": [
+          "This event is built around the current annual topic published by DECA.",
+          "The participant prepares in advance and delivers a 15-minute consultation or sales presentation to the judge.",
+          "The case generator should not imitate an on-site district role-play for these events; it should imitate a prepared-event brief and buyer meeting.",
+          "For Ontario, include a companion PDF/report/presentation requirement note because Ontario requires a submitted component."
+        ],
+        "twenty_first_century_skills_template": [
+          "Critical Thinking - Reason effectively and use systems thinking.",
+          "Communication - Communicate clearly.",
+          "Creativity and Innovation - Show evidence of creativity."
+        ]
+      },
+      "generation_profile": {
+        "role_level": "sales representative",
+        "org_types": [
+          "subscription-based employee training and development platform company"
+        ],
+        "judge_roles": [
+          "local nonprofit executive director"
+        ],
+        "issue_types": [
+          "selling a training platform to improve staff skills, customer service, and retention"
+        ],
+        "realism_rules": [
+          "This is a prepared sales presentation, not a district role-play.",
+          "The participant should uncover needs and present fit/benefits.",
+          "Keep the solution businesslike and buyer-oriented."
+        ]
+      },
+      "instructional_area_to_indicator_pool": {},
+      "pi_selection_rule": "Use consultative-selling/cluster-relevant indicators only as supporting design input; this event should follow the annual prepared-event topic, not district role-play logic.",
+      "prepared_event_topic_2025_2026": "2025-2026 annual topic: sell a subscription-based employee training and development platform to a local nonprofit executive director.",
+      "ontario_override": "Ontario requires a submitted report/research notes/presentation PDF even though US guidelines do not require a standardized written component."
+    }
+  ]
+}

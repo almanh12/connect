@@ -1,0 +1,977 @@
+{
+  "dataset_name": "ontario_deca_events_2025_2026_raw_dataset",
+  "generated_on": "2026-03-18",
+  "scope": "Ontario DECA competitive events offered in 2025-2026, with event-category guidelines, Ontario-specific overrides, and performance-indicator source mappings.",
+  "notes": [
+    "DECA performance indicators are published by cluster/instructional-area list, not as one static per-event list.",
+    "District/association scenarios pull from primary instructional areas plus broader cluster knowledge for exams.",
+    "This dataset maps each event to its category, cluster, exam, guideline template, and the official PI source to use."
+  ],
+  "official_sources": {
+    "ontario_competitive_events": "https://deca.ca/v2/competitive-events/",
+    "deca_compete_overview": "https://www.deca.org/compete",
+    "deca_guide": "https://www.deca.org/advisor-resources/deca-guide",
+    "district_instructional_areas": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+    "exam_blueprints": "https://www.deca.org/advisor-resources/competitive-events-exam-blueprints",
+    "pi_pages": {
+      "business_administration_core": "https://www.deca.org/advisor-resources/performance-indicators-business-administration-core",
+      "business_management_and_administration": "https://www.deca.org/advisor-resources/performance-indicators-business-management-and-administration",
+      "entrepreneurship": "https://www.deca.org/advisor-resources/performance-indicators-entrepreneurship",
+      "finance": "https://www.deca.org/advisor-resources/performance-indicators-finance",
+      "hospitality_and_tourism": "https://www.deca.org/advisor-resources/performance-indicators-hospitality-and-tourism",
+      "marketing": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "personal_finance": "https://www.deca.org/advisor-resources/performance-indicators-personal-finance"
+    }
+  },
+  "cluster_pi_sources": {
+    "Business Administration Core": {
+      "pi_source_key": "business_administration_core",
+      "primary_use": [
+        "Principles of Business Administration events",
+        "Common/core indicators used across role-play events"
+      ]
+    },
+    "Business Management and Administration": {
+      "pi_source_key": "business_management_and_administration",
+      "primary_use": [
+        "HRM",
+        "PBM",
+        "BLTDM",
+        "BOR",
+        "Project Management events",
+        "business management exams"
+      ]
+    },
+    "Entrepreneurship": {
+      "pi_source_key": "entrepreneurship",
+      "primary_use": [
+        "PEN",
+        "ENT",
+        "ETDM",
+        "EIP",
+        "ESB",
+        "EFB",
+        "IBP",
+        "EIB"
+      ]
+    },
+    "Finance": {
+      "pi_source_key": "finance",
+      "primary_use": [
+        "PFN",
+        "ACT",
+        "BFS",
+        "FTDM",
+        "FCE",
+        "FOR"
+      ]
+    },
+    "Hospitality and Tourism": {
+      "pi_source_key": "hospitality_and_tourism",
+      "primary_use": [
+        "PHT",
+        "HLM",
+        "RFSM",
+        "HTDM",
+        "TTDM",
+        "HTPS",
+        "HTOR"
+      ]
+    },
+    "Marketing": {
+      "pi_source_key": "marketing",
+      "primary_use": [
+        "PMK",
+        "AAM",
+        "ASM",
+        "BSM",
+        "FMS",
+        "MCS",
+        "RMS",
+        "SEM",
+        "BTDM",
+        "MTDM",
+        "STDM",
+        "BMOR",
+        "IMCE",
+        "IMCP",
+        "IMCS",
+        "PSE"
+      ]
+    },
+    "Personal Financial Literacy": {
+      "pi_source_key": "personal_finance",
+      "primary_use": [
+        "PFL"
+      ]
+    }
+  },
+  "category_templates": {
+    "principles": {
+      "category_name": "Principles of Business Administration",
+      "participants": "1",
+      "prep_time_minutes": 10,
+      "presentation_time_minutes": 10,
+      "exam_required": true,
+      "exam_type": "Business Administration Core exam",
+      "ontario_notes": [
+        "Reserved for first-year DECA members unless otherwise noted.",
+        "PMK reserved for Grade 9 students only in Ontario."
+      ],
+      "source": "Ontario DECA competitive events page"
+    },
+    "individual_series": {
+      "category_name": "Individual Series",
+      "participants": "1",
+      "prep_time_minutes": 10,
+      "presentation_time_minutes": 10,
+      "exam_required": true,
+      "exam_type": "Career-cluster exam aligned to event cluster",
+      "source": "Ontario DECA competitive events page"
+    },
+    "team_decision": {
+      "category_name": "Team Decision Making",
+      "participants": "2",
+      "prep_time_minutes": 30,
+      "presentation_time_minutes": 15,
+      "exam_required": true,
+      "exam_type": "Career-cluster exam aligned to event cluster",
+      "source": "Ontario DECA competitive events page"
+    },
+    "personal_financial_literacy": {
+      "category_name": "Personal Financial Literacy",
+      "participants": "1",
+      "prep_time_minutes": 10,
+      "presentation_time_minutes": 10,
+      "exam_required": true,
+      "exam_type": "Financial Literacy exam",
+      "source": "Ontario DECA competitive events page"
+    },
+    "operations_research": {
+      "category_name": "Business Operations Research",
+      "participants": "1-3",
+      "report_limit": "20 pages",
+      "presentation_time_minutes": 15,
+      "exam_required": false,
+      "ontario_submission": "DLG Judge Pro online submission by 2026-01-09; max 30 MB PDF",
+      "source": "Ontario DECA competitive events page"
+    },
+    "project_management": {
+      "category_name": "Project Management",
+      "participants": "1-3",
+      "report_limit": "20 pages",
+      "presentation_time_minutes": 15,
+      "exam_required": false,
+      "ontario_submission": "DLG Judge Pro online submission by 2026-01-09; max 30 MB PDF",
+      "source": "Ontario DECA competitive events page"
+    },
+    "entrepreneurship_prepared": {
+      "category_name": "Entrepreneurship",
+      "participants": "1-3",
+      "presentation_time_minutes": 15,
+      "exam_required": false,
+      "entry_length_varies": true,
+      "ontario_submission": "DLG Judge Pro online submission by 2026-01-09; max 30 MB PDF",
+      "source": "Ontario DECA competitive events page"
+    },
+    "integrated_marketing_campaign": {
+      "category_name": "Integrated Marketing Campaign",
+      "participants": "1-3",
+      "presentation_time_minutes": 15,
+      "entry_format": "Pitch deck",
+      "entry_limit": "20 slides",
+      "exam_required": true,
+      "exam_type": "Marketing exam at Regionals; weighted team average determines advancement to Provincials",
+      "ontario_submission": "DLG Judge Pro online submission by 2026-01-09; max 30 MB PDF",
+      "source": "Ontario DECA competitive events page"
+    },
+    "professional_selling_consulting": {
+      "category_name": "Professional Selling and Consulting",
+      "participants": "1",
+      "presentation_time_minutes": 15,
+      "exam_required": true,
+      "exam_type": "Cluster exam at Regionals determines advancement to Provincials",
+      "ontario_override": "Ontario requires a submitted report/research notes/presentation PDF even though US guidelines do not require a standardized written component.",
+      "ontario_submission": "DLG Judge Pro online submission by 2026-01-09; max 30 MB PDF",
+      "source": "Ontario DECA competitive events page"
+    },
+    "online_events": {
+      "category_name": "Online Events",
+      "participants": "varies by event",
+      "exam_required": false,
+      "source": "Ontario DECA competitive events page"
+    }
+  },
+  "rubric_templates": {
+    "roleplay_case_study_universal": {
+      "applies_to": [
+        "principles",
+        "individual_series",
+        "team_decision",
+        "personal_financial_literacy"
+      ],
+      "scored_components": [
+        "performance_indicators",
+        "knowledge_of_subject_matter",
+        "communication_skills",
+        "overall_impression"
+      ],
+      "modeling_note": "Performance indicators are dynamic and scenario-linked; use district instructional areas plus cluster PI list rather than a fixed per-event PI dump."
+    },
+    "prepared_event_universal": {
+      "applies_to": [
+        "operations_research",
+        "project_management",
+        "entrepreneurship_prepared",
+        "integrated_marketing_campaign",
+        "professional_selling_consulting"
+      ],
+      "scored_components": [
+        "written_or_submitted_entry",
+        "presentation",
+        "judge_interview_q_and_a",
+        "penalty_point_checklist_if_applicable"
+      ],
+      "modeling_note": "Use event-specific guidelines from DECA Guide / event page for exact itemization."
+    }
+  },
+  "events": [
+    {
+      "code": "PBM",
+      "name": "Principles of Business Management and Administration",
+      "category_key": "principles",
+      "cluster": "Business Management and Administration",
+      "exam": "Business Administration Core exam",
+      "pi_cluster": "Business Administration Core",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-business-administration-core",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/",
+      "ontario_restrictions": [
+        "First-year DECA members only"
+      ]
+    },
+    {
+      "code": "PEN",
+      "name": "Principles of Entrepreneurship",
+      "category_key": "principles",
+      "cluster": "Entrepreneurship",
+      "exam": "Business Administration Core exam",
+      "pi_cluster": "Business Administration Core",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-business-administration-core",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/",
+      "ontario_restrictions": [
+        "First-year DECA members only"
+      ]
+    },
+    {
+      "code": "PFN",
+      "name": "Principles of Finance",
+      "category_key": "principles",
+      "cluster": "Finance",
+      "exam": "Business Administration Core exam",
+      "pi_cluster": "Business Administration Core",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-business-administration-core",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/",
+      "ontario_restrictions": [
+        "First-year DECA members only"
+      ]
+    },
+    {
+      "code": "PHT",
+      "name": "Principles of Hospitality and Tourism",
+      "category_key": "principles",
+      "cluster": "Hospitality and Tourism",
+      "exam": "Business Administration Core exam",
+      "pi_cluster": "Business Administration Core",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-business-administration-core",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/",
+      "ontario_restrictions": [
+        "First-year DECA members only"
+      ]
+    },
+    {
+      "code": "PMK",
+      "name": "Principles of Marketing",
+      "category_key": "principles",
+      "cluster": "Marketing",
+      "exam": "Business Administration Core exam",
+      "pi_cluster": "Business Administration Core",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-business-administration-core",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/",
+      "ontario_restrictions": [
+        "First-year DECA members only",
+        "Ontario: reserved for Grade 9 students only"
+      ]
+    },
+    {
+      "code": "ACT",
+      "name": "Accounting Applications Series",
+      "category_key": "individual_series",
+      "cluster": "Finance",
+      "exam": "Finance exam",
+      "pi_cluster": "Finance",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-finance",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "AAM",
+      "name": "Apparel and Accessories Marketing Series",
+      "category_key": "individual_series",
+      "cluster": "Marketing",
+      "exam": "Marketing exam",
+      "pi_cluster": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "ASM",
+      "name": "Automotive Services Marketing Series",
+      "category_key": "individual_series",
+      "cluster": "Marketing",
+      "exam": "Marketing exam",
+      "pi_cluster": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "BFS",
+      "name": "Business Finance Series",
+      "category_key": "individual_series",
+      "cluster": "Finance",
+      "exam": "Finance exam",
+      "pi_cluster": "Finance",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-finance",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "BSM",
+      "name": "Business Services Marketing Series",
+      "category_key": "individual_series",
+      "cluster": "Marketing",
+      "exam": "Marketing exam",
+      "pi_cluster": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "ENT",
+      "name": "Entrepreneurship Series",
+      "category_key": "individual_series",
+      "cluster": "Entrepreneurship",
+      "exam": "Entrepreneurship exam",
+      "pi_cluster": "Entrepreneurship",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-entrepreneurship",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "FMS",
+      "name": "Food Marketing Series",
+      "category_key": "individual_series",
+      "cluster": "Marketing",
+      "exam": "Marketing exam",
+      "pi_cluster": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "HLM",
+      "name": "Hotel and Lodging Management Series",
+      "category_key": "individual_series",
+      "cluster": "Hospitality and Tourism",
+      "exam": "Hospitality and Tourism exam",
+      "pi_cluster": "Hospitality and Tourism",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-hospitality-and-tourism",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "HRM",
+      "name": "Human Resources Management Series",
+      "category_key": "individual_series",
+      "cluster": "Business Management and Administration",
+      "exam": "Business Management exam",
+      "pi_cluster": "Business Management and Administration",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-business-management-and-administration",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "MCS",
+      "name": "Marketing Communications Series",
+      "category_key": "individual_series",
+      "cluster": "Marketing",
+      "exam": "Marketing exam",
+      "pi_cluster": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "RFSM",
+      "name": "Restaurant and Food Service Management Series",
+      "category_key": "individual_series",
+      "cluster": "Hospitality and Tourism",
+      "exam": "Hospitality and Tourism exam",
+      "pi_cluster": "Hospitality and Tourism",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-hospitality-and-tourism",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "RMS",
+      "name": "Retail Merchandising Series",
+      "category_key": "individual_series",
+      "cluster": "Marketing",
+      "exam": "Marketing exam",
+      "pi_cluster": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "SEM",
+      "name": "Sports and Entertainment Marketing Series",
+      "category_key": "individual_series",
+      "cluster": "Marketing",
+      "exam": "Marketing exam",
+      "pi_cluster": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "BLTDM",
+      "name": "Business Law and Ethics Team Decision Making",
+      "category_key": "team_decision",
+      "cluster": "Business Management and Administration",
+      "exam": "Business Management exam",
+      "pi_cluster": "Business Management and Administration",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-business-management-and-administration",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "BTDM",
+      "name": "Buying and Merchandising Team Decision Making",
+      "category_key": "team_decision",
+      "cluster": "Marketing",
+      "exam": "Marketing exam",
+      "pi_cluster": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "ETDM",
+      "name": "Entrepreneurship Team Decision Making",
+      "category_key": "team_decision",
+      "cluster": "Entrepreneurship",
+      "exam": "Entrepreneurship exam",
+      "pi_cluster": "Entrepreneurship",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-entrepreneurship",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "FTDM",
+      "name": "Financial Services Team Decision Making",
+      "category_key": "team_decision",
+      "cluster": "Finance",
+      "exam": "Finance exam",
+      "pi_cluster": "Finance",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-finance",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "HTDM",
+      "name": "Hospitality Services Team Decision Making",
+      "category_key": "team_decision",
+      "cluster": "Hospitality and Tourism",
+      "exam": "Hospitality and Tourism exam",
+      "pi_cluster": "Hospitality and Tourism",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-hospitality-and-tourism",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "MTDM",
+      "name": "Marketing Management Team Decision Making",
+      "category_key": "team_decision",
+      "cluster": "Marketing",
+      "exam": "Marketing exam",
+      "pi_cluster": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "STDM",
+      "name": "Sports and Entertainment Marketing Team Decision Making",
+      "category_key": "team_decision",
+      "cluster": "Marketing",
+      "exam": "Marketing exam",
+      "pi_cluster": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "TTDM",
+      "name": "Travel and Tourism Team Decision Making",
+      "category_key": "team_decision",
+      "cluster": "Hospitality and Tourism",
+      "exam": "Hospitality and Tourism exam",
+      "pi_cluster": "Hospitality and Tourism",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-hospitality-and-tourism",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "PFL",
+      "name": "Personal Financial Literacy",
+      "category_key": "personal_financial_literacy",
+      "cluster": "Personal Financial Literacy",
+      "exam": "Financial Literacy exam",
+      "pi_cluster": "Personal Financial Literacy",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-personal-finance",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "BOR",
+      "name": "Business Services Operations Research",
+      "category_key": "operations_research",
+      "cluster": "Business Management and Administration",
+      "exam": null,
+      "pi_cluster": "Business Management and Administration",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-business-management-and-administration",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/",
+      "report_topic_note": "2025-2026 topic changes annually; Ontario page specifies current topic for BOR/FOR/HTOR/SEOR/BMOR family."
+    },
+    {
+      "code": "BMOR",
+      "name": "Buying and Merchandising Operations Research",
+      "category_key": "operations_research",
+      "cluster": "Marketing",
+      "exam": null,
+      "pi_cluster": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/",
+      "report_topic_note": "2025-2026 topic changes annually; Ontario page specifies current topic for BOR/FOR/HTOR/SEOR/BMOR family."
+    },
+    {
+      "code": "FOR",
+      "name": "Finance Operations Research",
+      "category_key": "operations_research",
+      "cluster": "Finance",
+      "exam": null,
+      "pi_cluster": "Finance",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-finance",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/",
+      "report_topic_note": "2025-2026 topic changes annually; Ontario page specifies current topic for BOR/FOR/HTOR/SEOR/BMOR family."
+    },
+    {
+      "code": "HTOR",
+      "name": "Hospitality and Tourism Operations Research",
+      "category_key": "operations_research",
+      "cluster": "Hospitality and Tourism",
+      "exam": null,
+      "pi_cluster": "Hospitality and Tourism",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-hospitality-and-tourism",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/",
+      "report_topic_note": "2025-2026 topic changes annually; Ontario page specifies current topic for BOR/FOR/HTOR/SEOR/BMOR family."
+    },
+    {
+      "code": "SEOR",
+      "name": "Sports and Entertainment Marketing Operations Research",
+      "category_key": "operations_research",
+      "cluster": "Marketing",
+      "exam": null,
+      "pi_cluster": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/",
+      "report_topic_note": "2025-2026 topic changes annually; Ontario page specifies current topic for BOR/FOR/HTOR/SEOR/BMOR family."
+    },
+    {
+      "code": "PMBS",
+      "name": "Business Solutions Project",
+      "category_key": "project_management",
+      "cluster": "Business Management and Administration",
+      "exam": null,
+      "pi_cluster": "Business Management and Administration",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-business-management-and-administration",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "PMCD",
+      "name": "Career Development Project",
+      "category_key": "project_management",
+      "cluster": "Business Management and Administration",
+      "exam": null,
+      "pi_cluster": "Business Management and Administration",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-business-management-and-administration",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "PMCA",
+      "name": "Community Awareness Project",
+      "category_key": "project_management",
+      "cluster": "Business Management and Administration",
+      "exam": null,
+      "pi_cluster": "Business Management and Administration",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-business-management-and-administration",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "PMCG",
+      "name": "Community Giving Project",
+      "category_key": "project_management",
+      "cluster": "Business Management and Administration",
+      "exam": null,
+      "pi_cluster": "Business Management and Administration",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-business-management-and-administration",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "PMFL",
+      "name": "Financial Literacy Project",
+      "category_key": "project_management",
+      "cluster": "Business Management and Administration",
+      "exam": null,
+      "pi_cluster": "Business Management and Administration",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-business-management-and-administration",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "PMSP",
+      "name": "Sales Project",
+      "category_key": "project_management",
+      "cluster": "Business Management and Administration",
+      "exam": null,
+      "pi_cluster": "Business Management and Administration",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-business-management-and-administration",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "EIP",
+      "name": "Innovation Plan",
+      "category_key": "entrepreneurship_prepared",
+      "cluster": "Entrepreneurship",
+      "exam": null,
+      "pi_cluster": "Entrepreneurship",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-entrepreneurship",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/",
+      "entry_format": "Pitch deck",
+      "entry_limit": "20 slides"
+    },
+    {
+      "code": "ESB",
+      "name": "Start-Up Business Plan",
+      "category_key": "entrepreneurship_prepared",
+      "cluster": "Entrepreneurship",
+      "exam": null,
+      "pi_cluster": "Entrepreneurship",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-entrepreneurship",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/",
+      "entry_format": "Pitch deck",
+      "entry_limit": "20 slides"
+    },
+    {
+      "code": "EIB",
+      "name": "Independent Business Plan",
+      "category_key": "entrepreneurship_prepared",
+      "cluster": "Entrepreneurship",
+      "exam": null,
+      "pi_cluster": "Entrepreneurship",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-entrepreneurship",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/",
+      "entry_format": "Written report",
+      "entry_limit": "20 pages"
+    },
+    {
+      "code": "IBP",
+      "name": "International Business Plan",
+      "category_key": "entrepreneurship_prepared",
+      "cluster": "Entrepreneurship",
+      "exam": null,
+      "pi_cluster": "Entrepreneurship",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-entrepreneurship",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/",
+      "entry_format": "Written report",
+      "entry_limit": "20 pages"
+    },
+    {
+      "code": "EFB",
+      "name": "Franchise Business Plan",
+      "category_key": "entrepreneurship_prepared",
+      "cluster": "Entrepreneurship",
+      "exam": null,
+      "pi_cluster": "Entrepreneurship",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-entrepreneurship",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/",
+      "entry_format": "Written report",
+      "entry_limit": "20 pages"
+    },
+    {
+      "code": "IMCE",
+      "name": "Integrated Marketing Campaign - Event",
+      "category_key": "integrated_marketing_campaign",
+      "cluster": "Marketing",
+      "exam": "Marketing exam (Regionals in Ontario)",
+      "pi_cluster": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/",
+      "entry_format": "Pitch deck",
+      "entry_limit": "20 slides"
+    },
+    {
+      "code": "IMCP",
+      "name": "Integrated Marketing Campaign - Product",
+      "category_key": "integrated_marketing_campaign",
+      "cluster": "Marketing",
+      "exam": "Marketing exam (Regionals in Ontario)",
+      "pi_cluster": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/",
+      "entry_format": "Pitch deck",
+      "entry_limit": "20 slides"
+    },
+    {
+      "code": "IMCS",
+      "name": "Integrated Marketing Campaign - Service",
+      "category_key": "integrated_marketing_campaign",
+      "cluster": "Marketing",
+      "exam": "Marketing exam (Regionals in Ontario)",
+      "pi_cluster": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/",
+      "entry_format": "Pitch deck",
+      "entry_limit": "20 slides"
+    },
+    {
+      "code": "FCE",
+      "name": "Financial Consulting",
+      "category_key": "professional_selling_consulting",
+      "cluster": "Finance",
+      "exam": "Finance exam (Regionals in Ontario)",
+      "pi_cluster": "Finance",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-finance",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/",
+      "ontario_requires_submission": true
+    },
+    {
+      "code": "HTPS",
+      "name": "Hospitality and Tourism Professional Selling",
+      "category_key": "professional_selling_consulting",
+      "cluster": "Hospitality and Tourism",
+      "exam": "Hospitality and Tourism exam (Regionals in Ontario)",
+      "pi_cluster": "Hospitality and Tourism",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-hospitality-and-tourism",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/",
+      "ontario_requires_submission": true
+    },
+    {
+      "code": "PSE",
+      "name": "Professional Selling",
+      "category_key": "professional_selling_consulting",
+      "cluster": "Marketing",
+      "exam": "Marketing exam (Regionals in Ontario)",
+      "pi_cluster": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/",
+      "ontario_requires_submission": true
+    },
+    {
+      "code": "SMG",
+      "name": "Stock Market Game",
+      "category_key": "online_events",
+      "cluster": "Finance",
+      "exam": null,
+      "pi_cluster": "Finance",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-finance",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/",
+      "ontario_note": "Pitch deck required only at ICDC per Ontario page note."
+    },
+    {
+      "code": "VBC-Accounting",
+      "name": "Virtual Business Challenge - Accounting",
+      "category_key": "online_events",
+      "cluster": "Finance",
+      "exam": null,
+      "pi_cluster": "Finance",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-finance",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "VBC-Entrepreneurship",
+      "name": "Virtual Business Challenge - Entrepreneurship",
+      "category_key": "online_events",
+      "cluster": "Entrepreneurship",
+      "exam": null,
+      "pi_cluster": "Entrepreneurship",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-entrepreneurship",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "VBC-Fashion",
+      "name": "Virtual Business Challenge - Fashion",
+      "category_key": "online_events",
+      "cluster": "Marketing",
+      "exam": null,
+      "pi_cluster": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "VBC-Hotel",
+      "name": "Virtual Business Challenge - Hotel Management",
+      "category_key": "online_events",
+      "cluster": "Hospitality and Tourism",
+      "exam": null,
+      "pi_cluster": "Hospitality and Tourism",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-hospitality-and-tourism",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "VBC-Personal Finance",
+      "name": "Virtual Business Challenge - Personal Finance",
+      "category_key": "online_events",
+      "cluster": "Personal Financial Literacy",
+      "exam": null,
+      "pi_cluster": "Personal Financial Literacy",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-personal-finance",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "VBC-Restaurant",
+      "name": "Virtual Business Challenge - Restaurant",
+      "category_key": "online_events",
+      "cluster": "Hospitality and Tourism",
+      "exam": null,
+      "pi_cluster": "Hospitality and Tourism",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-hospitality-and-tourism",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "VBC-Retail",
+      "name": "Virtual Business Challenge - Retail",
+      "category_key": "online_events",
+      "cluster": "Marketing",
+      "exam": null,
+      "pi_cluster": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    },
+    {
+      "code": "VBC-Sports",
+      "name": "Virtual Business Challenge - Sports",
+      "category_key": "online_events",
+      "cluster": "Marketing",
+      "exam": null,
+      "pi_cluster": "Marketing",
+      "pi_source_page": "https://www.deca.org/advisor-resources/performance-indicators-marketing",
+      "district_instructional_areas_source": "https://www.deca.org/advisor-resources/competitive-events-district-instructional-areas",
+      "deca_guide_source": "https://www.deca.org/advisor-resources/deca-guide",
+      "ontario_competitive_events_source": "https://deca.ca/v2/competitive-events/"
+    }
+  ]
+}
