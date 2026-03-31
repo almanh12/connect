@@ -94,14 +94,15 @@ export function Sidebar({ user, profile }: { user: SupabaseUser; profile: Profil
     <>
     <aside
       className={`
-        hidden md:flex fixed top-0 left-0 z-40
+        hidden md:flex fixed left-0 z-40
         bg-[#10243E] border-r border-white/[0.08]
         transition-all duration-200 ease-in-out
         ${isCollapsed ? "md:w-[72px] lg:w-[72px]" : "md:w-[260px] lg:w-[260px]"}
       `}
       style={{
         fontFamily: "'Gotham Light', sans-serif",
-        height: "100vh",
+        top: "var(--disclaimer-banner-height, 0px)",
+        height: "calc(100dvh - var(--disclaimer-banner-height, 0px))",
         flexDirection: "column",
         overflowY: "auto",
       }}

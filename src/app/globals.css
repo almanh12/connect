@@ -173,6 +173,11 @@
   --font-gotham: var(--font-gotham, ui-sans-serif), ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Set by DisclaimerBanner client component when visible; fixed chrome (sidebar, nav) uses this offset */
+:root {
+  --disclaimer-banner-height: 0px;
+}
+
 body {
   font-family: var(--font-gotham), sans-serif;
   font-weight: 400;

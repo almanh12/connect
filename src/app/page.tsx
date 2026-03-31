@@ -58,7 +58,10 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen font-gotham font-light bg-white">
       {/* ========== SECTION 1: NAVIGATION ========== */}
-      <nav className="fixed top-0 left-0 right-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+      <nav
+        className="fixed left-0 right-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.06)]"
+        style={{ top: "var(--disclaimer-banner-height, 0px)" }}
+      >
         <div className="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex justify-between items-center">
           <Link href="/" className="flex-shrink-0">
             <Image
@@ -102,7 +105,12 @@ export default function LandingPage() {
 
       {/* Mobile slide-down panel */}
       {mobileMenuOpen && (
-        <div className="fixed top-20 left-0 right-0 z-40 md:hidden bg-white shadow-lg">
+        <div
+          className="fixed left-0 right-0 z-40 md:hidden bg-white shadow-lg"
+          style={{
+            top: "calc(5rem + var(--disclaimer-banner-height, 0px))",
+          }}
+        >
           <div className="px-6 py-6 flex flex-col gap-4">
             <Link
               href="/login"

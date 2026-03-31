@@ -19,9 +19,10 @@ export function LandingNav() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 h-20 bg-white border-b border-slate-100 transition-shadow duration-200 ${
+        className={`fixed left-0 right-0 z-50 h-20 bg-white border-b border-slate-100 transition-shadow duration-200 ${
           scrolled ? "shadow-sm" : ""
         }`}
+        style={{ top: "var(--disclaimer-banner-height, 0px)" }}
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-8 h-full flex justify-between items-center">
           <Link href="/" className="flex-shrink-0">
@@ -70,7 +71,12 @@ export function LandingNav() {
 
       {/* Mobile dropdown */}
       {mobileMenuOpen && (
-        <div className="fixed top-20 left-0 right-0 z-40 md:hidden bg-white shadow-lg">
+        <div
+          className="fixed left-0 right-0 z-40 md:hidden bg-white shadow-lg"
+          style={{
+            top: "calc(5rem + var(--disclaimer-banner-height, 0px))",
+          }}
+        >
           <div className="px-6 py-6 flex flex-col gap-4">
             <Link
               href="/login"

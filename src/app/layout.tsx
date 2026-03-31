@@ -34,10 +34,6 @@ export const metadata: Metadata = {
     title: "DECA Engage",
     description: "Supercharge your DECA chapter's engagement with AI",
   },
-  icons: {
-    icon: "/deca-logo.png",
-    apple: "/deca-logo.png",
-  },
   manifest: "/manifest.json",
 };
 
@@ -59,14 +55,18 @@ export default function RootLayout({
       className={`${gotham.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className={`${gotham.variable} font-gotham min-h-full flex flex-col bg-[var(--gray-50)] text-[var(--gray-700)] font-normal`}>
+      <body
+        className={`${gotham.variable} font-gotham flex min-h-screen flex-col bg-[var(--gray-50)] text-[var(--gray-700)] font-normal`}
+      >
         <DisclaimerBanner />
-        <ErrorBoundary>
-          <NavigationProgress />
-          <SessionHandler />
-          {children}
-          <Toaster position="top-center" duration={4000} toastOptions={{ style: { borderRadius: "0.5rem", fontSize: "0.875rem" } }} />
-        </ErrorBoundary>
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+          <ErrorBoundary>
+            <NavigationProgress />
+            <SessionHandler />
+            {children}
+            <Toaster position="top-center" duration={4000} toastOptions={{ style: { borderRadius: "0.5rem", fontSize: "0.875rem" } }} />
+          </ErrorBoundary>
+        </div>
       </body>
     </html>
   );

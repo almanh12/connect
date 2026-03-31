@@ -1,13 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 const STORAGE_KEY = "deca_engage_ontario_disclaimer_dismissed";
 
+function setBannerHeightPx(px: number) {
+  if (typeof document === "undefined") return;
+  document.documentElement.style.setProperty(
+    "--disclaimer-banner-height",
+    px > 0 ? `${px}px` : "0px"
+  );
+}
+
 export function DisclaimerBanner() {
   const [visible, setVisible] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     try {
       if (typeof window !== "undefined" && localStorage.getItem(STORAGE_KEY) !== "1") {
         setVisible(true);
@@ -17,6 +26,28 @@ export function DisclaimerBanner() {
     }
   }, []);
 
+  useLayoutEffect(() => {
+    if (!visible) {
+      setBannerHeightPx(0);
+      return;
+    }
+
+    const el = rootRef.current;
+    if (!el) return;
+
+    const sync = () => {
+      setBannerHeightPx(el.offsetHeight);
+    };
+
+    sync();
+    const ro = new ResizeObserver(sync);
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+      setBannerHeightPx(0);
+    };
+  }, [visible]);
+
   const dismiss = () => {
     try {
       localStorage.setItem(STORAGE_KEY, "1");
@@ -24,23 +55,27 @@ export function DisclaimerBanner() {
       /* ignore */
     }
     setVisible(false);
+    setBannerHeightPx(0);
   };
 
   if (!visible) return null;
 
   return (
     <div
+      ref={rootRef}
       role="status"
-      className="relative flex min-h-[2.5rem] shrink-0 items-center justify-center border-b border-amber-200/90 bg-amber-50 px-10 py-2 pr-12 text-center text-[0.75rem] leading-snug text-gray-800 sm:text-[0.8125rem]"
+      className="flex w-full shrink-0 items-center gap-3 border-b border-amber-200/90 bg-amber-50 px-4 py-2 text-[0.75rem] leading-snug text-gray-800 sm:px-6 sm:text-[0.8125rem]"
     >
-      <p className="max-w-4xl">
-        This platform is not affiliated with or endorsed by Ontario DECA. It was created as part of a
-        Provincial Officer application.
-      </p>
+      <div className="min-w-0 flex-1 text-center">
+        <p className="mx-auto max-w-4xl">
+          This platform is not affiliated with or endorsed by Ontario DECA. It was created as part of a
+          Provincial Officer application.
+        </p>
+      </div>
       <button
         type="button"
         onClick={dismiss}
-        className="absolute right-2 top-1/2 flex h-8 w-8 shrink-0 -translate-y-1/2 items-center justify-center rounded-md text-gray-600 transition-colors hover:bg-amber-100/80 hover:text-gray-900"
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-gray-600 transition-colors hover:bg-amber-100/80 hover:text-gray-900"
         aria-label="Dismiss disclaimer"
       >
         <span className="text-lg leading-none" aria-hidden>
