@@ -36,6 +36,7 @@ export function OnboardingWizard({
   const [experienceLevel, setExperienceLevel] = useState<string | null>(null);
   const [selectedEventCodes, setSelectedEventCodes] = useState<string[]>([]);
   const [eventSearch, setEventSearch] = useState("");
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const groupedEvents = useMemo(() => getEventsGroupedByCategory(), []);
   const filteredEvents = useMemo(
@@ -87,13 +88,6 @@ export function OnboardingWizard({
     }
   };
 
-  const handleBack = () => {
-    if (step > 1) {
-      setStep((s) => s - 1);
-      setError(null);
-    }
-  };
-
   const handleComplete = async () => {
     setIsSubmitting(true);
     setError(null);
@@ -121,7 +115,6 @@ export function OnboardingWizard({
     }
   };
 
-  const [showConfetti, setShowConfetti] = useState(false);
   const progress = (step / TOTAL_STEPS) * 100;
   const selectedEventNames = selectedEventCodes
     .map((c) => ONTARIO_DECA_EVENTS.find((e) => e.code === c)?.name ?? c)
@@ -412,15 +405,21 @@ export function OnboardingWizard({
           </div>
         )}
 
-        <div className="mt-8 flex items-center justify-between">
+        <div className="relative z-20 mt-8 flex items-center justify-between">
           <button
             type="button"
+            aria-disabled={step === 1}
+            tabIndex={step === 1 ? -1 : 0}
             onClick={(e) => {
               e.preventDefault();
-              handleBack();
+              e.stopPropagation();
+              if (step <= 1) return;
+              setStep((s) => s - 1);
+              setError(null);
             }}
-            disabled={step === 1}
-            className="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+            className={`rounded-lg px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100 ${
+              step === 1 ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+            }`}
           >
             Back
           </button>
