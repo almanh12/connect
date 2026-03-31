@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { Toaster } from "sonner";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { DisclaimerBanner } from "@/components/disclaimer-banner";
 import { SessionHandler } from "@/components/session-handler";
 import { NavigationProgress } from "@/components/navigation-progress";
 import "./globals.css";
@@ -34,8 +35,8 @@ export const metadata: Metadata = {
     description: "Supercharge your DECA chapter's engagement with AI",
   },
   icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
+    icon: "/deca-logo.png",
+    apple: "/deca-logo.png",
   },
   manifest: "/manifest.json",
 };
@@ -59,6 +60,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className={`${gotham.variable} font-gotham min-h-full flex flex-col bg-[var(--gray-50)] text-[var(--gray-700)] font-normal`}>
+        <DisclaimerBanner />
         <ErrorBoundary>
           <NavigationProgress />
           <SessionHandler />

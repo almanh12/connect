@@ -9,15 +9,9 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/icon.svg",
+      "src": "/deca-logo.png",
       "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    },
-    {
-      "src": "/favicon.ico",
-      "sizes": "48x48",
-      "type": "image/x-icon",
+      "type": "image/png",
       "purpose": "any"
     }
   ],
