@@ -47,7 +47,7 @@ export function DisclaimerBanner() {
     <div
       ref={rootRef}
       role="status"
-      className="flex w-full shrink-0 items-center gap-3 border-b border-amber-200/90 bg-amber-50 px-4 py-2 text-[0.75rem] leading-snug text-gray-800 sm:px-6 sm:text-[0.8125rem]"
+      className="fixed top-0 left-0 right-0 z-[9999] flex w-full shrink-0 items-center gap-3 border-b border-amber-200/90 bg-amber-50 px-4 py-2 text-[0.75rem] leading-snug text-gray-800 sm:px-6 sm:text-[0.8125rem]"
     >
       <div className="min-w-0 flex-1 text-center">
         <p className="mx-auto max-w-4xl">
