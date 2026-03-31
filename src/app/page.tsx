@@ -17,6 +17,25 @@ import {
 } from "lucide-react";
 import { FeatureSegmentBar } from "@/components/feature-segment-bar";
 
+/** Landing-page preview only — not real analytics */
+const LANDING_ENGAGEMENT_WEEK = [
+  { label: "M", value: 72 },
+  { label: "Tu", value: 85 },
+  { label: "W", value: 68 },
+  { label: "Th", value: 91 },
+  { label: "F", value: 78 },
+  { label: "Sa", value: 45 },
+  { label: "Su", value: 30 },
+] as const;
+const LANDING_ENGAGEMENT_MAX = Math.max(
+  ...LANDING_ENGAGEMENT_WEEK.map((d) => d.value)
+);
+const LANDING_ANALYTICS_STATS = [
+  { label: "Events", val: "94%" },
+  { label: "Members", val: "127" },
+  { label: "Practice", val: "68" },
+] as const;
+
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeVideo, setActiveVideo] = useState(0);
@@ -418,25 +437,29 @@ export default function LandingPage() {
                   </div>
                   <span className="text-[10px] text-slate-600 font-medium">Last 7 days</span>
                 </div>
-                <div className="h-28 flex items-end gap-2">
-                  {[72, 58, 85, 62, 91, 78, 88].map((val, i) => (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                      <div className="w-full flex-1 flex items-end rounded-t overflow-hidden bg-slate-200/80">
-                        <div
-                          className="w-full rounded-t"
-                          style={{ height: `${val}%`, backgroundColor: i === 4 ? "#0171BB" : "#0B5A8A" }}
-                        />
+                <div className="grid h-28 grid-cols-7 gap-1.5">
+                  {LANDING_ENGAGEMENT_WEEK.map(({ label, value }) => {
+                    const barPct = (value / LANDING_ENGAGEMENT_MAX) * 100;
+                    return (
+                      <div key={label} className="flex min-h-0 flex-col">
+                        <div className="flex min-h-0 flex-1 flex-col justify-end overflow-hidden">
+                          <div
+                            className="w-full min-h-[4px] rounded-t"
+                            style={{
+                              height: `${barPct}%`,
+                              background: "linear-gradient(to top, #0072CE, #4BA3E3)",
+                            }}
+                          />
+                        </div>
+                        <span className="text-center text-[8px] font-medium text-slate-600">
+                          {label}
+                        </span>
                       </div>
-                      <span className="text-[8px] text-slate-600 font-medium">{["M", "Tu", "W", "Th", "F", "S", "S"][i]}</span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
                 <div className="mt-4 pt-3 border-t border-slate-200 grid grid-cols-3 gap-2">
-                  {[
-                    { label: "Events", val: "94%" },
-                    { label: "Members", val: "127" },
-                    { label: "Practice", val: "68" },
-                  ].map(({ label, val }, i) => (
+                  {LANDING_ANALYTICS_STATS.map(({ label, val }, i) => (
                     <div key={i} className="text-center">
                       <div className="text-sm font-bold text-slate-900">{val}</div>
                       <div className="text-[9px] text-slate-600 font-medium">{label}</div>

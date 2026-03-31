@@ -15,6 +15,18 @@ import {
 const EASE = [0.42, 0, 0.58, 1] as const; // easeInOut
 const DURATION = 0.2;
 
+/** Landing preview only — mock analytics card (M–F) */
+const ANALYTICS_PREVIEW_MF = [
+  { label: "M", value: 60 },
+  { label: "Tu", value: 75 },
+  { label: "W", value: 80 },
+  { label: "Th", value: 65 },
+  { label: "F", value: 74 },
+] as const;
+const ANALYTICS_PREVIEW_MF_MAX = Math.max(
+  ...ANALYTICS_PREVIEW_MF.map((d) => d.value)
+);
+
 const FEATURES = [
   {
     id: "events",
@@ -351,22 +363,30 @@ function FeatureMockup({ feature }: { feature: (typeof FEATURES)[number] }) {
       );
     }
     case "analytics": {
-      const bars = [72, 85, 58, 91, 68];
       return (
         <div className={`${MOCKUP_BASE}`} style={{ boxShadow: `0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px ${color}12` }}>
           <div className="h-6 flex items-center gap-1 px-2" style={{ backgroundColor: `${color}18` }}>
             <div className="w-1 h-1 rounded-full bg-slate-400/60" />
           </div>
           <div className="p-2">
-            <div className="flex items-end gap-1 h-14">
-              {bars.map((val, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
-                  <div className="w-full flex-1 flex items-end">
-                    <div className="w-full rounded-t" style={{ height: `${val}%`, backgroundColor: `${color}${i === 2 ? "99" : "cc"}` }} />
+            <div className="grid h-14 grid-cols-5 gap-0.5">
+              {ANALYTICS_PREVIEW_MF.map(({ label, value }) => {
+                const barPct = (value / ANALYTICS_PREVIEW_MF_MAX) * 100;
+                return (
+                  <div key={label} className="flex min-h-0 flex-col">
+                    <div className="flex min-h-0 flex-1 flex-col justify-end overflow-hidden">
+                      <div
+                        className="w-full min-h-[3px] rounded-t"
+                        style={{
+                          height: `${barPct}%`,
+                          background: "linear-gradient(to top, #0072CE, #4BA3E3)",
+                        }}
+                      />
+                    </div>
+                    <div className="text-center text-[6px] text-slate-500">{label}</div>
                   </div>
-                  <div className="text-[6px] text-slate-500">{["M", "Tu", "W", "Th", "F"][i]}</div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <div className="mt-1.5 flex justify-between text-[6px] text-slate-500">
               <span>Engagement</span>
