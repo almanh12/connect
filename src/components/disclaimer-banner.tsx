@@ -2,8 +2,6 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 
-const STORAGE_KEY = "deca_engage_ontario_disclaimer_dismissed";
-
 function setBannerHeightPx(px: number) {
   if (typeof document === "undefined") return;
   document.documentElement.style.setProperty(
@@ -13,18 +11,8 @@ function setBannerHeightPx(px: number) {
 }
 
 export function DisclaimerBanner() {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
   const rootRef = useRef<HTMLDivElement>(null);
-
-  useLayoutEffect(() => {
-    try {
-      if (typeof window !== "undefined" && localStorage.getItem(STORAGE_KEY) !== "1") {
-        setVisible(true);
-      }
-    } catch {
-      setVisible(true);
-    }
-  }, []);
 
   useLayoutEffect(() => {
     if (!visible) {
@@ -49,11 +37,6 @@ export function DisclaimerBanner() {
   }, [visible]);
 
   const dismiss = () => {
-    try {
-      localStorage.setItem(STORAGE_KEY, "1");
-    } catch {
-      /* ignore */
-    }
     setVisible(false);
     setBannerHeightPx(0);
   };
