@@ -18,6 +18,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import type { Chapter } from "@/lib/types";
+import { getPublicAppOrigin } from "@/lib/public-origin";
 
 type ActivityItem =
   | { type: "member_join"; name: string; at: string }
@@ -70,8 +71,7 @@ export function OverviewClient({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
 
-  const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
-  const link = chapter.invite_link || `${baseUrl}/join?code=${chapter.invite_code}`;
+  const link = `${getPublicAppOrigin()}/join?code=${chapter.invite_code}`;
 
   const copyCode = () => {
     navigator.clipboard.writeText(chapter.invite_code);

@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { getPublicAppOrigin } from "@/lib/public-origin";
 
 const INVITE_CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
@@ -57,10 +58,7 @@ export async function createChapter(input: {
     attempts++;
   }
 
-  const baseUrl =
-    process.env.NEXT_PUBLIC_APP_URL ??
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
-  const inviteLink = `${baseUrl}/join?code=${inviteCode}`;
+  const inviteLink = `${getPublicAppOrigin()}/join?code=${inviteCode}`;
 
   const { data: chapter, error: chapterError } = await supabase
     .from("chapters")

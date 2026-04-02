@@ -8,6 +8,7 @@ import { updateChapter, regenerateInviteCode, deleteChapter } from "./actions";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import type { Chapter } from "@/lib/types";
+import { getPublicAppOrigin } from "@/lib/public-origin";
 
 interface ChapterSettingsClientProps {
   chapter: Chapter;
@@ -24,7 +25,6 @@ export function ChapterSettingsClient({
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [inviteCode, setInviteCode] = useState(chapter.invite_code);
-  const [inviteLink, setInviteLink] = useState(chapter.invite_link ?? "");
   const [form, setForm] = useState({
     name: chapter.name,
     school_name: chapter.school_name ?? "",
@@ -33,8 +33,7 @@ export function ChapterSettingsClient({
   const [showRegenConfirm, setShowRegenConfirm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  const baseUrl = typeof window !== "undefined" ? window.location.origin : process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-  const link = inviteLink || `${baseUrl}/join?code=${inviteCode}`;
+  const link = `${getPublicAppOrigin()}/join?code=${inviteCode}`;
 
   const copyCode = () => {
     navigator.clipboard.writeText(inviteCode);
@@ -73,7 +72,6 @@ export function ChapterSettingsClient({
       return;
     }
     if (result.inviteCode) setInviteCode(result.inviteCode);
-    if (result.inviteLink) setInviteLink(result.inviteLink);
     toast.success("New invite code generated");
   };
 
