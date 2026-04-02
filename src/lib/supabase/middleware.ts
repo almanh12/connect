@@ -5,6 +5,8 @@ import type { User } from "@supabase/supabase-js";
 export async function updateSession(request: NextRequest): Promise<{
   response: NextResponse;
   user: User | null;
+  /** True when the request targets /dashboard and the signed-in user has no chapter (needs /chapter-setup). */
+  dashboardUserLacksChapter: boolean;
 }> {
   let supabaseResponse = NextResponse.next({
     request,
@@ -32,5 +34,19 @@ export async function updateSession(request: NextRequest): Promise<{
     data: { user },
   } = await supabase.auth.getUser();
 
-  return { response: supabaseResponse, user };
+  const pathname = request.nextUrl.pathname;
+  const isDashboardRoute =
+    pathname === "/dashboard" || pathname.startsWith("/dashboard/");
+
+  let dashboardUserLacksChapter = false;
+  if (user && isDashboardRoute) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("chapter_id")
+      .eq("id", user.id)
+      .maybeSingle();
+    dashboardUserLacksChapter = !profile?.chapter_id;
+  }
+
+  return { response: supabaseResponse, user, dashboardUserLacksChapter };
 }

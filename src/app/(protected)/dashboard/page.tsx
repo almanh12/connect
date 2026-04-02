@@ -25,12 +25,12 @@ export default async function DashboardPage() {
     .from("profiles")
     .select("*")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
   if (profileError) {
     console.error("[dashboard] Profile fetch error:", profileError.message);
   }
-  if (!profile?.chapter_id) {
+  if (!profile || !profile.chapter_id) {
     redirect("/chapter-setup");
   }
 

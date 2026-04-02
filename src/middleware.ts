@@ -6,7 +6,8 @@ const PUBLIC_PATHS = ["/", "/login"];
 const AUTH_CALLBACK_PATH = "/auth/callback";
 
 export async function middleware(request: NextRequest) {
-  const { response: supabaseResponse, user } = await updateSession(request);
+  const { response: supabaseResponse, user, dashboardUserLacksChapter } =
+    await updateSession(request);
 
   const pathname = request.nextUrl.pathname;
 
@@ -53,6 +54,15 @@ export async function middleware(request: NextRequest) {
     const fullPath = pathname + (request.nextUrl.search ? request.nextUrl.search : "");
     loginUrl.searchParams.set("redirectTo", fullPath);
     return NextResponse.redirect(loginUrl);
+  }
+
+  // Avoid loading the dashboard RSC for users who still need chapter setup (prevents error/flash before client redirect)
+  if (dashboardUserLacksChapter) {
+    const res = NextResponse.redirect(new URL("/chapter-setup", request.url));
+    supabaseResponse.cookies.getAll().forEach((c) => {
+      res.cookies.set(c.name, c.value);
+    });
+    return res;
   }
 
   return supabaseResponse;
