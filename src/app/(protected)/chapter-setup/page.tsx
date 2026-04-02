@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { createChapter, lookupChapterByCode, joinChapter } from "./actions";
+import { getPublicAppOrigin } from "@/lib/public-origin";
 import { toast } from "sonner";
 import { Loader2, Users, Flag, Copy, Check, ChevronLeft, ImagePlus } from "lucide-react";
 
@@ -260,6 +261,7 @@ export default function ChapterSetupPage() {
   }
 
   if (mode === "create-success" && createResult) {
+    const inviteShareUrl = `${getPublicAppOrigin()}/join?code=${createResult.inviteCode}`;
     return (
       <ChapterSetupLayout>
         <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm text-center">
@@ -285,12 +287,12 @@ export default function ChapterSetupPage() {
             <input
               type="text"
               readOnly
-              value={createResult.inviteLink}
+              value={inviteShareUrl}
               className="flex-1 rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 text-sm"
             />
             <button
               type="button"
-              onClick={() => copyToClipboard(createResult.inviteLink, "Invite link")}
+              onClick={() => copyToClipboard(inviteShareUrl, "Invite link")}
               className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
             >
               <Copy className="h-4 w-4" /> Copy

@@ -17,15 +17,31 @@ export function JoinChapterForm({ code }: { code: string }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [chapterInfo, setChapterInfo] = useState<{ name: string; school_name: string | null } | null>(null);
+  const [lookupPhase, setLookupPhase] = useState<"idle" | "checking" | "ready">(() =>
+    initialCode.length === 6 ? "checking" : "ready"
+  );
+  const [codeLookupError, setCodeLookupError] = useState<string | null>(null);
 
   useEffect(() => {
     const c = code.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6);
     if (c.length === 6) {
       const arr = c.split("");
       setJoinCode(arr);
+      setLookupPhase("checking");
+      setCodeLookupError(null);
       lookupChapterByCode(c).then((res) => {
-        if (res.chapter) setChapterInfo(res.chapter);
+        setLookupPhase("ready");
+        if (res.chapter) {
+          setChapterInfo(res.chapter);
+          setCodeLookupError(null);
+        } else {
+          setChapterInfo(null);
+          setCodeLookupError(res.error ?? "Invalid or expired invite code");
+        }
       });
+    } else {
+      setLookupPhase("ready");
+      setCodeLookupError(null);
     }
   }, [code]);
 
@@ -38,6 +54,7 @@ export function JoinChapterForm({ code }: { code: string }) {
     next[index] = char;
     setJoinCode(next);
     setError(null);
+    setCodeLookupError(null);
     setChapterInfo(null);
     if (char && index < 5) {
       const nextInput = document.getElementById(`join-code-${index + 1}`);
@@ -89,7 +106,13 @@ export function JoinChapterForm({ code }: { code: string }) {
         </Link>
         <h1 className="mt-4 text-xl font-bold text-gray-900">Join a Chapter</h1>
         <p className="mt-1 text-sm text-gray-600">Enter the 6-character invite code from your advisor.</p>
-        <form onSubmit={handleSubmit} className="mt-8">
+        {lookupPhase === "checking" && (
+          <div className="mt-8 flex flex-col items-center gap-3 py-4">
+            <Loader2 className="h-8 w-8 animate-spin text-[#0171BB]" aria-hidden />
+            <p className="text-sm text-gray-500">Checking invite code…</p>
+          </div>
+        )}
+        <form onSubmit={handleSubmit} className={`mt-8 ${lookupPhase === "checking" ? "pointer-events-none opacity-50" : ""}`}>
           <div className="flex justify-center gap-2">
             {[0, 1, 2, 3, 4, 5].map((i) => (
               <input
@@ -105,6 +128,12 @@ export function JoinChapterForm({ code }: { code: string }) {
               />
             ))}
           </div>
+          {codeLookupError && lookupPhase === "ready" && (
+            <div className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 text-center">
+              <p className="text-sm font-medium text-red-800">{codeLookupError}</p>
+              <p className="mt-1 text-xs text-red-700">Ask your advisor for a new code or check the link.</p>
+            </div>
+          )}
           {chapterInfo && (
             <div className="mt-6 rounded-xl border border-green-200 bg-green-50 p-4">
               <p className="font-medium text-green-800">{chapterInfo.name}</p>
@@ -114,7 +143,12 @@ export function JoinChapterForm({ code }: { code: string }) {
           {error && <p className="mt-4 text-center text-sm text-red-600">{error}</p>}
           <button
             type="submit"
-            disabled={isSubmitting || joinCodeStr.length !== 6}
+            disabled={
+              isSubmitting ||
+              joinCodeStr.length !== 6 ||
+              lookupPhase === "checking" ||
+              !!codeLookupError
+            }
             className="mt-6 w-full rounded-lg bg-[#0171BB] py-3 font-semibold text-white hover:bg-[#015a96] disabled:opacity-50"
           >
             {isSubmitting ? <Loader2 className="mx-auto h-5 w-5 animate-spin" /> : chapterInfo ? `Join ${chapterInfo.name}` : "Join Chapter"}

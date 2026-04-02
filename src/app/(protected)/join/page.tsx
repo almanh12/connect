@@ -1,4 +1,3 @@
-import React from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
@@ -10,7 +9,7 @@ export default async function JoinPage({
 }: {
   searchParams: Promise<{ code?: string }>;
 }) {
-  const { code } = React.use(searchParams);
+  const { code } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -26,7 +25,7 @@ export default async function JoinPage({
     .from("profiles")
     .select("chapter_id")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
   if (profile?.chapter_id) {
     const { data: chapter } = await supabase
