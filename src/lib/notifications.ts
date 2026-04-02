@@ -41,13 +41,13 @@ export async function getNotifications(
     const weekAgo = new Date(now);
     weekAgo.setDate(weekAgo.getDate() - 7);
 
-    let announcements: { id: string; title: string; body: string | null; created_at: string }[] = [];
+    let announcements: { id: string; title: string; content: string | null; created_at: string }[] = [];
     let events: { id: string; title: string; date?: string | null; start_time: string; is_mandatory: boolean | null }[] = [];
     let attendances: { event_id: string }[] = [];
 
     const { data: annData, error: annErr } = await supabase
       .from("announcements")
-      .select("id, title, body, created_at")
+      .select("id, title, content, created_at")
       .eq("chapter_id", chapterId)
       .gte("created_at", weekAgo.toISOString())
       .order("created_at", { ascending: false })
@@ -121,7 +121,7 @@ export async function getNotifications(
         id: `announcement-${a.id}`,
         type: "announcement",
         title: a.title,
-        body: a.body?.slice(0, 200) ?? null,
+        body: a.content?.slice(0, 200) ?? null,
         reference_id: a.id,
         read_at: null,
         created_at: a.created_at,

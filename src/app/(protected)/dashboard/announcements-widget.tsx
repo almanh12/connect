@@ -94,12 +94,12 @@ export function AnnouncementsWidget({ announcements, fullPage }: AnnouncementsWi
                   </div>
                   {expanded && (
                     <div className="mt-3 w-full rounded bg-gray-50 p-3 text-sm text-gray-700 whitespace-pre-wrap">
-                      {ann.body}
+                      {ann.content}
                     </div>
                   )}
                   {!expanded && (
                     <p className="mt-1 line-clamp-2 text-xs text-gray-500">
-                      {ann.body}
+                      {ann.content}
                     </p>
                   )}
                 </button>

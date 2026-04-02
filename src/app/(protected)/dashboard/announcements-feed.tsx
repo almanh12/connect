@@ -41,7 +41,7 @@ function setLastVisit() {
 export interface AnnouncementWithAuthor {
   id: string;
   title: string;
-  body: string;
+  content: string;
   priority?: string | null;
   created_at: string;
   user_id: string | null;
@@ -172,12 +172,12 @@ export function AnnouncementsFeed({
                   </div>
                   {expanded && (
                     <div className={`mt-3 w-full rounded-[var(--radius-sm)] p-3 text-sm whitespace-pre-wrap ${dark ? "bg-white/10 text-white/90" : "bg-white border border-[#E8ECF0] text-[var(--gray-700)]"}`}>
-                      {ann.body}
+                      {ann.content}
                     </div>
                   )}
                   {!expanded && (
                     <p className={`mt-1 line-clamp-2 text-xs ${dark ? "text-white/70" : "text-[var(--gray-500)]"}`}>
-                      {ann.body}
+                      {ann.content}
                     </p>
                   )}
                 </button>

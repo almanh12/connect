@@ -76,7 +76,7 @@ export function AnnouncementsClient({
       setAnnouncements((prev) =>
         prev.map((a) =>
           a.id === editingId
-            ? { ...a, title: title.trim(), body: content.trim(), priority }
+            ? { ...a, title: title.trim(), content: content.trim(), priority }
             : a
         )
       );
@@ -98,7 +98,7 @@ export function AnnouncementsClient({
   const startEdit = (ann: Announcement) => {
     setEditingId(ann.id);
     setTitle(ann.title);
-    setContent(ann.body);
+    setContent(ann.content);
     setPriority((ann.priority as AnnouncementPriority) ?? "normal");
     setShowForm(true);
   };
@@ -212,7 +212,7 @@ export function AnnouncementsClient({
                 <div className="min-w-0 flex-1">
                   <p className="font-medium text-gray-900">{ann.title}</p>
                   <p className="mt-0.5 line-clamp-2 text-sm text-gray-500">
-                    {ann.body}
+                    {ann.content}
                   </p>
                   <p className="mt-1 text-xs text-gray-400">
                     {format(new Date(ann.created_at), "MMM d, yyyy")} ·{" "}

@@ -87,8 +87,7 @@ export interface Announcement {
   id: string;
   chapter_id: string | null;
   title: string;
-  /** DB column `body` (PostgREST returns as `body`) */
-  body: string;
+  content: string;
   user_id: string | null;
   is_pinned: boolean;
   priority?: AnnouncementPriority | null;

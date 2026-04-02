@@ -42,13 +42,12 @@ export async function createAnnouncement(
 
   const { title: t, content: c, priority: pr } = validated.data;
 
-  // DB column for message text is `body` (not `content`)
   const { data, error } = await supabase
     .from("announcements")
     .insert({
       chapter_id: profile.chapter_id,
       title: t.trim(),
-      body: c.trim(),
+      content: c.trim(),
       user_id: user.id,
       is_pinned: false,
       priority: pr,
@@ -99,7 +98,7 @@ export async function updateAnnouncement(
     .from("announcements")
     .update({
       title: t.trim(),
-      body: c.trim(),
+      content: c.trim(),
       priority: pr,
       updated_at: new Date().toISOString(),
     })
