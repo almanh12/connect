@@ -117,6 +117,8 @@ export function ChatClient({
   const bottomRef = useRef<HTMLDivElement>(null);
   const hasUserSentMessageRef = useRef(false);
   const justLoadedMessagesRef = useRef(false);
+  /** When sendMessage creates a new conversation, activeId changes and would trigger loadMessages and wipe optimistic UI — skip that fetch until the send finishes. */
+  const skipLoadMessagesOnceForConvIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     const ta = inputRef.current;
@@ -154,8 +156,14 @@ export function ChatClient({
   }, []);
 
   useEffect(() => {
-    if (activeId) loadMessages(activeId);
-    else setMessages([]);
+    if (!activeId) {
+      setMessages([]);
+      return;
+    }
+    if (skipLoadMessagesOnceForConvIdRef.current === activeId) {
+      return;
+    }
+    loadMessages(activeId);
   }, [activeId, loadMessages]);
 
   useEffect(() => {
@@ -270,6 +278,7 @@ export function ChatClient({
         return;
       }
       convId = id;
+      skipLoadMessagesOnceForConvIdRef.current = id;
       const newConv: Conversation = {
         id,
         user_id: userId,
@@ -336,6 +345,23 @@ export function ChatClient({
         const last = next[next.length - 1];
         if (last?.role === "assistant") {
           next[next.length - 1] = { ...last, content: fullContent };
+          return next;
+        }
+        if (fullContent) {
+          return [
+            {
+              id: crypto.randomUUID(),
+              role: "user",
+              content: trimmed,
+              created_at: new Date().toISOString(),
+            },
+            {
+              id: crypto.randomUUID(),
+              role: "assistant",
+              content: fullContent,
+              created_at: new Date().toISOString(),
+            },
+          ];
         }
         return next;
       });
@@ -358,6 +384,9 @@ export function ChatClient({
       setMessages((prev) => prev.slice(0, -1));
     } finally {
       setIsLoading(false);
+      if (skipLoadMessagesOnceForConvIdRef.current === convId) {
+        skipLoadMessagesOnceForConvIdRef.current = null;
+      }
     }
   };
 
