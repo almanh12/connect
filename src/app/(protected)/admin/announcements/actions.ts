@@ -48,7 +48,7 @@ export async function createAnnouncement(
       chapter_id: profile.chapter_id,
       title: t.trim(),
       content: c.trim(),
-      author_id: user.id,
+      user_id: user.id,
       is_pinned: false,
       priority: pr,
     })

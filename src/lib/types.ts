@@ -88,7 +88,7 @@ export interface Announcement {
   chapter_id: string | null;
   title: string;
   content: string;
-  author_id: string | null;
+  user_id: string | null;
   is_pinned: boolean;
   priority?: AnnouncementPriority | null;
   created_at: string;

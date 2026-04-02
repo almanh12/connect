@@ -44,7 +44,7 @@ export interface AnnouncementWithAuthor {
   content: string;
   priority?: string | null;
   created_at: string;
-  author_id: string | null;
+  user_id: string | null;
   author_name?: string | null;
 }
 

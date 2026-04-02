@@ -93,7 +93,7 @@ export default async function DashboardPage() {
   const authorIds = [
     ...new Set(
       (announcementsList ?? [])
-        .map((a) => a.author_id)
+        .map((a) => a.user_id)
         .filter(Boolean) as string[]
     ),
   ];
@@ -109,7 +109,7 @@ export default async function DashboardPage() {
   );
   const announcementsWithAuthors = announcementsList.map((a) => ({
     ...a,
-    author_name: a.author_id ? authorMap.get(a.author_id) ?? null : null,
+    author_name: a.user_id ? authorMap.get(a.user_id) ?? null : null,
   }));
 
   const recentActivity = await getMemberRecentActivity(
