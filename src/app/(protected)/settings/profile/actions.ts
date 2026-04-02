@@ -5,6 +5,17 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 import { profileUpdateBodySchema } from "@/lib/security/schemas";
 
+const isDev = process.env.NODE_ENV === "development";
+
+function logDeleteAccountDev(context: string, err: unknown) {
+  if (!isDev) return;
+  if (err && typeof err === "object" && "message" in err) {
+    console.error(`[deleteAccount][dev] ${context}:`, (err as { message?: string }).message, err);
+  } else {
+    console.error(`[deleteAccount][dev] ${context}:`, err);
+  }
+}
+
 export async function updateProfile(data: {
   full_name: string;
   grade: number | null;
@@ -65,7 +76,6 @@ export async function deleteAccount(): Promise<{
 
   const userId = user.id;
 
-  // 1. Check if user is chapter Owner — block deletion
   const { data: profile } = await supabase
     .from("profiles")
     .select("role")
@@ -79,12 +89,12 @@ export async function deleteAccount(): Promise<{
     };
   }
 
-  // 2. Use admin client for full cleanup (bypasses RLS) — service role key must exist only in server env
   let admin;
   try {
     admin = createAdminClient();
   } catch (adminErr) {
     console.error("[deleteAccount] Admin client failed:", adminErr);
+    logDeleteAccountDev("createAdminClient", adminErr);
     return {
       error:
         "Could not initialize server admin client. Ensure server environment is configured.",
@@ -92,88 +102,128 @@ export async function deleteAccount(): Promise<{
   }
 
   try {
-    // Order matters: respect FK constraints and child→parent relationships
-    // Unassign strategies (don't delete — just remove assignment)
+    // --- Clear FKs that block auth.users deletion (e.g. manual_points.awarded_by has no ON DELETE CASCADE) ---
     const { error: strategiesErr } = await admin
       .from("strategies")
       .update({ assigned_to: null })
       .eq("assigned_to", userId);
     if (strategiesErr) {
       console.error("[deleteAccount] strategies update error:", strategiesErr);
+      logDeleteAccountDev("strategies", strategiesErr);
     }
 
-    // Delete chat messages (by user_id catches all, including legacy orphaned)
+    const { error: mpAwarderErr } = await admin
+      .from("manual_points")
+      .update({ awarded_by: null })
+      .eq("awarded_by", userId);
+    if (mpAwarderErr) {
+      console.error("[deleteAccount] manual_points awarded_by null error:", mpAwarderErr);
+      logDeleteAccountDev("manual_points.awarded_by", mpAwarderErr);
+    }
+
+    const { error: partnerErr } = await admin
+      .from("competition_registrations")
+      .update({ partner_id: null })
+      .eq("partner_id", userId);
+    if (partnerErr) {
+      console.error("[deleteAccount] competition_registrations partner_id null error:", partnerErr);
+      logDeleteAccountDev("competition_registrations.partner_id", partnerErr);
+    }
+
+    const { error: compDelErr } = await admin
+      .from("competition_registrations")
+      .delete()
+      .eq("user_id", userId);
+    if (compDelErr) {
+      console.error("[deleteAccount] competition_registrations delete error:", compDelErr);
+      logDeleteAccountDev("competition_registrations.delete", compDelErr);
+    }
+
+    // --- User-owned rows (explicit deletes; auth CASCADE also covers many of these) ---
     const { error: chatErr } = await admin.from("chat_messages").delete().eq("user_id", userId);
-    if (chatErr) console.error("[deleteAccount] chat_messages delete error:", chatErr);
+    if (chatErr) {
+      console.error("[deleteAccount] chat_messages delete error:", chatErr);
+      logDeleteAccountDev("chat_messages", chatErr);
+    }
 
-    // Delete conversations
     const { error: convErr } = await admin.from("conversations").delete().eq("user_id", userId);
-    if (convErr) console.error("[deleteAccount] conversations delete error:", convErr);
+    if (convErr) {
+      console.error("[deleteAccount] conversations delete error:", convErr);
+      logDeleteAccountDev("conversations", convErr);
+    }
 
-    // Delete practice sessions
     const { error: practiceErr } = await admin.from("practice_sessions").delete().eq("user_id", userId);
-    if (practiceErr) console.error("[deleteAccount] practice_sessions delete error:", practiceErr);
+    if (practiceErr) {
+      console.error("[deleteAccount] practice_sessions delete error:", practiceErr);
+      logDeleteAccountDev("practice_sessions", practiceErr);
+    }
 
-    // Delete attendance
     const { error: attErr } = await admin.from("attendance").delete().eq("user_id", userId);
-    if (attErr) console.error("[deleteAccount] attendance delete error:", attErr);
+    if (attErr) {
+      console.error("[deleteAccount] attendance delete error:", attErr);
+      logDeleteAccountDev("attendance", attErr);
+    }
 
-    // Delete points/score history (tables may not exist in all deployments)
     const { error: epErr } = await admin.from("engagement_points").delete().eq("user_id", userId);
-    if (epErr) console.error("[deleteAccount] engagement_points delete error:", epErr);
+    if (epErr) {
+      console.error("[deleteAccount] engagement_points delete error:", epErr);
+      logDeleteAccountDev("engagement_points", epErr);
+    }
 
     const { error: mpErr } = await admin.from("manual_points").delete().eq("user_id", userId);
-    if (mpErr) console.error("[deleteAccount] manual_points delete error:", mpErr);
-
-    // Delete API usage
-    const { error: apiErr } = await admin.from("api_usage").delete().eq("user_id", userId);
-    if (apiErr) console.error("[deleteAccount] api_usage delete error:", apiErr);
-
-    // Delete notifications
-    const { error: notifErr } = await admin.from("notifications").delete().eq("user_id", userId);
-    if (notifErr) console.error("[deleteAccount] notifications delete error:", notifErr);
-
-    // Delete profile
-    const { error: profileError } = await admin
-      .from("profiles")
-      .delete()
-      .eq("id", userId);
-
-    if (profileError) {
-      console.error("[deleteAccount] Profile delete error:", profileError);
-      console.error("[deleteAccount] Profile error code:", profileError.code);
-      console.error("[deleteAccount] Profile error message:", profileError.message);
-      console.error("[deleteAccount] Profile error details:", profileError.details);
-      return { error: "Could not delete account. Please contact support." };
+    if (mpErr) {
+      console.error("[deleteAccount] manual_points delete error:", mpErr);
+      logDeleteAccountDev("manual_points", mpErr);
     }
 
-    // Delete auth user (prevents sign-in and ghost profile)
+    const { error: apiErr } = await admin.from("api_usage").delete().eq("user_id", userId);
+    if (apiErr) {
+      console.error("[deleteAccount] api_usage delete error:", apiErr);
+      logDeleteAccountDev("api_usage", apiErr);
+    }
+
+    const { error: notifErr } = await admin.from("notifications").delete().eq("user_id", userId);
+    if (notifErr) {
+      console.error("[deleteAccount] notifications delete error:", notifErr);
+      logDeleteAccountDev("notifications", notifErr);
+    }
+
+    const { error: aiStratErr } = await admin.from("ai_strategies").delete().eq("user_id", userId);
+    if (aiStratErr) {
+      console.error("[deleteAccount] ai_strategies delete error:", aiStratErr);
+      logDeleteAccountDev("ai_strategies", aiStratErr);
+    }
+
+    // Remove auth user — CASCADE deletes public.profiles when profiles.id references auth.users(id) ON DELETE CASCADE
     const { error: authError } = await admin.auth.admin.deleteUser(userId);
 
     if (authError) {
       console.error("[deleteAccount] Auth delete error:", authError);
-      console.error("[deleteAccount] Auth error name:", authError.name);
       console.error("[deleteAccount] Auth error message:", authError.message);
-      return {
-        error:
-          "Profile was removed but auth deletion failed. Please contact support.",
-      };
+      logDeleteAccountDev("auth.admin.deleteUser", authError);
+      return { error: "Could not delete account. Please contact support." };
     }
 
-    // Sign out the current session (in case auth delete didn't clear it)
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } catch (signOutErr) {
+      console.warn("[deleteAccount] signOut after delete:", signOutErr);
+      logDeleteAccountDev("signOut", signOutErr);
+    }
 
     console.log("[deleteAccount] Successfully deleted account for userId:", userId);
     return { success: true };
   } catch (err) {
     console.error("[deleteAccount] Unexpected error:", err);
-    console.error("[deleteAccount] Error type:", err instanceof Error ? err.constructor?.name : typeof err);
-    console.error("[deleteAccount] Error message:", err instanceof Error ? err.message : String(err));
+    logDeleteAccountDev("catch", err);
     if (err instanceof Error && err.stack) {
       console.error("[deleteAccount] Error stack:", err.stack);
     }
     try {
-      console.error("[deleteAccount] Full error (serialized):", JSON.stringify(err, Object.getOwnPropertyNames(err ?? {})));
+      console.error(
+        "[deleteAccount] Full error (serialized):",
+        JSON.stringify(err, Object.getOwnPropertyNames(err ?? {}))
+      );
     } catch {
       console.error("[deleteAccount] Could not serialize error (possibly circular)");
     }
