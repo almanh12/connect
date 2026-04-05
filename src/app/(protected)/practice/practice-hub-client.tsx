@@ -579,9 +579,10 @@ export function PracticeHubClient({
                     session.score ??
                     (session.feedback
                       ? (() => {
-                          const m = session.feedback.match(
-                            /(?:Overall\s+)?Score[:\s]*(\d+)(?:\/100)?/i
-                          );
+                          const fb = session.feedback;
+                          const m =
+                            fb.match(/\*\*Overall\s+Score\*\*[:\s]*(\d+)/i) ||
+                            fb.match(/(?:Overall\s+)?Score[:\s]*(\d+)(?:\/100)?/i);
                           return m ? parseInt(m[1], 10) : null;
                         })()
                       : null);

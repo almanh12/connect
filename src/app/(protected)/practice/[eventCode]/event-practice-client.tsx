@@ -19,6 +19,7 @@ import {
   Check,
 } from "lucide-react";
 import { toast } from "sonner";
+import ReactMarkdown from "react-markdown";
 import type { OntarioDecaEvent } from "@/lib/ontario-deca-data";
 import {
   getCategoryTemplate,
@@ -98,6 +99,21 @@ function parseDecaCaseFormat(text: string): DecaCaseSections | null {
     if (content) sections[header as keyof DecaCaseSections] = content;
   }
   return Object.keys(sections).length > 0 ? sections : null;
+}
+
+/** Parse overall score from written/prepared AI text (markdown-tolerant). */
+function parseOverallScoreFromWrittenContent(content: string): number | null {
+  const m =
+    content.match(/\*\*Overall\s+Score\*\*[:\s]*(\d+)/i) ||
+    content.match(/(?:Overall\s+)?Score[:\s]*(\d+)(?:\s*\/\s*100)?/i);
+  return m?.[1] ? parseInt(m[1], 10) : null;
+}
+
+function extractJudgeSummaryLine(text: string): string | undefined {
+  const star = text.match(/\*\*Judge'?s\s+Summary\*\*[:\s]*([^\n]+)/i);
+  if (star?.[1]) return star[1].trim();
+  const plain = text.match(/Judge'?s\s+Summary[:\s]+([^\n]+)/i);
+  return plain?.[1]?.trim();
 }
 
 function parseLegacyCaseFormat(text: string): Record<string, string> | null {
@@ -777,7 +793,17 @@ export function EventPracticeClient({
                         sessionIdRef.current = id;
                         setCurrentSessionId(id);
                       }
+                    } else {
+                      const err = await createRes.json().catch(() => ({}));
+                      console.error("[practice] start failed:", createRes.status, err);
                     }
+                  }
+
+                  if (!sessionId) {
+                    toast.error(
+                      "Could not start a practice session. Please try again."
+                    );
+                    return;
                   }
 
                   let res: Response;
@@ -864,7 +890,15 @@ export function EventPracticeClient({
                     return;
                   }
 
-                  setFeedback(data?.content ?? "");
+                  const feedbackText = data?.content ?? "";
+                  setFeedback(feedbackText);
+                  const overallForUi =
+                    data?.overall_score ?? parseOverallScoreFromWrittenContent(feedbackText);
+                  setResultData({
+                    overall_score: overallForUi ?? undefined,
+                    pi_scores: data?.pi_scores,
+                    overall_feedback: extractJudgeSummaryLine(feedbackText),
+                  });
                   setStep("results");
 
                   const duration = practiceStartTime
@@ -872,12 +906,7 @@ export function EventPracticeClient({
                     : null;
                   const score =
                     data?.overall_score ??
-                    (() => {
-                      const scoreMatch = (data?.content ?? "").match(
-                        /(?:Overall\s+)?Score[:\s]*(\d+)(?:\/100)?/i
-                      );
-                      return scoreMatch ? parseInt(scoreMatch[1], 10) : null;
-                    })();
+                    parseOverallScoreFromWrittenContent(feedbackText);
                   const saveRes = await fetch("/api/practice/save", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -888,7 +917,7 @@ export function EventPracticeClient({
                       category: template?.category_name ?? event.category_key,
                       score,
                       pi_scores: data?.pi_scores ?? null,
-                      feedback: data?.content ?? "",
+                      feedback: feedbackText,
                       duration_seconds: duration,
                       student_response:
                         (pdfLabelForSave ??
@@ -906,6 +935,25 @@ export function EventPracticeClient({
                     }
                     console.error("[practice] Prepared save failed:", saveRes.status, saveErr);
                     toast.error(saveErr.error ?? "Session could not be updated. Try refreshing.");
+                  } else {
+                    const histRes = await fetch("/api/practice/history");
+                    if (histRes.ok) {
+                      const hist = await histRes.json();
+                      const forEvent = (hist.sessions ?? []).filter(
+                        (s: { event_code?: string; event_category?: string }) =>
+                          (s.event_code || s.event_category) === event.code
+                      );
+                      setSessions(
+                        forEvent.map((s: Session) => ({
+                          id: s.id,
+                          score: s.score,
+                          pi_scores: s.pi_scores,
+                          feedback: s.feedback,
+                          duration_seconds: s.duration_seconds,
+                          created_at: s.created_at,
+                        }))
+                      );
+                    }
                   }
                 } catch (e) {
                   console.error("[practice] evaluate request error:", e);
@@ -936,40 +984,120 @@ export function EventPracticeClient({
           </div>
         )}
         {step === "results" && feedback && (
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Evaluation Results
-            </h2>
-            <div className="mt-4 flex flex-wrap items-center gap-4">
-              <div className="points-earned-badge inline-flex items-center gap-1.5 rounded-full border border-[#00539B20] bg-[#E8F1FA] px-3.5 py-1.5 font-bold text-[13px] text-[#00539B]">
-                +5 PTS ◇
+          <div className="space-y-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <h2 className="text-xl font-bold text-gray-900">Evaluation Results</h2>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    clearPracticeSessionId();
+                    setStep("intro");
+                    setFeedback(null);
+                    setResultData(null);
+                  }}
+                  className="flex items-center gap-2 rounded-lg bg-[#0072CE] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#004B87]"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                  Submit Another
+                </button>
+                <Link
+                  href="/practice"
+                  className="flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Back to Practice Hub
+                </Link>
               </div>
             </div>
-            <div className="mt-4 rounded-lg bg-gray-50 p-4">
-              <pre className="whitespace-pre-wrap text-sm text-gray-800">
-                {feedback}
-              </pre>
-            </div>
-            <div className="mt-6 flex gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  clearPracticeSessionId();
-                  setStep("intro");
-                  setFeedback(null);
-                }}
-                className="flex items-center gap-2 rounded-lg bg-[#0072CE] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#004B87]"
+
+            {resultData?.overall_score != null && (
+              <div className="rounded-[var(--radius-md)] border border-[var(--gray-200)] bg-white p-6 shadow-[var(--shadow-card)]">
+                <h3 className="mb-4 text-xs font-medium uppercase tracking-wide text-[var(--gray-500)]">
+                  Overall Score
+                </h3>
+                <div className="flex flex-wrap items-center gap-4">
+                  <div
+                    className={`flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-full border-4 ${
+                      resultData.overall_score >= 80
+                        ? "border-[var(--success)] text-[var(--success)]"
+                        : resultData.overall_score >= 60
+                          ? "border-[var(--deca-gold)] text-[var(--deca-gold)]"
+                          : "border-[var(--warning)] text-[var(--warning)]"
+                    }`}
+                  >
+                    <span className="text-3xl font-bold">
+                      {(resultData.overall_score / 10).toFixed(1)}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-lg text-[var(--gray-400)]">out of 10</p>
+                    {resultData.overall_feedback && (
+                      <p className="mt-1 text-sm text-[var(--gray-700)]">
+                        &quot;{resultData.overall_feedback}&quot;
+                      </p>
+                    )}
+                  </div>
+                  <div className="points-earned-badge inline-flex items-center gap-1.5 rounded-full border border-[#00539B20] bg-[#E8F1FA] px-3.5 py-1.5 font-bold text-[13px] text-[#00539B]">
+                    +5 PTS ◇
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {resultData?.pi_scores && Object.keys(resultData.pi_scores).length > 0 && (
+              <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+                {Object.entries(resultData.pi_scores).map(([name, score]) => {
+                  const max =
+                    name.includes("Knowledge") || name.includes("Critical")
+                      ? 30
+                      : name.includes("Communication")
+                        ? 25
+                        : name.includes("Professional") || name.includes("Presence")
+                          ? 15
+                          : 25;
+                  const pct = Math.min(100, (score / max) * 100);
+                  return (
+                    <div
+                      key={name}
+                      className="rounded-[var(--radius-md)] border border-[var(--gray-200)] bg-white p-4 shadow-sm"
+                    >
+                      <p
+                        className="truncate text-[11px] font-medium uppercase tracking-wide text-[var(--gray-500)]"
+                        title={name}
+                      >
+                        {name.split(" ")[0]}
+                      </p>
+                      <p className="mt-1 text-xl font-bold text-[var(--deca-blue)]">
+                        {score}/{max}
+                      </p>
+                      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-[var(--gray-200)]">
+                        <div
+                          className={`h-full rounded-full ${
+                            pct >= 80
+                              ? "bg-[var(--success)]"
+                              : pct >= 60
+                                ? "bg-[var(--deca-gold)]"
+                                : "bg-[var(--warning)]"
+                          }`}
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            <div className="rounded-[var(--radius-md)] border border-[var(--gray-200)] bg-white p-6 shadow-[var(--shadow-card)]">
+              <h3 className="mb-4 text-xs font-medium uppercase tracking-wide text-[var(--gray-500)]">
+                Detailed Feedback
+              </h3>
+              <div
+                className="prose prose-sm max-w-none text-[var(--gray-800)] prose-headings:text-[var(--gray-900)] prose-h1:text-lg prose-h2:text-base prose-h3:text-sm prose-strong:text-[var(--gray-900)] prose-hr:border-[var(--gray-200)] prose-li:my-0.5"
               >
-                <RotateCcw className="h-4 w-4" />
-                Submit Another
-              </button>
-              <Link
-                href="/practice"
-                className="flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Practice Hub
-              </Link>
+                <ReactMarkdown>{feedback}</ReactMarkdown>
+              </div>
             </div>
           </div>
         )}
