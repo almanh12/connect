@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { parseEventDateTime } from "@/lib/utils";
@@ -42,6 +42,8 @@ export function MarkAttendanceClient({
   const [search, setSearch] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  /** Keeps beforeunload in sync without stale closures (setState is async before navigation). */
+  const hasChangesRef = useRef(false);
 
   const presentCount = checked.size;
   const totalCount = members.length;
@@ -61,51 +63,63 @@ export function MarkAttendanceClient({
       return next;
     });
     setHasChanges(true);
+    hasChangesRef.current = true;
   }, [attendanceLocked]);
 
   const selectAll = useCallback(() => {
     if (attendanceLocked) return;
     setChecked(new Set(members.map((m) => m.id)));
     setHasChanges(true);
+    hasChangesRef.current = true;
   }, [members, attendanceLocked]);
 
   const deselectAll = useCallback(() => {
     if (attendanceLocked) return;
     setChecked(new Set());
     setHasChanges(true);
+    hasChangesRef.current = true;
   }, [attendanceLocked]);
 
   const handleSave = async () => {
     const selectedMemberIds = [...checked];
-    // Debug: verify checkbox state matches what gets sent
-    console.log("[MarkAttendance] selectedMemberIds RIGHT BEFORE save:", {
-      type: typeof selectedMemberIds,
-      isArray: Array.isArray(selectedMemberIds),
-      length: selectedMemberIds.length,
-      ids: selectedMemberIds,
-      sampleType: selectedMemberIds[0] ? typeof selectedMemberIds[0] : "n/a",
-    });
     setIsSaving(true);
-    const result = await saveBulkAttendance(event.id, selectedMemberIds);
-    setIsSaving(false);
-    if (result.error) {
-      toast.error(result.error);
-      return;
+    try {
+      const result = await saveBulkAttendance(event.id, selectedMemberIds);
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
+      toast.success(
+        `Attendance saved. 10 points awarded to ${result.awardedCount ?? presentCount} members.`
+      );
+      hasChangesRef.current = false;
+      setHasChanges(false);
+      window.location.href = "/admin/attendance";
+    } catch (err) {
+      console.error("[MarkAttendance] save failed:", err);
+      toast.error(
+        err instanceof Error
+          ? err.message
+          : "Failed to save attendance. Please try again."
+      );
+    } finally {
+      setIsSaving(false);
     }
-    toast.success(
-      `Attendance saved. 10 points awarded to ${result.awardedCount ?? presentCount} members.`
-    );
-    setHasChanges(false);
-    window.location.href = "/admin/attendance";
   };
 
   useEffect(() => {
+    hasChangesRef.current = hasChanges;
+  }, [hasChanges]);
+
+  useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (hasChanges) e.preventDefault();
+      if (!hasChangesRef.current) return;
+      e.preventDefault();
+      e.returnValue = "";
     };
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [hasChanges]);
+  }, []);
 
   return (
     <div className="space-y-6">
