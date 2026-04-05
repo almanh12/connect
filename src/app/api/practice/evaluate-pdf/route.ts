@@ -1,8 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
-import Anthropic from "@anthropic-ai/sdk";
+import Anthropic, { APIError } from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { PDFParse } from "pdf-parse";
-import { getEventByCode, getCategoryTemplate } from "@/lib/ontario-deca-data";
+import { getEventByCode } from "@/lib/ontario-deca-data";
 import {
   checkPracticeEvalRateLimit,
   recordPracticeEvalUsage,
@@ -13,6 +13,34 @@ const formEventCodeSchema = z.string().min(1).max(32).trim();
 
 const MODEL = "claude-opus-4-6";
 const MAX_PDF_SIZE_MB = 10;
+/** Keep prompt within model limits; huge extracted PDFs otherwise cause API errors */
+const MAX_EXTRACTED_TEXT_CHARS = 150_000;
+
+export const runtime = "nodejs";
+export const maxDuration = 120;
+
+const MAX_CLIENT_ERROR_LEN = 450;
+
+function clientSafeErrorMessage(err: unknown): string {
+  if (err instanceof APIError) {
+    return err.message.slice(0, MAX_CLIENT_ERROR_LEN);
+  }
+  if (err instanceof Error) {
+    return err.message.slice(0, MAX_CLIENT_ERROR_LEN);
+  }
+  return "An unexpected error occurred.";
+}
+
+function isPdfFile(file: File): boolean {
+  const name = (file.name ?? "").toLowerCase();
+  const t = (file.type ?? "").toLowerCase();
+  return (
+    t === "application/pdf" ||
+    t === "application/x-pdf" ||
+    t === "binary/octet-stream" ||
+    (name.endsWith(".pdf") && (t === "" || t === "application/octet-stream"))
+  );
+}
 
 function buildEvaluationSystemPrompt(eventName: string): string {
   return `You are an expert DECA competition judge and coach. A student has uploaded their work for the event: ${eventName}.
@@ -62,7 +90,20 @@ export async function POST(request: Request) {
       );
     }
 
-    const formData = await request.formData();
+    let formData: FormData;
+    try {
+      formData = await request.formData();
+    } catch (formErr) {
+      console.error("[evaluate-pdf] formData() failed (body too large or bad multipart):", formErr);
+      return NextResponse.json(
+        {
+          error:
+            "Upload could not be read. Try a smaller PDF (under ~4 MB on many hosts), or paste the text instead.",
+        },
+        { status: 413 }
+      );
+    }
+
     const file = formData.get("file") as File | null;
     const eventCodeRaw = formData.get("event_code");
     const eventCodeParsed = formEventCodeSchema.safeParse(
@@ -77,9 +118,9 @@ export async function POST(request: Request) {
       );
     }
 
-    if (file.type !== "application/pdf") {
+    if (!isPdfFile(file)) {
       return NextResponse.json(
-        { error: "File must be a PDF" },
+        { error: "File must be a PDF (.pdf)" },
         { status: 400 }
       );
     }
@@ -122,9 +163,22 @@ export async function POST(request: Request) {
       );
     }
 
+    let textForModel = extractedText.trim();
+    if (textForModel.length > MAX_EXTRACTED_TEXT_CHARS) {
+      console.warn(
+        "[evaluate-pdf] Truncating extracted text:",
+        textForModel.length,
+        "→",
+        MAX_EXTRACTED_TEXT_CHARS
+      );
+      textForModel =
+        textForModel.slice(0, MAX_EXTRACTED_TEXT_CHARS) +
+        "\n\n[…truncated for evaluation; document was longer]";
+    }
+
     const anthropic = new Anthropic({ apiKey });
     const system = buildEvaluationSystemPrompt(event.name);
-    const userContent = `[Written submission for evaluation]\n\n${extractedText}`;
+    const userContent = `[Written submission for evaluation]\n\n${textForModel}`;
 
     const response = await anthropic.messages.create({
       model: MODEL,
@@ -158,10 +212,11 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ content, pi_scores, overall_score });
   } catch (err) {
-    console.error("Evaluate PDF API error:", err);
-    return NextResponse.json(
-      { error: "Something went wrong. Please try again." },
-      { status: 500 }
-    );
+    console.error("[evaluate-pdf] unhandled error:", err);
+    const message = clientSafeErrorMessage(err);
+    const status =
+      err instanceof APIError && typeof err.status === "number" ? err.status : 500;
+    const httpStatus = status >= 400 && status < 600 ? status : 500;
+    return NextResponse.json({ error: message }, { status: httpStatus });
   }
 }

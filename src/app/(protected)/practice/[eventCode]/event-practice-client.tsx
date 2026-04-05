@@ -797,15 +797,31 @@ export function EventPracticeClient({
                     });
                   }
 
-                  const data = (await res.json().catch(() => ({}))) as {
+                  const rawBody = await res.text();
+                  let data = {} as {
                     content?: string;
                     pi_scores?: Record<string, number>;
                     overall_score?: number;
                     error?: string;
                   };
+                  try {
+                    data = rawBody ? (JSON.parse(rawBody) as typeof data) : {};
+                  } catch {
+                    data = {
+                      error:
+                        rawBody.slice(0, 280) ||
+                        `Request failed (${res.status} ${res.statusText || ""})`.trim(),
+                    };
+                  }
 
                   if (!res.ok) {
-                    toast.error(data?.error ?? "Something went wrong. Please try again.");
+                    const msg =
+                      data.error ||
+                      (res.status === 413
+                        ? "Upload too large for the server. Use a smaller PDF or paste text."
+                        : "Something went wrong. Please try again.");
+                    console.error("[practice] evaluate failed:", res.status, msg);
+                    toast.error(msg);
                     return;
                   }
 
@@ -849,8 +865,13 @@ export function EventPracticeClient({
                     console.error("[practice] Prepared save failed:", saveRes.status, saveErr);
                     toast.error(saveErr.error ?? "Session could not be updated. Try refreshing.");
                   }
-                } catch {
-                  toast.error("Could not evaluate. Please try again.");
+                } catch (e) {
+                  console.error("[practice] evaluate request error:", e);
+                  toast.error(
+                    e instanceof Error
+                      ? e.message
+                      : "Could not evaluate. Please try again."
+                  );
                 } finally {
                   setIsLoading(false);
                 }

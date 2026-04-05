@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  /** pdf-parse pulls in pdfjs-dist; bundling can break workers in production */
+  serverExternalPackages: ["pdf-parse", "pdfjs-dist"],
   images: {
     remotePatterns: [
       {
