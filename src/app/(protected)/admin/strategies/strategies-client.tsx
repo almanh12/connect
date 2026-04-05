@@ -100,6 +100,15 @@ const TAG_COLORS: Record<string, string> = {
   retention: "bg-emerald-100 text-emerald-800",
 };
 
+/** Display-only: capitalize first letter per word; DB values unchanged. */
+function capitalizeBadgeLabel(s: string): string {
+  return s
+    .trim()
+    .split(/\s+/)
+    .map((w) => (w ? w.charAt(0).toUpperCase() + w.slice(1).toLowerCase() : w))
+    .join(" ");
+}
+
 // ─── Props ───────────────────────────────────────────────────────────────────
 
 type ChapterOfficer = {
@@ -650,7 +659,7 @@ function NewStrategyCard({
               PRIORITY_STYLES[strategy.priority] ?? PRIORITY_STYLES.medium
             }`}
           >
-            {strategy.priority}
+            {capitalizeBadgeLabel(strategy.priority)}
           </span>
         </div>
       </div>
@@ -664,7 +673,7 @@ function NewStrategyCard({
                 TAG_COLORS[t.toLowerCase()] ?? "bg-[var(--gray-100)] text-[var(--gray-700)]"
               }`}
             >
-              {t}
+              {capitalizeBadgeLabel(t)}
             </span>
           ))}
         </div>
@@ -765,7 +774,7 @@ function ActiveStrategyCard({
           <h3 className="text-lg font-bold text-[var(--gray-900)]">{strategy.title}</h3>
           <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-[var(--gray-500)]">
             <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${PRIORITY_STYLES[strategy.priority] ?? PRIORITY_STYLES.medium}`}>
-              {strategy.priority}
+              {capitalizeBadgeLabel(strategy.priority)}
             </span>
             <span>{completedCount} of {totalCount} steps</span>
             {daysRemaining !== null && (
