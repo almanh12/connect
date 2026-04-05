@@ -10,6 +10,12 @@ import {
   PREPARED_EVENT_SCORING,
 } from "@/lib/ontario-deca-data";
 import {
+  buildWrittenEvaluationJsonSystemPrompt,
+  parseWrittenEvaluationJson,
+  formatWrittenEvaluationMarkdown,
+  flattenWrittenPiScores,
+} from "@/lib/written-evaluation";
+import {
   checkPracticeEvalRateLimit,
   recordPracticeEvalUsage,
 } from "@/lib/rate-limit";
@@ -73,24 +79,7 @@ When providing feedback, be encouraging but honest. Reference specific things th
 
   if (requestFeedback) {
     if (isWrittenSubmission) {
-      return `You are an expert DECA competition judge and coach. A student has uploaded their work for the event: ${event.name}.
-
-Evaluate based on DECA judging criteria:
-1. Content knowledge and accuracy
-2. Organization and structure
-3. Professional quality
-4. Use of evidence and examples
-5. Recommendations and conclusions
-
-Provide your response in this format:
-- Overall Score: X/100
-- Strengths: (3 bullet points)
-- Areas for Improvement: (3 bullet points with actionable suggestions)
-- Judge's Summary: (2-3 sentence overall assessment)
-
-Be encouraging but honest. These are high school students.
-
-Also return a JSON object with the PI category scores for tracking. Include this at the end of your response as: [PI_SCORES]{"category": score, ...}[/PI_SCORES]`;
+      return buildWrittenEvaluationJsonSystemPrompt(event.name);
     }
     return `${base}
 
@@ -199,6 +188,31 @@ export async function POST(request: Request) {
 
     const textBlock = response.content.find((b) => b.type === "text");
     let content = textBlock?.type === "text" ? textBlock.text : "";
+
+    if (request_feedback && isWrittenSubmission) {
+      const parsed = parseWrittenEvaluationJson(content);
+      if (!parsed) {
+        return NextResponse.json(
+          { error: "Could not parse written evaluation. Please try again." },
+          { status: 500 }
+        );
+      }
+      const formatted = formatWrittenEvaluationMarkdown(parsed, event.name);
+      const flat = flattenWrittenPiScores(parsed.pi_scores);
+      await recordPracticeEvalUsage(user.id);
+      return NextResponse.json({
+        content: formatted,
+        feedback: formatted,
+        pi_scores: flat,
+        overall_score: parsed.overall_score,
+        result: {
+          strengths: parsed.strengths,
+          improvements: parsed.improvements,
+          event_specific_tips: parsed.event_specific_tips,
+          overall_feedback: parsed.overall_feedback,
+        },
+      });
+    }
 
     let pi_scores: Record<string, number> | undefined;
     const piMatch = content.match(/\[PI_SCORES\]([\s\S]*?)\[\/PI_SCORES\]/);

@@ -88,8 +88,11 @@ export function SessionDetailClient({ session }: SessionDetailClientProps) {
     "Communication & Presentation Skills": 25,
     "Professional Presence & Poise": 15,
     "Executive Summary / Overview": 15,
-    "Research & Analysis": 25,
-    "Recommendations": 25,
+    "Research & Analysis": 20,
+    "Strategy & Implementation Plan": 25,
+    "Financial Projections / Budget": 20,
+    "Presentation & Format Quality": 20,
+    Recommendations: 25,
     "Presentation Quality": 20,
     "Innovation & Creativity": 15,
   };

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   Send,
@@ -19,7 +20,6 @@ import {
   Check,
 } from "lucide-react";
 import { toast } from "sonner";
-import ReactMarkdown from "react-markdown";
 import type { OntarioDecaEvent } from "@/lib/ontario-deca-data";
 import {
   getCategoryTemplate,
@@ -101,21 +101,6 @@ function parseDecaCaseFormat(text: string): DecaCaseSections | null {
   return Object.keys(sections).length > 0 ? sections : null;
 }
 
-/** Parse overall score from written/prepared AI text (markdown-tolerant). */
-function parseOverallScoreFromWrittenContent(content: string): number | null {
-  const m =
-    content.match(/\*\*Overall\s+Score\*\*[:\s]*(\d+)/i) ||
-    content.match(/(?:Overall\s+)?Score[:\s]*(\d+)(?:\s*\/\s*100)?/i);
-  return m?.[1] ? parseInt(m[1], 10) : null;
-}
-
-function extractJudgeSummaryLine(text: string): string | undefined {
-  const star = text.match(/\*\*Judge'?s\s+Summary\*\*[:\s]*([^\n]+)/i);
-  if (star?.[1]) return star[1].trim();
-  const plain = text.match(/Judge'?s\s+Summary[:\s]+([^\n]+)/i);
-  return plain?.[1]?.trim();
-}
-
 function parseLegacyCaseFormat(text: string): Record<string, string> | null {
   const sections: Record<string, string> = {};
   const parts = text.split(/\*\*([^*]+):\*\*/);
@@ -131,6 +116,7 @@ export function EventPracticeClient({
   event,
   initialSessions,
 }: EventPracticeClientProps) {
+  const router = useRouter();
   const template = getCategoryTemplate(event.category_key);
   const prepMin = getPrepTimeMinutes(event) ?? 0;
   const presMin = getPresentationTimeMinutes(event) ?? 10;
@@ -144,7 +130,7 @@ export function EventPracticeClient({
   const safePrep = (PREP_OPTIONS as readonly number[]).includes(prepMin) ? prepMin : 10;
   const safePres = (PRES_OPTIONS as readonly number[]).includes(presMin) ? presMin : 10;
 
-  const [step, setStep] = useState<"intro" | "prep" | "presentation" | "results">("intro");
+  const [step, setStep] = useState<"intro" | "prep" | "presentation">("intro");
   const [caseStudy, setCaseStudy] = useState<string | null>(null);
   const [caseData, setCaseData] = useState<ApiCaseData | null>(null);
   const [studentResponse, setStudentResponse] = useState("");
@@ -156,15 +142,6 @@ export function EventPracticeClient({
   const [customPresMin, setCustomPresMin] = useState(safePres);
   const [prepSecondsLeft, setPrepSecondsLeft] = useState(prepSec);
   const [presSecondsLeft, setPresSecondsLeft] = useState(presSec);
-  const [feedback, setFeedback] = useState<string | null>(null);
-  const [resultData, setResultData] = useState<{
-    overall_score?: number;
-    pi_scores?: Record<string, number>;
-    strengths?: string[];
-    improvements?: string[];
-    tips?: string[];
-    overall_feedback?: string;
-  } | null>(null);
   const [sessions, setSessions] = useState<Session[]>(initialSessions);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [practiceStartTime, setPracticeStartTime] = useState<number | null>(null);
@@ -237,17 +214,6 @@ export function EventPracticeClient({
         pi_scores: data?.pi_scores,
       });
       const content = data?.feedback ?? "";
-      setFeedback(content);
-      setResultData({
-        overall_score: data?.overall_score,
-        pi_scores: data?.pi_scores,
-        strengths: data?.result?.strengths,
-        improvements: data?.result?.improvements,
-        tips: data?.result?.event_specific_tips,
-        overall_feedback: data?.result?.overall_feedback,
-      });
-      setStep("results");
-
       const score = data?.overall_score ?? null;
       console.log("[practice] Updating database with score:", score);
 
@@ -290,25 +256,8 @@ export function EventPracticeClient({
         }
         console.error("[practice] Save failed:", saveRes.status, saveErr);
         toast.error(saveErr.error ?? "Session could not be updated. Try refreshing.");
-      }
-
-      const histRes = await fetch("/api/practice/history");
-      if (histRes.ok) {
-        const hist = await histRes.json();
-        const forEvent = (hist.sessions ?? []).filter(
-          (s: { event_code?: string; event_category?: string }) =>
-            (s.event_code || s.event_category) === event.code
-        );
-        setSessions(
-          forEvent.map((s: Session) => ({
-            id: s.id,
-            score: s.score,
-            pi_scores: s.pi_scores,
-            feedback: s.feedback,
-            duration_seconds: s.duration_seconds,
-            created_at: s.created_at,
-          }))
-        );
+      } else {
+        router.push(`/practice/history/${activeSessionId}`);
       }
     } catch (err) {
       toast.error("Could not get feedback. Please try again.");
@@ -316,6 +265,7 @@ export function EventPracticeClient({
       setIsLoading(false);
     }
   }, [
+    router,
     currentSessionId,
     event.code,
     event.name,
@@ -891,22 +841,11 @@ export function EventPracticeClient({
                   }
 
                   const feedbackText = data?.content ?? "";
-                  setFeedback(feedbackText);
-                  const overallForUi =
-                    data?.overall_score ?? parseOverallScoreFromWrittenContent(feedbackText);
-                  setResultData({
-                    overall_score: overallForUi ?? undefined,
-                    pi_scores: data?.pi_scores,
-                    overall_feedback: extractJudgeSummaryLine(feedbackText),
-                  });
-                  setStep("results");
 
                   const duration = practiceStartTime
                     ? Math.round((Date.now() - practiceStartTime) / 1000)
                     : null;
-                  const score =
-                    data?.overall_score ??
-                    parseOverallScoreFromWrittenContent(feedbackText);
+                  const score = data?.overall_score ?? null;
                   const saveRes = await fetch("/api/practice/save", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -936,24 +875,7 @@ export function EventPracticeClient({
                     console.error("[practice] Prepared save failed:", saveRes.status, saveErr);
                     toast.error(saveErr.error ?? "Session could not be updated. Try refreshing.");
                   } else {
-                    const histRes = await fetch("/api/practice/history");
-                    if (histRes.ok) {
-                      const hist = await histRes.json();
-                      const forEvent = (hist.sessions ?? []).filter(
-                        (s: { event_code?: string; event_category?: string }) =>
-                          (s.event_code || s.event_category) === event.code
-                      );
-                      setSessions(
-                        forEvent.map((s: Session) => ({
-                          id: s.id,
-                          score: s.score,
-                          pi_scores: s.pi_scores,
-                          feedback: s.feedback,
-                          duration_seconds: s.duration_seconds,
-                          created_at: s.created_at,
-                        }))
-                      );
-                    }
+                    router.push(`/practice/history/${sessionId}`);
                   }
                 } catch (e) {
                   console.error("[practice] evaluate request error:", e);
@@ -981,124 +903,6 @@ export function EventPracticeClient({
                   : "Evaluating submission..."
                 : "Evaluate My Submission"}
             </button>
-          </div>
-        )}
-        {step === "results" && feedback && (
-          <div className="space-y-6">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <h2 className="text-xl font-bold text-gray-900">Evaluation Results</h2>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    clearPracticeSessionId();
-                    setStep("intro");
-                    setFeedback(null);
-                    setResultData(null);
-                  }}
-                  className="flex items-center gap-2 rounded-lg bg-[#0072CE] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#004B87]"
-                >
-                  <RotateCcw className="h-4 w-4" />
-                  Submit Another
-                </button>
-                <Link
-                  href="/practice"
-                  className="flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to Practice Hub
-                </Link>
-              </div>
-            </div>
-
-            {resultData?.overall_score != null && (
-              <div className="rounded-[var(--radius-md)] border border-[var(--gray-200)] bg-white p-6 shadow-[var(--shadow-card)]">
-                <h3 className="mb-4 text-xs font-medium uppercase tracking-wide text-[var(--gray-500)]">
-                  Overall Score
-                </h3>
-                <div className="flex flex-wrap items-center gap-4">
-                  <div
-                    className={`flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-full border-4 ${
-                      resultData.overall_score >= 80
-                        ? "border-[var(--success)] text-[var(--success)]"
-                        : resultData.overall_score >= 60
-                          ? "border-[var(--deca-gold)] text-[var(--deca-gold)]"
-                          : "border-[var(--warning)] text-[var(--warning)]"
-                    }`}
-                  >
-                    <span className="text-3xl font-bold">
-                      {(resultData.overall_score / 10).toFixed(1)}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="text-lg text-[var(--gray-400)]">out of 10</p>
-                    {resultData.overall_feedback && (
-                      <p className="mt-1 text-sm text-[var(--gray-700)]">
-                        &quot;{resultData.overall_feedback}&quot;
-                      </p>
-                    )}
-                  </div>
-                  <div className="points-earned-badge inline-flex items-center gap-1.5 rounded-full border border-[#00539B20] bg-[#E8F1FA] px-3.5 py-1.5 font-bold text-[13px] text-[#00539B]">
-                    +5 PTS ◇
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {resultData?.pi_scores && Object.keys(resultData.pi_scores).length > 0 && (
-              <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-                {Object.entries(resultData.pi_scores).map(([name, score]) => {
-                  const max =
-                    name.includes("Knowledge") || name.includes("Critical")
-                      ? 30
-                      : name.includes("Communication")
-                        ? 25
-                        : name.includes("Professional") || name.includes("Presence")
-                          ? 15
-                          : 25;
-                  const pct = Math.min(100, (score / max) * 100);
-                  return (
-                    <div
-                      key={name}
-                      className="rounded-[var(--radius-md)] border border-[var(--gray-200)] bg-white p-4 shadow-sm"
-                    >
-                      <p
-                        className="truncate text-[11px] font-medium uppercase tracking-wide text-[var(--gray-500)]"
-                        title={name}
-                      >
-                        {name.split(" ")[0]}
-                      </p>
-                      <p className="mt-1 text-xl font-bold text-[var(--deca-blue)]">
-                        {score}/{max}
-                      </p>
-                      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-[var(--gray-200)]">
-                        <div
-                          className={`h-full rounded-full ${
-                            pct >= 80
-                              ? "bg-[var(--success)]"
-                              : pct >= 60
-                                ? "bg-[var(--deca-gold)]"
-                                : "bg-[var(--warning)]"
-                          }`}
-                          style={{ width: `${pct}%` }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            <div className="rounded-[var(--radius-md)] border border-[var(--gray-200)] bg-white p-6 shadow-[var(--shadow-card)]">
-              <h3 className="mb-4 text-xs font-medium uppercase tracking-wide text-[var(--gray-500)]">
-                Detailed Feedback
-              </h3>
-              <div
-                className="prose prose-sm max-w-none text-[var(--gray-800)] prose-headings:text-[var(--gray-900)] prose-h1:text-lg prose-h2:text-base prose-h3:text-sm prose-strong:text-[var(--gray-900)] prose-hr:border-[var(--gray-200)] prose-li:my-0.5"
-              >
-                <ReactMarkdown>{feedback}</ReactMarkdown>
-              </div>
-            </div>
           </div>
         )}
       </div>
@@ -1193,7 +997,7 @@ export function EventPracticeClient({
                         {new Date(s.created_at).toLocaleDateString()}
                       </span>
                       <span className="font-medium text-[var(--deca-blue)]">
-                        {s.score != null ? `${(s.score / 10).toFixed(1)}/10` : "—"}
+                        {s.score != null ? `${s.score}/100` : "—"}
                       </span>
                     </div>
                   ))}
@@ -1461,183 +1265,6 @@ export function EventPracticeClient({
               </button>
             </div>
           </div>
-        </div>
-      )}
-
-      {step === "results" && feedback && (
-        <div className="space-y-6">
-          {/* Page header with actions */}
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <h1 className="text-xl font-bold text-[var(--gray-900)]">
-              {event.name} — Results
-            </h1>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  clearPracticeSessionId();
-                  setStep("intro");
-                  setCaseStudy(null);
-                  setCaseData(null);
-                  setStudentResponse("");
-                  setPrepNotes("");
-                  setFeedback(null);
-                  setResultData(null);
-                }}
-                className="flex items-center gap-2 rounded-lg bg-[var(--deca-blue)] px-4 py-2 text-sm font-medium text-white transition hover:bg-[var(--deca-blue-dark)]"
-              >
-                <RotateCcw className="h-4 w-4" />
-                Practice Again ↻
-              </button>
-              <Link
-                href="/practice"
-                className="flex items-center gap-2 rounded-lg border border-[var(--gray-200)] bg-white px-4 py-2 text-sm font-medium text-[var(--gray-700)] transition hover:bg-[var(--gray-50)]"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Practice
-              </Link>
-            </div>
-          </div>
-
-          {/* Overall score */}
-          {resultData?.overall_score != null && (
-            <div className="rounded-[var(--radius-md)] border border-[var(--gray-200)] bg-white p-6 shadow-[var(--shadow-card)]">
-              <h3 className="text-xs font-medium uppercase tracking-wide text-[var(--gray-500)] mb-4">
-                Overall Score
-              </h3>
-              <div className="flex flex-wrap items-center gap-4">
-                <div
-                  className={`flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-full border-4 ${
-                    resultData.overall_score >= 80
-                      ? "border-[var(--success)] text-[var(--success)]"
-                      : resultData.overall_score >= 60
-                        ? "border-[var(--deca-gold)] text-[var(--deca-gold)]"
-                        : "border-[var(--warning)] text-[var(--warning)]"
-                  }`}
-                >
-                  <span className="text-3xl font-bold">
-                    {(resultData.overall_score / 10).toFixed(1)}
-                  </span>
-                </div>
-                <div>
-                  <p className="text-lg text-[var(--gray-400)]">out of 10</p>
-                  {resultData.overall_feedback && (
-                    <p className="mt-1 text-sm text-[var(--gray-700)]">
-                      &quot;{resultData.overall_feedback}&quot;
-                    </p>
-                  )}
-                </div>
-                <div className="points-earned-badge inline-flex items-center gap-1.5 rounded-full border border-[var(--deca-blue)]/20 bg-[var(--deca-blue-light)] px-3.5 py-1.5 font-bold text-[13px] text-[var(--deca-blue)]">
-                  +5 PTS ◇
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Category scores */}
-          {resultData?.pi_scores && Object.keys(resultData.pi_scores).length > 0 && (
-            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-              {Object.entries(resultData.pi_scores).map(([name, score]) => {
-                const max = name.includes("Knowledge") || name.includes("Critical") ? 30 : name.includes("Communication") ? 25 : 15;
-                const pct = (score / max) * 100;
-                return (
-                  <div
-                    key={name}
-                    className="rounded-[var(--radius-md)] border border-[var(--gray-200)] bg-white p-4 shadow-sm"
-                  >
-                    <p className="text-[11px] font-medium uppercase tracking-wide text-[var(--gray-500)] truncate" title={name}>
-                      {name.split(" ")[0]}
-                    </p>
-                    <p className="mt-1 text-xl font-bold text-[var(--deca-blue)]">
-                      {score}/{max}
-                    </p>
-                    <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-[var(--gray-200)]">
-                      <div
-                        className={`h-full rounded-full ${
-                          pct >= 80 ? "bg-[var(--success)]" : pct >= 60 ? "bg-[var(--deca-gold)]" : "bg-[var(--warning)]"
-                        }`}
-                        style={{ width: `${pct}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Detailed feedback */}
-          <div className="rounded-[var(--radius-md)] border border-[var(--gray-200)] bg-white p-6 shadow-[var(--shadow-card)]">
-            <h3 className="text-xs font-medium uppercase tracking-wide text-[var(--gray-500)] mb-4">
-              Detailed Feedback
-            </h3>
-            {resultData?.strengths && resultData.strengths.length > 0 && (
-              <div className="mb-6 border-l-4 border-[var(--success)] pl-4">
-                <p className="text-sm font-semibold text-[var(--gray-900)]">✅ Strengths</p>
-                <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-[var(--gray-700)]">
-                  {resultData.strengths.map((s, i) => (
-                    <li key={i}>{s}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {resultData?.improvements && resultData.improvements.length > 0 && (
-              <div className="mb-6 border-l-4 border-[var(--deca-gold)] pl-4">
-                <p className="text-sm font-semibold text-[var(--gray-900)]">🔶 Areas for Improvement</p>
-                <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-[var(--gray-700)]">
-                  {resultData.improvements.map((s, i) => (
-                    <li key={i}>{s}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {resultData?.tips && resultData.tips.length > 0 && (
-              <div className="border-l-4 border-[var(--deca-blue)] pl-4">
-                <p className="text-sm font-semibold text-[var(--gray-900)]">💡 Tips for Next Time</p>
-                <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-[var(--gray-700)]">
-                  {resultData.tips.map((s, i) => (
-                    <li key={i}>{s}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {(!resultData?.strengths?.length && !resultData?.improvements?.length && !resultData?.tips?.length) && (
-              <div className="rounded-lg bg-[var(--gray-50)] p-4">
-                <pre className="whitespace-pre-wrap text-sm text-[var(--gray-800)]">{feedback}</pre>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {step === "results" && sessions.length > 0 && (
-        <div className="rounded-[var(--radius-md)] border border-[var(--gray-200)] bg-white p-6 shadow-[var(--shadow-card)]">
-          <h2 className="text-lg font-semibold text-[var(--gray-900)]">
-            Your history for {event.code}
-          </h2>
-          <ul className="mt-4 space-y-2">
-            {sessions.map((s) => (
-              <li
-                key={s.id}
-                className="flex items-center justify-between rounded-lg border border-[var(--gray-200)] bg-[var(--gray-50)] px-4 py-3"
-              >
-                <span className="text-sm text-[var(--gray-500)]">
-                  {new Date(s.created_at).toLocaleDateString()}
-                </span>
-                <div className="flex items-center gap-3">
-                  {s.duration_seconds != null && (
-                    <span className="text-xs text-[var(--gray-500)]">
-                      {Math.floor(s.duration_seconds / 60)}m
-                    </span>
-                  )}
-                  {s.score != null && (
-                    <span className="rounded-full bg-[var(--deca-blue-light)] px-2.5 py-0.5 text-sm font-medium text-[var(--deca-blue)]">
-                      {(s.score / 10).toFixed(1)}/10
-                    </span>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
         </div>
       )}
     </div>

@@ -4,6 +4,12 @@ import Anthropic, { APIError } from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { getEventByCode } from "@/lib/ontario-deca-data";
 import {
+  buildWrittenEvaluationJsonSystemPrompt,
+  parseWrittenEvaluationJson,
+  formatWrittenEvaluationMarkdown,
+  flattenWrittenPiScores,
+} from "@/lib/written-evaluation";
+import {
   checkPracticeEvalRateLimit,
   recordPracticeEvalUsage,
 } from "@/lib/rate-limit";
@@ -26,27 +32,6 @@ function clientSafeErrorMessage(err: unknown): string {
     return err.message.slice(0, MAX_CLIENT_ERROR_LEN);
   }
   return "An unexpected error occurred.";
-}
-
-function buildEvaluationSystemPrompt(eventName: string): string {
-  return `You are an expert DECA competition judge and coach. A student has uploaded their work for the event: ${eventName}.
-
-Evaluate based on DECA judging criteria:
-1. Content knowledge and accuracy
-2. Organization and structure
-3. Professional quality
-4. Use of evidence and examples
-5. Recommendations and conclusions
-
-Provide your response in this format:
-- Overall Score: X/100
-- Strengths: (3 bullet points)
-- Areas for Improvement: (3 bullet points with actionable suggestions)
-- Judge's Summary: (2-3 sentence overall assessment)
-
-Be encouraging but honest. These are high school students.
-
-Also return a JSON object with the PI category scores for tracking. Include this at the end of your response as: [PI_SCORES]{"category": score, ...}[/PI_SCORES]`;
 }
 
 function isOwnedStoragePath(userId: string, storagePath: string): boolean {
@@ -139,7 +124,7 @@ export async function POST(request: Request) {
     const base64Data = buffer.toString("base64");
 
     const anthropic = new Anthropic({ apiKey });
-    const system = buildEvaluationSystemPrompt(event.name);
+    const system = buildWrittenEvaluationJsonSystemPrompt(event.name);
 
     const response = await anthropic.messages.create({
       model: MODEL,
@@ -167,27 +152,21 @@ export async function POST(request: Request) {
     });
 
     const textBlock = response.content.find((b) => b.type === "text");
-    let content = textBlock?.type === "text" ? textBlock.text : "";
+    const rawText = textBlock?.type === "text" ? textBlock.text : "";
 
-    let pi_scores: Record<string, number> | undefined;
-    const piMatch = content.match(/\[PI_SCORES\]([\s\S]*?)\[\/PI_SCORES\]/);
-    if (piMatch) {
-      try {
-        pi_scores = JSON.parse(piMatch[1].trim()) as Record<string, number>;
-        content = content.replace(/\[PI_SCORES\][\s\S]*?\[\/PI_SCORES\]/, "").trim();
-      } catch {
-        // ignore parse errors
-      }
+    const evalParsed = parseWrittenEvaluationJson(rawText);
+    if (!evalParsed) {
+      return NextResponse.json(
+        { error: "Could not parse written evaluation. Please try again." },
+        { status: 500 }
+      );
     }
 
-    await recordPracticeEvalUsage(user.id);
+    const content = formatWrittenEvaluationMarkdown(evalParsed, event.name);
+    const pi_scores = flattenWrittenPiScores(evalParsed.pi_scores);
+    const overall_score = evalParsed.overall_score;
 
-    const overall_score =
-      pi_scores && typeof pi_scores === "object"
-        ? Math.round(
-            Object.values(pi_scores).reduce((a, b) => a + (typeof b === "number" ? b : 0), 0)
-          )
-        : undefined;
+    await recordPracticeEvalUsage(user.id);
 
     try {
       const { error: removeErr } = await admin.storage
@@ -200,7 +179,18 @@ export async function POST(request: Request) {
       console.warn("[evaluate-pdf] post-success cleanup:", cleanupErr);
     }
 
-    return NextResponse.json({ content, pi_scores, overall_score });
+    return NextResponse.json({
+      content,
+      feedback: content,
+      pi_scores,
+      overall_score,
+      result: {
+        strengths: evalParsed.strengths,
+        improvements: evalParsed.improvements,
+        event_specific_tips: evalParsed.event_specific_tips,
+        overall_feedback: evalParsed.overall_feedback,
+      },
+    });
   } catch (err) {
     console.error("[evaluate-pdf] unhandled error:", err);
     const message = clientSafeErrorMessage(err);
