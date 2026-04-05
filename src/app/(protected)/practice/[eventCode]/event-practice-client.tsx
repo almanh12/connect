@@ -30,6 +30,10 @@ import {
   ROLEPLAY_PI_SCORING,
   PREPARED_EVENT_SCORING,
 } from "@/lib/ontario-deca-data";
+import {
+  extractPdfTextInBrowser,
+  MAX_PDF_FILE_BYTES,
+} from "@/lib/extract-pdf-text-client";
 
 interface Session {
   id: string;
@@ -769,14 +773,42 @@ export function EventPracticeClient({
                   }
 
                   let res: Response;
+                  let extractedPdfTextForSave: string | null = null;
                   if (pdfFile) {
-                    const formData = new FormData();
-                    formData.append("file", pdfFile);
-                    formData.append("event_code", event.code);
+                    if (pdfFile.size > MAX_PDF_FILE_BYTES) {
+                      toast.error("PDF must be under 10 MB.");
+                      return;
+                    }
+                    let extracted: string;
+                    try {
+                      extracted = await extractPdfTextInBrowser(pdfFile);
+                    } catch (e) {
+                      console.error("[practice] PDF extract failed:", e);
+                      toast.error(
+                        e instanceof Error
+                          ? e.message
+                          : "Could not read this PDF. Try a different file or paste the text."
+                      );
+                      return;
+                    }
+                    if (!extracted.trim()) {
+                      toast.error(
+                        "No text could be extracted from the PDF. Try pasting the content instead."
+                      );
+                      return;
+                    }
+                    extractedPdfTextForSave =
+                      extracted.length > 200_000
+                        ? extracted.slice(0, 200_000)
+                        : extracted;
                     res = await fetch("/api/practice/evaluate-pdf", {
                       method: "POST",
-                      body: formData,
+                      headers: { "Content-Type": "application/json" },
                       credentials: "same-origin",
+                      body: JSON.stringify({
+                        event_code: event.code,
+                        extracted_text: extracted,
+                      }),
                     });
                   } else {
                     res = await fetch("/api/practice", {
@@ -851,7 +883,10 @@ export function EventPracticeClient({
                       pi_scores: data?.pi_scores ?? null,
                       feedback: data?.content ?? "",
                       duration_seconds: duration,
-                      student_response: (pastedContent ?? studentResponse.trim()) || null,
+                      student_response:
+                        (extractedPdfTextForSave ??
+                          (pastedContent ?? studentResponse.trim())) ||
+                        null,
                     }),
                   });
                   if (!saveRes.ok) {

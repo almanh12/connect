@@ -1,19 +1,16 @@
 import { createClient } from "@/lib/supabase/server";
 import Anthropic, { APIError } from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
-import { PDFParse } from "pdf-parse";
 import { getEventByCode } from "@/lib/ontario-deca-data";
 import {
   checkPracticeEvalRateLimit,
   recordPracticeEvalUsage,
 } from "@/lib/rate-limit";
-import { z } from "zod";
-
-const formEventCodeSchema = z.string().min(1).max(32).trim();
+import { parseJsonBody } from "@/lib/security/parse-json";
+import { evaluatePdfTextBodySchema } from "@/lib/security/schemas";
 
 const MODEL = "claude-opus-4-6";
-const MAX_PDF_SIZE_MB = 10;
-/** Keep prompt within model limits; huge extracted PDFs otherwise cause API errors */
+/** Keep prompt within model limits */
 const MAX_EXTRACTED_TEXT_CHARS = 150_000;
 
 export const runtime = "nodejs";
@@ -29,17 +26,6 @@ function clientSafeErrorMessage(err: unknown): string {
     return err.message.slice(0, MAX_CLIENT_ERROR_LEN);
   }
   return "An unexpected error occurred.";
-}
-
-function isPdfFile(file: File): boolean {
-  const name = (file.name ?? "").toLowerCase();
-  const t = (file.type ?? "").toLowerCase();
-  return (
-    t === "application/pdf" ||
-    t === "application/x-pdf" ||
-    t === "binary/octet-stream" ||
-    (name.endsWith(".pdf") && (t === "" || t === "application/octet-stream"))
-  );
 }
 
 function buildEvaluationSystemPrompt(eventName: string): string {
@@ -90,48 +76,10 @@ export async function POST(request: Request) {
       );
     }
 
-    let formData: FormData;
-    try {
-      formData = await request.formData();
-    } catch (formErr) {
-      console.error("[evaluate-pdf] formData() failed (body too large or bad multipart):", formErr);
-      return NextResponse.json(
-        {
-          error:
-            "Upload could not be read. Try a smaller PDF (under ~4 MB on many hosts), or paste the text instead.",
-        },
-        { status: 413 }
-      );
-    }
+    const parsed = await parseJsonBody(request, evaluatePdfTextBodySchema);
+    if (!parsed.ok) return parsed.response;
 
-    const file = formData.get("file") as File | null;
-    const eventCodeRaw = formData.get("event_code");
-    const eventCodeParsed = formEventCodeSchema.safeParse(
-      typeof eventCodeRaw === "string" ? eventCodeRaw : ""
-    );
-    const event_code = eventCodeParsed.success ? eventCodeParsed.data : null;
-
-    if (!file || !event_code) {
-      return NextResponse.json(
-        { error: "PDF file and a valid event_code are required" },
-        { status: 400 }
-      );
-    }
-
-    if (!isPdfFile(file)) {
-      return NextResponse.json(
-        { error: "File must be a PDF (.pdf)" },
-        { status: 400 }
-      );
-    }
-
-    const sizeMB = file.size / (1024 * 1024);
-    if (sizeMB > MAX_PDF_SIZE_MB) {
-      return NextResponse.json(
-        { error: `PDF must be under ${MAX_PDF_SIZE_MB} MB` },
-        { status: 400 }
-      );
-    }
+    const { event_code, extracted_text } = parsed.data;
 
     const event = getEventByCode(event_code);
     if (!event) {
@@ -141,29 +89,15 @@ export async function POST(request: Request) {
       );
     }
 
-    let extractedText: string;
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const parser = new PDFParse({ data: buffer });
-    try {
-      const result = await parser.getText();
-      extractedText = result?.text ?? "";
-      await parser.destroy();
-    } catch (parseErr) {
-      console.error("[evaluate-pdf] PDF parse error:", parseErr);
+    const trimmed = extracted_text.trim();
+    if (!trimmed) {
       return NextResponse.json(
-        { error: "Could not extract text from PDF. Try pasting the content instead." },
+        { error: "No text was provided for evaluation. Try pasting the content instead." },
         { status: 400 }
       );
     }
 
-    if (!extractedText.trim()) {
-      return NextResponse.json(
-        { error: "No text could be extracted from the PDF. Try pasting the content instead." },
-        { status: 400 }
-      );
-    }
-
-    let textForModel = extractedText.trim();
+    let textForModel = trimmed;
     if (textForModel.length > MAX_EXTRACTED_TEXT_CHARS) {
       console.warn(
         "[evaluate-pdf] Truncating extracted text:",

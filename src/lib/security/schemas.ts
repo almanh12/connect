@@ -37,6 +37,14 @@ export const practiceSaveBodySchema = z
     message: "event_code or event_category is required",
   });
 
+/** Prepared-event evaluation: client extracts PDF text; only text is sent (avoids large multipart bodies). */
+export const evaluatePdfTextBodySchema = z
+  .object({
+    event_code: z.string().min(1).max(32).trim(),
+    extracted_text: z.string().min(1).max(200_000),
+  })
+  .strict();
+
 export const competitionPostBodySchema = z
   .object({
     event_code: z.string().min(1).max(32),
