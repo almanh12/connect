@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import Anthropic, { APIError } from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { getEventByCode } from "@/lib/ontario-deca-data";
@@ -7,14 +8,13 @@ import {
   recordPracticeEvalUsage,
 } from "@/lib/rate-limit";
 import { parseJsonBody } from "@/lib/security/parse-json";
-import { evaluatePdfTextBodySchema } from "@/lib/security/schemas";
+import { evaluatePdfStorageBodySchema } from "@/lib/security/schemas";
 
 const MODEL = "claude-opus-4-6";
-/** Keep prompt within model limits */
-const MAX_EXTRACTED_TEXT_CHARS = 150_000;
+const BUCKET = "practice-submissions";
 
 export const runtime = "nodejs";
-export const maxDuration = 120;
+export const maxDuration = 300;
 
 const MAX_CLIENT_ERROR_LEN = 450;
 
@@ -49,12 +49,31 @@ Be encouraging but honest. These are high school students.
 Also return a JSON object with the PI category scores for tracking. Include this at the end of your response as: [PI_SCORES]{"category": score, ...}[/PI_SCORES]`;
 }
 
+function isOwnedStoragePath(userId: string, storagePath: string): boolean {
+  if (!storagePath || storagePath.startsWith("/") || storagePath.includes("..")) {
+    return false;
+  }
+  const prefix = `${userId}/`;
+  return storagePath.startsWith(prefix);
+}
+
 export async function POST(request: Request) {
   try {
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
         { error: "AI features are not configured. Contact your admin." },
+        { status: 503 }
+      );
+    }
+
+    let admin;
+    try {
+      admin = createAdminClient();
+    } catch (e) {
+      console.error("[evaluate-pdf] admin client:", e);
+      return NextResponse.json(
+        { error: "Server storage is not configured (missing service role key)." },
         { status: 503 }
       );
     }
@@ -76,10 +95,17 @@ export async function POST(request: Request) {
       );
     }
 
-    const parsed = await parseJsonBody(request, evaluatePdfTextBodySchema);
+    const parsed = await parseJsonBody(request, evaluatePdfStorageBodySchema);
     if (!parsed.ok) return parsed.response;
 
-    const { event_code, extracted_text } = parsed.data;
+    const { event_code, storage_path } = parsed.data;
+
+    if (!isOwnedStoragePath(user.id, storage_path)) {
+      return NextResponse.json(
+        { error: "Invalid or unauthorized file path." },
+        { status: 403 }
+      );
+    }
 
     const event = getEventByCode(event_code);
     if (!event) {
@@ -89,36 +115,55 @@ export async function POST(request: Request) {
       );
     }
 
-    const trimmed = extracted_text.trim();
-    if (!trimmed) {
+    const { data: fileBlob, error: downloadErr } = await admin.storage
+      .from(BUCKET)
+      .download(storage_path);
+
+    if (downloadErr || !fileBlob) {
+      console.error("[evaluate-pdf] download:", downloadErr);
       return NextResponse.json(
-        { error: "No text was provided for evaluation. Try pasting the content instead." },
+        { error: "Could not load the uploaded file. Try uploading again." },
         { status: 400 }
       );
     }
 
-    let textForModel = trimmed;
-    if (textForModel.length > MAX_EXTRACTED_TEXT_CHARS) {
-      console.warn(
-        "[evaluate-pdf] Truncating extracted text:",
-        textForModel.length,
-        "→",
-        MAX_EXTRACTED_TEXT_CHARS
+    const arrayBuffer = await fileBlob.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    if (buffer.length === 0) {
+      return NextResponse.json(
+        { error: "The uploaded file was empty." },
+        { status: 400 }
       );
-      textForModel =
-        textForModel.slice(0, MAX_EXTRACTED_TEXT_CHARS) +
-        "\n\n[…truncated for evaluation; document was longer]";
     }
+
+    const base64Data = buffer.toString("base64");
 
     const anthropic = new Anthropic({ apiKey });
     const system = buildEvaluationSystemPrompt(event.name);
-    const userContent = `[Written submission for evaluation]\n\n${textForModel}`;
 
     const response = await anthropic.messages.create({
       model: MODEL,
       max_tokens: 2048,
       system,
-      messages: [{ role: "user", content: userContent }],
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: "[Written submission for evaluation]",
+            },
+            {
+              type: "document",
+              source: {
+                type: "base64",
+                media_type: "application/pdf",
+                data: base64Data,
+              },
+            },
+          ],
+        },
+      ],
     });
 
     const textBlock = response.content.find((b) => b.type === "text");
@@ -143,6 +188,17 @@ export async function POST(request: Request) {
             Object.values(pi_scores).reduce((a, b) => a + (typeof b === "number" ? b : 0), 0)
           )
         : undefined;
+
+    try {
+      const { error: removeErr } = await admin.storage
+        .from(BUCKET)
+        .remove([storage_path]);
+      if (removeErr) {
+        console.warn("[evaluate-pdf] post-success cleanup:", removeErr);
+      }
+    } catch (cleanupErr) {
+      console.warn("[evaluate-pdf] post-success cleanup:", cleanupErr);
+    }
 
     return NextResponse.json({ content, pi_scores, overall_score });
   } catch (err) {

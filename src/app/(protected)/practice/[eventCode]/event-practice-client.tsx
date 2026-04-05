@@ -30,10 +30,14 @@ import {
   ROLEPLAY_PI_SCORING,
   PREPARED_EVENT_SCORING,
 } from "@/lib/ontario-deca-data";
-import {
-  extractPdfTextInBrowser,
-  MAX_PDF_FILE_BYTES,
-} from "@/lib/extract-pdf-text-client";
+import { createClient as createSupabaseClient } from "@/lib/supabase/client";
+
+const PRACTICE_SUBMISSIONS_BUCKET = "practice-submissions";
+
+function sanitizePracticePdfName(name: string): string {
+  const base = name.replace(/[^a-zA-Z0-9._-]+/g, "_");
+  return base.slice(0, 180) || "submission.pdf";
+}
 
 interface Session {
   id: string;
@@ -129,6 +133,9 @@ export function EventPracticeClient({
   const [caseData, setCaseData] = useState<ApiCaseData | null>(null);
   const [studentResponse, setStudentResponse] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [preparedSubmitPhase, setPreparedSubmitPhase] = useState<
+    "idle" | "uploading" | "evaluating"
+  >("idle");
   const [customPrepMin, setCustomPrepMin] = useState(safePrep);
   const [customPresMin, setCustomPresMin] = useState(safePres);
   const [prepSecondsLeft, setPrepSecondsLeft] = useState(prepSec);
@@ -749,6 +756,7 @@ export function EventPracticeClient({
                 }
 
                 setIsLoading(true);
+                setPreparedSubmitPhase(pdfFile ? "uploading" : "evaluating");
                 setPracticeStartTime(Date.now());
                 try {
                   let sessionId = sessionIdRef.current ?? currentSessionId;
@@ -773,41 +781,40 @@ export function EventPracticeClient({
                   }
 
                   let res: Response;
-                  let extractedPdfTextForSave: string | null = null;
+                  let pdfLabelForSave: string | null = null;
                   if (pdfFile) {
-                    if (pdfFile.size > MAX_PDF_FILE_BYTES) {
-                      toast.error("PDF must be under 10 MB.");
+                    const supabase = createSupabaseClient();
+                    const {
+                      data: { user },
+                    } = await supabase.auth.getUser();
+                    if (!user) {
+                      toast.error("You must be signed in to upload a PDF.");
                       return;
                     }
-                    let extracted: string;
-                    try {
-                      extracted = await extractPdfTextInBrowser(pdfFile);
-                    } catch (e) {
-                      console.error("[practice] PDF extract failed:", e);
+                    const objectPath = `${user.id}/${Date.now()}-${sanitizePracticePdfName(pdfFile.name)}`;
+                    const { error: uploadErr } = await supabase.storage
+                      .from(PRACTICE_SUBMISSIONS_BUCKET)
+                      .upload(objectPath, pdfFile, {
+                        contentType: "application/pdf",
+                        cacheControl: "3600",
+                        upsert: false,
+                      });
+                    if (uploadErr) {
+                      console.error("[practice] Storage upload failed:", uploadErr);
                       toast.error(
-                        e instanceof Error
-                          ? e.message
-                          : "Could not read this PDF. Try a different file or paste the text."
+                        uploadErr.message || "Could not upload PDF. Please try again."
                       );
                       return;
                     }
-                    if (!extracted.trim()) {
-                      toast.error(
-                        "No text could be extracted from the PDF. Try pasting the content instead."
-                      );
-                      return;
-                    }
-                    extractedPdfTextForSave =
-                      extracted.length > 200_000
-                        ? extracted.slice(0, 200_000)
-                        : extracted;
+                    pdfLabelForSave = `[PDF] ${pdfFile.name}`;
+                    setPreparedSubmitPhase("evaluating");
                     res = await fetch("/api/practice/evaluate-pdf", {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
                       credentials: "same-origin",
                       body: JSON.stringify({
                         event_code: event.code,
-                        extracted_text: extracted,
+                        storage_path: objectPath,
                       }),
                     });
                   } else {
@@ -884,7 +891,7 @@ export function EventPracticeClient({
                       feedback: data?.content ?? "",
                       duration_seconds: duration,
                       student_response:
-                        (extractedPdfTextForSave ??
+                        (pdfLabelForSave ??
                           (pastedContent ?? studentResponse.trim())) ||
                         null,
                     }),
@@ -909,6 +916,7 @@ export function EventPracticeClient({
                   );
                 } finally {
                   setIsLoading(false);
+                  setPreparedSubmitPhase("idle");
                 }
               }}
               disabled={isLoading}
@@ -919,7 +927,11 @@ export function EventPracticeClient({
               ) : (
                 <FileText className="h-4 w-4" />
               )}
-              Evaluate My Submission
+              {isLoading
+                ? preparedSubmitPhase === "uploading"
+                  ? "Uploading PDF..."
+                  : "Evaluating submission..."
+                : "Evaluate My Submission"}
             </button>
           </div>
         )}

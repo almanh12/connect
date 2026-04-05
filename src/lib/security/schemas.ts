@@ -37,13 +37,20 @@ export const practiceSaveBodySchema = z
     message: "event_code or event_category is required",
   });
 
-/** Prepared-event evaluation: client extracts PDF text; only text is sent (avoids large multipart bodies). */
-export const evaluatePdfTextBodySchema = z
+/** Prepared-event evaluation: PDF uploaded to Storage first; API receives path only. */
+export const evaluatePdfStorageBodySchema = z
   .object({
     event_code: z.string().min(1).max(32).trim(),
-    extracted_text: z.string().min(1).max(200_000),
+    storage_path: z
+      .string()
+      .min(3)
+      .max(500)
+      .regex(/^[a-zA-Z0-9._\-\/]+$/),
   })
-  .strict();
+  .strict()
+  .refine((d) => !d.storage_path.includes(".."), {
+    message: "Invalid storage path",
+  });
 
 export const competitionPostBodySchema = z
   .object({
