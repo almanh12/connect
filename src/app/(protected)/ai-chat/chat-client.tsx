@@ -16,6 +16,11 @@ import {
   PanelLeft,
   Paperclip,
   Mic,
+  Trophy,
+  MessageSquare,
+  CheckSquare,
+  BarChart,
+  type LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -35,11 +40,36 @@ import {
   clearConversationMessages,
 } from "./actions";
 
-const SUGGESTED_PROMPTS = [
-  "Pick a competition event for me",
-  "Generate a roleplay case",
-  "Quiz me on performance indicators",
-  "What's my chapter's engagement looking like?",
+const SUGGESTED_PROMPTS: {
+  text: string;
+  icon: LucideIcon;
+  borderClass: string;
+  iconClass: string;
+}[] = [
+  {
+    text: "Pick a competition event for me",
+    icon: Trophy,
+    borderClass: "border-l-deca-blue",
+    iconClass: "text-deca-blue",
+  },
+  {
+    text: "Generate a roleplay case",
+    icon: MessageSquare,
+    borderClass: "border-l-deca-blue-dark",
+    iconClass: "text-deca-blue-dark",
+  },
+  {
+    text: "Quiz me on performance indicators",
+    icon: CheckSquare,
+    borderClass: "border-l-deca-blue-muted",
+    iconClass: "text-deca-blue-muted",
+  },
+  {
+    text: "What's my chapter's engagement looking like?",
+    icon: BarChart,
+    borderClass: "border-l-primary",
+    iconClass: "text-primary",
+  },
 ];
 
 const MAX_TEXTAREA_ROWS = 6;
@@ -145,6 +175,7 @@ export function ChatClient({
     : conversations;
   const grouped = groupConversationsByDate(filteredConvs);
   const hasMessages = messages.length > 0;
+  const isEmptyState = !hasMessages && !loadingMessages;
   const canSend = input.trim().length > 0 && !isLoading;
 
   const loadMessages = useCallback(async (convId: string) => {
@@ -565,8 +596,18 @@ export function ChatClient({
         </SheetContent>
       </Sheet>
 
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-        <header className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-4 py-2.5">
+      <div
+        className={cn(
+          "flex min-h-0 min-w-0 flex-1 flex-col",
+          isEmptyState && "overflow-hidden"
+        )}
+      >
+        <header
+          className={cn(
+            "flex shrink-0 items-center justify-between gap-3 border-b border-border px-4",
+            isEmptyState ? "py-2" : "py-2.5"
+          )}
+        >
           <div className="flex min-w-0 flex-1 items-center gap-2">
             <button
               type="button"
@@ -666,49 +707,79 @@ export function ChatClient({
 
         <div
           ref={chatContainerRef}
-          className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden scroll-smooth"
+          className={cn(
+            "min-h-0 flex-1 overflow-x-hidden scroll-smooth",
+            isEmptyState ? "overflow-hidden" : "overflow-y-auto"
+          )}
         >
           <div
             className={cn(
-              "mx-auto w-full max-w-[720px] px-4 py-6",
-              !hasMessages && !loadingMessages && "flex min-h-full flex-col justify-center"
+              "mx-auto w-full max-w-[720px] px-4",
+              isEmptyState
+                ? "flex min-h-full max-h-[min(80vh,calc(100vh-12rem))] flex-col justify-center py-2"
+                : "py-6"
             )}
           >
             {loadingMessages ? (
               <div className="flex min-h-[200px] items-center justify-center">
                 <p className="text-sm text-muted-foreground">Loading...</p>
               </div>
-            ) : !hasMessages ? (
-              <div className="flex flex-col items-center text-center">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent">
+            ) : isEmptyState ? (
+              <div className="relative flex w-full flex-col items-center text-center">
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-3xl"
+                  style={{
+                    background: `
+                      radial-gradient(ellipse 85% 55% at 50% 15%, color-mix(in srgb, var(--primary) 10%, transparent), transparent 65%),
+                      radial-gradient(ellipse 55% 45% at 85% 55%, color-mix(in srgb, var(--deca-blue-light) 12%, transparent), transparent 60%),
+                      radial-gradient(ellipse 50% 40% at 15% 75%, color-mix(in srgb, var(--deca-blue-muted) 8%, transparent), transparent 55%)
+                    `,
+                  }}
+                />
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent shadow-[var(--shadow-brand)]">
                   <Image
                     src="/deca-engage-logo.png"
                     alt="DECA Engage"
-                    width={40}
-                    height={40}
+                    width={36}
+                    height={36}
                     className="object-contain"
                   />
                 </div>
-                <h2 className="mt-6 text-2xl font-semibold tracking-tight text-foreground">
+                <h2 className="mt-3 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
                   How can I help with DECA today?
                 </h2>
-                <p className="mt-2 max-w-md text-sm text-muted-foreground">
+                <p className="mt-1 max-w-md text-sm text-muted-foreground">
                   Your competition coach for events, roleplays, performance indicators, and chapter insights.
                 </p>
-                <div className="mt-10 grid w-full max-w-lg grid-cols-1 gap-2 sm:grid-cols-2">
-                  {SUGGESTED_PROMPTS.map((text) => (
-                    <motion.button
-                      key={text}
-                      type="button"
-                      onClick={() => handleSuggestedClick(text)}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                      className="rounded-2xl border border-border bg-card px-4 py-3.5 text-left text-sm text-foreground shadow-sm transition-shadow hover:border-primary/30 hover:shadow-md"
-                    >
-                      {text}
-                    </motion.button>
-                  ))}
+                <div className="mt-4 grid w-full max-w-lg grid-cols-1 gap-1.5 sm:grid-cols-2">
+                  {SUGGESTED_PROMPTS.map((prompt) => {
+                    const Icon = prompt.icon;
+                    return (
+                      <motion.button
+                        key={prompt.text}
+                        type="button"
+                        onClick={() => handleSuggestedClick(prompt.text)}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                        className={cn(
+                          "flex w-full items-center gap-2.5 rounded-2xl border border-border border-l-[3px] bg-card px-3 py-2.5 text-left text-sm text-foreground shadow-sm transition-colors hover:bg-accent hover:shadow-[var(--shadow-brand)]",
+                          prompt.borderClass
+                        )}
+                      >
+                        <span
+                          className={cn(
+                            "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent",
+                            prompt.iconClass
+                          )}
+                        >
+                          <Icon className="h-4 w-4" strokeWidth={2} />
+                        </span>
+                        <span className="leading-snug">{prompt.text}</span>
+                      </motion.button>
+                    );
+                  })}
                 </div>
               </div>
             ) : (
@@ -781,7 +852,12 @@ export function ChatClient({
           </div>
         </div>
 
-        <div className="shrink-0 border-t border-border bg-background px-4 pb-5 pt-3">
+        <div
+          className={cn(
+            "shrink-0 border-t border-border bg-background px-4",
+            isEmptyState ? "pb-3 pt-2" : "pb-5 pt-3"
+          )}
+        >
           <div className="mx-auto w-full max-w-[720px]">
             <form onSubmit={handleSubmit}>
               <div
@@ -819,7 +895,7 @@ export function ChatClient({
                     placeholder="Ask anything about DECA..."
                     rows={1}
                     disabled={isLoading}
-                    className="max-h-[144px] min-h-[44px] flex-1 resize-none bg-transparent px-2 py-2.5 text-sm leading-6 text-foreground placeholder:text-muted-foreground focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                    className="max-h-[144px] min-h-[44px] flex-1 resize-none border-0 bg-transparent px-2 py-2.5 text-sm leading-6 text-foreground shadow-none placeholder:text-muted-foreground outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
                   />
                   <button
                     type="button"
@@ -844,7 +920,12 @@ export function ChatClient({
                   </button>
                 </div>
               </div>
-              <p className="mt-2 text-center text-xs text-muted-foreground">
+              <p
+                className={cn(
+                  "text-center text-xs text-muted-foreground",
+                  isEmptyState ? "mt-1" : "mt-2"
+                )}
+              >
                 Shift+Enter for newline
               </p>
             </form>
