@@ -14,8 +14,6 @@ import {
   MessageSquareOff,
   Search,
   PanelLeft,
-  Paperclip,
-  Mic,
   Trophy,
   MessageSquare,
   CheckSquare,
@@ -47,7 +45,7 @@ const SUGGESTED_PROMPTS: {
   iconClass: string;
 }[] = [
   {
-    text: "Pick a competition event for me",
+    text: "Pick a competition event",
     icon: Trophy,
     borderClass: "border-l-deca-blue",
     iconClass: "text-deca-blue",
@@ -59,13 +57,13 @@ const SUGGESTED_PROMPTS: {
     iconClass: "text-deca-blue-dark",
   },
   {
-    text: "Quiz me on performance indicators",
+    text: "Quiz me on key PIs",
     icon: CheckSquare,
     borderClass: "border-l-deca-blue-muted",
     iconClass: "text-deca-blue-muted",
   },
   {
-    text: "What's my chapter's engagement looking like?",
+    text: "Analyze chapter engagement",
     icon: BarChart,
     borderClass: "border-l-primary",
     iconClass: "text-primary",
@@ -708,35 +706,30 @@ export function ChatClient({
         <div
           ref={chatContainerRef}
           className={cn(
-            "min-h-0 flex-1 overflow-x-hidden scroll-smooth",
-            isEmptyState ? "overflow-hidden" : "overflow-y-auto"
+            "min-h-0 flex-1 overflow-x-hidden",
+            isEmptyState
+              ? "flex flex-col overflow-hidden"
+              : "overflow-y-auto scroll-smooth"
           )}
         >
-          <div
-            className={cn(
-              "mx-auto w-full max-w-[720px] px-4",
-              isEmptyState
-                ? "flex min-h-full max-h-[min(80vh,calc(100vh-12rem))] flex-col justify-center py-2"
-                : "py-6"
-            )}
-          >
-            {loadingMessages ? (
-              <div className="flex min-h-[200px] items-center justify-center">
-                <p className="text-sm text-muted-foreground">Loading...</p>
-              </div>
-            ) : isEmptyState ? (
-              <div className="relative flex w-full flex-col items-center text-center">
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-3xl"
-                  style={{
-                    background: `
-                      radial-gradient(ellipse 85% 55% at 50% 15%, color-mix(in srgb, var(--primary) 10%, transparent), transparent 65%),
-                      radial-gradient(ellipse 55% 45% at 85% 55%, color-mix(in srgb, var(--deca-blue-light) 12%, transparent), transparent 60%),
-                      radial-gradient(ellipse 50% 40% at 15% 75%, color-mix(in srgb, var(--deca-blue-muted) 8%, transparent), transparent 55%)
-                    `,
-                  }}
-                />
+          {loadingMessages ? (
+            <div className="mx-auto flex min-h-[200px] w-full max-w-[720px] items-center justify-center px-4 py-6">
+              <p className="text-sm text-muted-foreground">Loading...</p>
+            </div>
+          ) : isEmptyState ? (
+            <div className="relative mx-auto flex h-full min-h-0 w-full max-w-[720px] flex-col px-4">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
+                style={{
+                  background: `
+                    radial-gradient(ellipse 85% 55% at 50% 15%, color-mix(in srgb, var(--primary) 10%, transparent), transparent 65%),
+                    radial-gradient(ellipse 55% 45% at 85% 55%, color-mix(in srgb, var(--deca-blue-light) 12%, transparent), transparent 60%),
+                    radial-gradient(ellipse 50% 40% at 15% 75%, color-mix(in srgb, var(--deca-blue-muted) 8%, transparent), transparent 55%)
+                  `,
+                }}
+              />
+              <div className="flex shrink-0 flex-col items-center space-y-6 pt-[10vh] text-center">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent shadow-[var(--shadow-brand)]">
                   <Image
                     src="/deca-engage-logo.png"
@@ -746,13 +739,17 @@ export function ChatClient({
                     className="object-contain"
                   />
                 </div>
-                <h2 className="mt-3 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
-                  How can I help with DECA today?
-                </h2>
-                <p className="mt-1 max-w-md text-sm text-muted-foreground">
-                  Your competition coach for events, roleplays, performance indicators, and chapter insights.
-                </p>
-                <div className="mt-4 grid w-full max-w-lg grid-cols-1 gap-1.5 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+                    How can I help with DECA today?
+                  </h2>
+                  <p className="max-w-md text-sm text-muted-foreground">
+                    Your competition coach for events, roleplays, performance indicators, and chapter insights.
+                  </p>
+                </div>
+              </div>
+              <div className="flex min-h-0 flex-1 flex-col items-center justify-center py-6">
+                <div className="grid w-full max-w-2xl grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
                   {SUGGESTED_PROMPTS.map((prompt) => {
                     const Icon = prompt.icon;
                     return (
@@ -764,25 +761,27 @@ export function ChatClient({
                         whileTap={{ scale: 0.98 }}
                         transition={{ type: "spring", stiffness: 400, damping: 25 }}
                         className={cn(
-                          "flex w-full items-center gap-2.5 rounded-2xl border border-border border-l-[3px] bg-card px-3 py-2.5 text-left text-sm text-foreground shadow-sm transition-colors hover:bg-accent hover:shadow-[var(--shadow-brand)]",
+                          "flex w-full items-center gap-3 rounded-2xl border border-border border-l-[3px] bg-card p-4 text-left text-sm text-foreground shadow-sm transition-colors hover:bg-accent hover:shadow-[var(--shadow-brand)]",
                           prompt.borderClass
                         )}
                       >
                         <span
                           className={cn(
-                            "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent",
+                            "flex h-9 w-9 shrink-0 items-center justify-center self-center rounded-lg bg-accent",
                             prompt.iconClass
                           )}
                         >
                           <Icon className="h-4 w-4" strokeWidth={2} />
                         </span>
-                        <span className="leading-snug">{prompt.text}</span>
+                        <span className="min-w-0 flex-1 leading-snug">{prompt.text}</span>
                       </motion.button>
                     );
                   })}
                 </div>
               </div>
-            ) : (
+            </div>
+          ) : (
+            <div className="mx-auto w-full max-w-[720px] px-4 py-6">
               <div className="space-y-1 pb-4">
                 {messages.map((msg, i) => {
                   const prev = messages[i - 1];
@@ -848,14 +847,14 @@ export function ChatClient({
                   );
                 })}
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         <div
           className={cn(
             "shrink-0 border-t border-border bg-background px-4",
-            isEmptyState ? "pb-3 pt-2" : "pb-5 pt-3"
+            isEmptyState ? "pb-8 pt-3" : "pb-5 pt-3"
           )}
         >
           <div className="mx-auto w-full max-w-[720px]">
@@ -871,15 +870,7 @@ export function ChatClient({
                 <span className="pointer-events-none absolute left-4 top-3 rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
                   DECA Engage AI
                 </span>
-                <div className="flex items-end gap-0.5 px-2 pb-2 pt-9">
-                  <button
-                    type="button"
-                    disabled
-                    className="mb-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted-foreground"
-                    aria-label="Attach file (coming soon)"
-                  >
-                    <Paperclip className="h-4 w-4" />
-                  </button>
+                <div className="flex items-end gap-2 px-3 pb-2 pt-9">
                   <textarea
                     ref={inputRef}
                     value={input}
@@ -895,16 +886,8 @@ export function ChatClient({
                     placeholder="Ask anything about DECA..."
                     rows={1}
                     disabled={isLoading}
-                    className="max-h-[144px] min-h-[44px] flex-1 resize-none border-0 bg-transparent px-2 py-2.5 text-sm leading-6 text-foreground shadow-none placeholder:text-muted-foreground outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="max-h-[144px] min-h-[44px] flex-1 resize-none border-0 bg-transparent py-2.5 pl-1 pr-1 text-sm leading-6 text-foreground shadow-none placeholder:text-muted-foreground outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
                   />
-                  <button
-                    type="button"
-                    disabled
-                    className="mb-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted-foreground"
-                    aria-label="Voice input (coming soon)"
-                  >
-                    <Mic className="h-4 w-4" />
-                  </button>
                   <button
                     type="submit"
                     disabled={!canSend}
