@@ -1,6 +1,6 @@
 /**
  * Design system tokens for DECA Engage.
- * Matches globals.css and DECA brand guidelines.
+ * Canonical brand blue: #0072CE (--deca-blue). Matches globals.css.
  */
 export const TOKENS = {
   radius: {
@@ -8,12 +8,34 @@ export const TOKENS = {
     md: "var(--radius-md)",
     lg: "var(--radius-lg)",
     full: "var(--radius-full)",
+    panel: "var(--panel-radius)",
+    chip: "var(--chip-radius)",
   },
   shadow: {
     sm: "var(--shadow-sm)",
     md: "var(--shadow-md)",
     lg: "var(--shadow-lg)",
+    xl: "var(--shadow-xl)",
+    elevated: "var(--shadow-elevated)",
+    brand: "var(--shadow-brand)",
     card: "var(--shadow-card)",
+  },
+  motion: {
+    easeOut: "var(--ease-out)",
+    easeInOut: "var(--ease-in-out)",
+    easeEmphasized: "var(--ease-emphasized)",
+    instant: "var(--duration-instant)",
+    fast: "var(--duration-fast)",
+    normal: "var(--duration-normal)",
+    slow: "var(--duration-slow)",
+    slower: "var(--duration-slower)",
+    staggerStep: "var(--stagger-step)",
+  },
+  zIndex: {
+    dropdown: "var(--z-dropdown)",
+    modal: "var(--z-modal)",
+    toast: "var(--z-toast)",
+    navProgress: "var(--z-nav-progress)",
   },
   colors: {
     "deca-blue": "var(--deca-blue)",
@@ -24,19 +46,31 @@ export const TOKENS = {
     "deca-gold": "var(--deca-gold)",
     "deca-gold-light": "var(--deca-gold-light)",
     "deca-gold-dark": "var(--deca-gold-dark)",
+    "achievement-gold": "var(--achievement-gold)",
+    "achievement-gold-muted": "var(--achievement-gold-muted)",
+    "on-achievement": "var(--on-achievement)",
     white: "var(--white)",
     gray: {
       50: "var(--gray-50)",
       100: "var(--gray-100)",
       200: "var(--gray-200)",
       300: "var(--gray-300)",
+      400: "var(--gray-400)",
       500: "var(--gray-500)",
+      600: "var(--gray-600)",
       700: "var(--gray-700)",
+      800: "var(--gray-800)",
       900: "var(--gray-900)",
     },
     success: "var(--success)",
     warning: "var(--warning)",
+    info: "var(--info)",
     error: "var(--error)",
+  },
+  typography: {
+    heading: "var(--font-heading)",
+    body: "var(--text-body)",
+    metricNumber: "var(--metric-number-size)",
   },
   spacing: {
     pagePadding: "1rem",

@@ -6,6 +6,10 @@ import { DisclaimerBanner } from "@/components/disclaimer-banner";
 import { SessionHandler } from "@/components/session-handler";
 import { NavigationProgress } from "@/components/navigation-progress";
 import "./globals.css";
+import { Inter } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
 const gotham = localFont({
   src: [
@@ -52,7 +56,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${gotham.variable} h-full antialiased`}
+      className={cn("h-full", "antialiased", gotham.variable, "font-sans", inter.variable)}
       suppressHydrationWarning
     >
       <body
