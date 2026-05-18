@@ -66,10 +66,10 @@ export function FilterChipBar({
         <button
           type="button"
           onClick={() => onChange(null)}
-          className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--deca-blue)] focus-visible:ring-offset-1 ${
+          className={`shrink-0 rounded-[var(--chip-radius)] px-3.5 py-1.5 text-xs font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 ${
             !value
-              ? "bg-[var(--deca-blue)] text-white"
-              : "border border-[var(--gray-200)] bg-white text-[var(--gray-600)] hover:border-[var(--gray-300)] hover:bg-[var(--gray-50)]"
+              ? "bg-primary text-primary-foreground"
+              : "border border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
           }`}
         >
           All
@@ -79,10 +79,10 @@ export function FilterChipBar({
             key={opt.value}
             type="button"
             onClick={() => onChange(value === opt.value ? null : opt.value)}
-            className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--deca-blue)] focus-visible:ring-offset-1 ${
+            className={`shrink-0 rounded-[var(--chip-radius)] px-3.5 py-1.5 text-xs font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 ${
               value === opt.value
-                ? "text-white"
-                : "border border-[var(--gray-200)] bg-white text-[var(--gray-600)] hover:border-[var(--gray-300)] hover:bg-[var(--gray-50)]"
+                ? "text-primary-foreground"
+                : "border border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}
             style={
               value === opt.value

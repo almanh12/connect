@@ -1,9 +1,22 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { ChevronRight, MapPin, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import {
+  ChevronRight,
+  MapPin,
+  MoreVertical,
+  Pencil,
+  Trash2,
+  TriangleAlert,
+} from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 export interface EventRowActionsEvent {
   id: string;
   title: string;
@@ -24,7 +37,6 @@ interface EventRowActionsProps<E extends EventRowActionsEvent = EventRowActionsE
 
 /**
  * Right-side meta/action area for event row: location, attendance, View button, overflow menu.
- * Reusable across event list UIs.
  */
 export function EventRowActions<E extends EventRowActionsEvent>({
   event,
@@ -34,30 +46,16 @@ export function EventRowActions<E extends EventRowActionsEvent>({
   onEdit,
   onDelete,
 }: EventRowActionsProps<E>) {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-
   const attendedCount = event.attended_count ?? 0;
   const totalMembers = event.total_members ?? 0;
   const hasAttendance = event.has_attendance_marked ?? attendedCount > 0;
   const hasActions = isAdmin && (onEdit || onDelete);
 
-  useEffect(() => {
-    if (!menuOpen) return;
-    const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [menuOpen]);
-
   return (
     <div className="flex shrink-0 items-center gap-3 pl-4">
       {event.location && (
         <span
-          className="flex items-center gap-1.5 text-[13px] text-[var(--gray-500)] whitespace-nowrap"
+          className="flex items-center gap-1.5 whitespace-nowrap text-[13px] text-muted-foreground"
           title={event.location}
         >
           <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden />
@@ -65,7 +63,7 @@ export function EventRowActions<E extends EventRowActionsEvent>({
         </span>
       )}
       {isAdmin && isPast && hasAttendance && (
-        <span className="text-xs font-medium text-[var(--success)] whitespace-nowrap">
+        <span className="whitespace-nowrap text-xs font-medium text-success">
           ✓ {attendedCount}/{totalMembers} attended
         </span>
       )}
@@ -73,84 +71,66 @@ export function EventRowActions<E extends EventRowActionsEvent>({
         <Link
           href={`/admin/attendance/${event.id}`}
           onClick={(e) => e.stopPropagation()}
-          className="inline-flex items-center rounded-md border border-[#D97706] bg-transparent px-3 py-1.5 text-xs font-medium text-[#D97706] transition hover:bg-[#FFFBEB]"
+          className="inline-flex items-center gap-1.5 rounded-[var(--radius-md)] border border-warning bg-transparent px-3 py-1.5 text-xs font-medium text-warning transition hover:bg-[var(--warning-light)]"
           aria-label={`Mark attendance for ${event.title}`}
         >
-          ⚠ Mark Attendance
+          <TriangleAlert className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          Mark Attendance
         </Link>
       )}
-      <button
+      <Button
         type="button"
+        variant="outline"
+        size="sm"
         onClick={(e) => {
           e.stopPropagation();
           onRowClick(event, isPast);
         }}
-        className="inline-flex items-center gap-1 rounded-lg border border-[var(--gray-200)] bg-white px-3 py-1.5 text-xs font-medium text-[var(--gray-700)] transition hover:bg-[var(--gray-50)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--deca-blue)] focus-visible:ring-offset-1"
+        className="gap-1"
         aria-label={`View ${event.title}`}
       >
         View
         <ChevronRight className="h-3.5 w-3.5" />
-      </button>
+      </Button>
       {hasActions && (
-        <div className="relative" ref={menuRef}>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setMenuOpen((v) => !v);
-            }}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--gray-500)] transition hover:bg-[var(--gray-100)] hover:text-[var(--gray-700)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--deca-blue)] focus-visible:ring-offset-1 disabled:opacity-50"
-            aria-label="More actions"
-            aria-expanded={menuOpen}
-            aria-haspopup="menu"
-          >
-            <MoreVertical className="h-4 w-4" />
-          </button>
-          {menuOpen && (
-            <>
-              <div
-                className="fixed inset-0 z-10"
-                onClick={() => setMenuOpen(false)}
-                aria-hidden
-              />
-              <div
-                role="menu"
-                className="absolute right-0 top-full z-20 mt-1 w-40 rounded-lg border border-[var(--gray-200)] bg-white py-1 shadow-lg"
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              onClick={(e) => e.stopPropagation()}
+              aria-label="More actions"
+            >
+              <MoreVertical className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+            {onEdit && (
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit();
+                }}
               >
-                {onEdit && (
-                  <button
-                    type="button"
-                    role="menuitem"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setMenuOpen(false);
-                      onEdit();
-                    }}
-                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-[var(--gray-700)] hover:bg-[var(--gray-50)]"
-                  >
-                    <Pencil className="h-4 w-4" />
-                    Edit
-                  </button>
-                )}
-                {onDelete && (
-                  <button
-                    type="button"
-                    role="menuitem"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setMenuOpen(false);
-                      onDelete();
-                    }}
-                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-[#DC2626] hover:bg-[#FEF2F2]"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    Delete
-                  </button>
-                )}
-              </div>
-            </>
-          )}
-        </div>
+                <Pencil className="h-4 w-4" />
+                Edit
+              </DropdownMenuItem>
+            )}
+            {onDelete && (
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete();
+                }}
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       )}
     </div>
   );

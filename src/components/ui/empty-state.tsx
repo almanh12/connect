@@ -1,5 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 
+import { cn } from "@/lib/utils";
+
 interface EmptyStateProps {
   icon: LucideIcon;
   title?: string;
@@ -11,7 +13,6 @@ interface EmptyStateProps {
 
 /**
  * Empty state: icon in small rounded square, optional title/description, primary CTA.
- * Matches dashboard screenshot styling.
  */
 export function EmptyState({
   icon: Icon,
@@ -19,21 +20,24 @@ export function EmptyState({
   description,
   primaryCta,
   action,
-  className = "",
+  className,
 }: EmptyStateProps) {
   const cta = primaryCta ?? action;
   return (
     <div
-      className={`flex min-h-[200px] flex-col items-center justify-center gap-4 py-8 px-4 text-center ${className}`}
+      className={cn(
+        "flex min-h-[200px] flex-col items-center justify-center gap-4 px-4 py-8 text-center",
+        className
+      )}
     >
       <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--deca-blue-light)] text-[var(--deca-blue)]">
         <Icon className="h-6 w-6" strokeWidth={1.5} aria-hidden />
       </div>
       {title && (
-        <p className="text-sm font-medium text-[#475569]">{title}</p>
+        <p className="text-sm font-medium text-muted-foreground">{title}</p>
       )}
       {description && (
-        <p className="max-w-[260px] text-xs text-[#64748B] leading-relaxed">
+        <p className="max-w-[260px] text-xs leading-relaxed text-muted-foreground">
           {description}
         </p>
       )}

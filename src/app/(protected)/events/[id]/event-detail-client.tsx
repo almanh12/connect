@@ -19,6 +19,10 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { deleteEvent } from "@/app/(protected)/admin/events/actions";
+import { getEventTypeIcon } from "@/lib/event-type-icons";
+import { RsvpToggle } from "@/components/rsvp-toggle";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { AttendanceView } from "@/app/(protected)/admin/events/attendance-view";
 import { createClient } from "@/lib/supabase/client";
@@ -32,17 +36,6 @@ const EVENT_TYPE_LABELS: Record<string, string> = {
   fundraiser: "Fundraiser",
   community_service: "Community Service",
   competition: "Competition",
-};
-
-const EVENT_TYPE_ICONS: Record<string, string> = {
-  meeting: "📋",
-  mcq_practice: "📝",
-  roleplay_practice: "🎭",
-  workshop: "🛠️",
-  social: "🎉",
-  fundraiser: "💰",
-  community_service: "🤝",
-  competition: "🏆",
 };
 
 interface EventDetailClientProps {
@@ -62,6 +55,8 @@ interface EventDetailClientProps {
   attendedCount: number;
   attendees: { id: string; full_name: string | null; avatar_url: string | null; attended: boolean }[];
   isOfficer: boolean;
+  hasRsvp: boolean;
+  isPast: boolean;
 }
 
 export function EventDetailClient({
@@ -70,6 +65,8 @@ export function EventDetailClient({
   attendedCount,
   attendees,
   isOfficer,
+  hasRsvp,
+  isPast,
 }: EventDetailClientProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
@@ -80,7 +77,7 @@ export function EventDetailClient({
 
   const eventType = event.event_type ?? "meeting";
   const typeLabel = EVENT_TYPE_LABELS[eventType] ?? eventType;
-  const typeIcon = EVENT_TYPE_ICONS[eventType] ?? "📅";
+  const TypeIcon = getEventTypeIcon(eventType);
   const isMandatory = event.is_mandatory ?? false;
 
   const handleShare = async () => {
@@ -131,23 +128,19 @@ export function EventDetailClient({
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       {/* Hero */}
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-[#0072CE]/5 to-white shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-[var(--deca-blue-light)] to-card shadow-sm">
         <div className="flex flex-col gap-4 p-6 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex gap-4">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-[#0072CE]/10 text-3xl">
-              {typeIcon}
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-[var(--deca-blue-light)] text-primary">
+              <TypeIcon className="h-7 w-7" aria-hidden />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">{event.title}</h1>
-              <p className="mt-1 text-sm text-gray-600">{typeLabel}</p>
+              <h1 className="text-2xl font-bold text-foreground">{event.title}</h1>
+              <p className="mt-1 text-sm text-muted-foreground">{typeLabel}</p>
               <div className="mt-2 flex flex-wrap items-center gap-2">
-                <span
-                  className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold ${
-                    isMandatory ? "bg-red-100 text-red-800" : "bg-blue-100 text-blue-800"
-                  }`}
-                >
+                <Badge variant={isMandatory ? "destructive" : "secondary"}>
                   {isMandatory ? "Mandatory" : "Optional"}
-                </span>
+                </Badge>
                 <span className="flex items-center gap-1.5 text-sm text-gray-600">
                   <Calendar className="h-4 w-4" />
                   {format(parseEventDateTime(event.start_time, event.date), "EEE, MMM d, yyyy")} ·{" "}
@@ -203,7 +196,7 @@ export function EventDetailClient({
             href={mapUrl ?? "#"}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-2 flex items-center gap-2 text-[#0072CE] hover:underline"
+            className="mt-2 flex min-h-11 items-center gap-2 text-primary hover:underline"
           >
             <MapPin className="h-5 w-5 shrink-0" />
             {event.location}
@@ -217,7 +210,7 @@ export function EventDetailClient({
             href={event.virtual_link}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 flex items-center gap-2 rounded-lg bg-[#0072CE] px-4 py-2.5 font-semibold text-white hover:bg-[#004B87]"
+            className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-lg bg-primary px-4 py-2.5 font-semibold text-primary-foreground hover:bg-[var(--deca-blue-dark)]"
           >
             <Video className="h-5 w-5" />
             Join virtually
@@ -264,7 +257,15 @@ export function EventDetailClient({
               </>
             )}
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
+            {!isOfficer && (
+              <RsvpToggle
+                key={`${event.id}-${hasRsvp}`}
+                eventId={event.id}
+                initialRsvped={hasRsvp}
+                isPast={isPast}
+              />
+            )}
             <button
               type="button"
               onClick={handleShare}

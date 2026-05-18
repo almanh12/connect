@@ -91,6 +91,7 @@ interface EventsClientProps {
   events: EventWithMeta[];
   isAdmin?: boolean;
   userId?: string;
+  rsvpEventIds?: string[];
   competitionRegistrations?: CompetitionRegistration[];
   chapterMembers?: ChapterMember[];
 }
@@ -600,6 +601,7 @@ export function EventsClient({
   events,
   isAdmin = false,
   userId = "",
+  rsvpEventIds = [],
   competitionRegistrations = [],
   chapterMembers = [],
 }: EventsClientProps) {
@@ -1122,6 +1124,11 @@ export function EventsClient({
       {selectedEvent && (
         <EventModal
           event={selectedEvent}
+          hasRsvp={rsvpEventIds.includes(selectedEvent.id)}
+          isPast={
+            parseEventDateTime(selectedEvent.start_time, selectedEvent.date) <
+            new Date()
+          }
           onClose={() => setSelectedEvent(null)}
           isAdmin={isAdmin}
           onEdit={() => {

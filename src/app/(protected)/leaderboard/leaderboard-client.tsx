@@ -1,49 +1,81 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Avatar } from "@/components/avatar";
 import { Crown, Search, TrendingUp, TrendingDown, Minus, Users, Trophy, Target, Award } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/ui/page-header";
 import { SegmentedControl } from "@/components/ui/segmented-control";
+import { cn } from "@/lib/utils";
+import { useProgressRouter } from "@/hooks/use-progress-router";
+import { navigationProgress } from "@/lib/navigation-progress";
 import type { LeaderboardEntry } from "@/lib/leaderboard";
 import { getTier, formatTierForDisplay } from "@/lib/points";
 
-/** Tier badge derived from engagement_score. Uses getTier() for correct tier/color. */
+/** Tier badge derived from engagement_score. */
 function TierBadge({ score }: { score: number }) {
   const tierInfo = getTier(score);
   const letter = tierInfo.name === "platinum" ? "P" : tierInfo.name.charAt(0).toUpperCase();
+  if (tierInfo.name === "gold") {
+    return (
+      <Badge variant="gold" className="h-5 px-1.5 text-[10px] font-bold">
+        {letter}
+      </Badge>
+    );
+  }
   return (
-    <span
-      className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider"
+    <Badge
+      variant="outline"
+      className="h-5 border-transparent px-1.5 text-[10px] font-bold"
       style={{
         backgroundColor: `${tierInfo.color}20`,
         color: tierInfo.color,
-        border: `1px solid ${tierInfo.color}40`,
+        borderColor: `${tierInfo.color}40`,
       }}
     >
       {letter}
-    </span>
+    </Badge>
   );
 }
 
-/** Full tier name badge for table — pill with tier color bg and white text. */
+/** Full tier name badge for table. */
 function TierBadgeFull({ score }: { score: number }) {
   const tierInfo = getTier(score);
-  const useLightText = ["silver", "gold", "platinum", "bronze"].includes(tierInfo.name);
+  if (tierInfo.name === "gold") {
+    return (
+      <Badge variant="gold" className="text-[11px] font-semibold uppercase tracking-wider">
+        {formatTierForDisplay(tierInfo.name)}
+      </Badge>
+    );
+  }
+  const useLightText = ["silver", "platinum", "bronze"].includes(tierInfo.name);
   return (
-    <span
-      className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider"
+    <Badge
+      variant="outline"
+      className="border-transparent text-[11px] font-semibold uppercase tracking-wider"
       style={{
         backgroundColor: tierInfo.color,
-        color: useLightText ? "#1a1a1a" : "#fff",
-        border: `1px solid ${tierInfo.color}`,
+        color: useLightText ? "var(--on-achievement)" : "var(--white)",
+        borderColor: tierInfo.color,
       }}
     >
       {formatTierForDisplay(tierInfo.name)}
-    </span>
+    </Badge>
   );
+}
+
+function usePrefersReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(mq.matches);
+    const onChange = () => setReduced(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+  return reduced;
 }
 
 /** Trend: up/down arrow + value when data exists; otherwise "No trend data" empty state. */
@@ -92,34 +124,37 @@ const PERIODS = [
 
 /** 25 confetti pieces with varied position, duration, delay, color, and shape. */
 const CONFETTI_PIECES = [
-  { left: 5, duration: 4.2, delay: 0, color: "#f59e0b", diamond: false },
-  { left: 12, duration: 5.1, delay: 1.2, color: "#eab308", diamond: true },
-  { left: 18, duration: 3.8, delay: 2.5, color: "#fbbf24", diamond: false },
-  { left: 25, duration: 6.2, delay: 0.8, color: "#d97706", diamond: true },
-  { left: 32, duration: 4.5, delay: 3.1, color: "#fcd34d", diamond: false },
-  { left: 40, duration: 5.8, delay: 0.3, color: "#f59e0b", diamond: true },
-  { left: 48, duration: 3.2, delay: 4.2, color: "#eab308", diamond: false },
-  { left: 55, duration: 6.5, delay: 1.5, color: "#fbbf24", diamond: true },
-  { left: 62, duration: 4.0, delay: 2.8, color: "#d97706", diamond: false },
-  { left: 70, duration: 5.3, delay: 0.1, color: "#fcd34d", diamond: true },
-  { left: 78, duration: 3.6, delay: 3.7, color: "#f59e0b", diamond: false },
-  { left: 85, duration: 6.0, delay: 1.0, color: "#eab308", diamond: true },
-  { left: 92, duration: 4.8, delay: 4.5, color: "#fbbf24", diamond: false },
-  { left: 8, duration: 5.5, delay: 2.2, color: "#d97706", diamond: true },
-  { left: 22, duration: 3.4, delay: 0.6, color: "#fcd34d", diamond: false },
-  { left: 38, duration: 6.3, delay: 3.3, color: "#f59e0b", diamond: true },
-  { left: 52, duration: 4.1, delay: 1.8, color: "#eab308", diamond: false },
-  { left: 68, duration: 5.7, delay: 4.0, color: "#fbbf24", diamond: true },
-  { left: 82, duration: 3.9, delay: 0.5, color: "#d97706", diamond: false },
-  { left: 95, duration: 6.1, delay: 2.9, color: "#fcd34d", diamond: true },
-  { left: 15, duration: 4.6, delay: 3.5, color: "#f59e0b", diamond: false },
-  { left: 30, duration: 5.2, delay: 1.2, color: "#eab308", diamond: true },
-  { left: 45, duration: 3.7, delay: 4.8, color: "#fbbf24", diamond: false },
-  { left: 60, duration: 6.4, delay: 0.9, color: "#d97706", diamond: true },
-  { left: 75, duration: 4.3, delay: 2.4, color: "#fcd34d", diamond: false },
+  { left: 5, duration: 4.2, delay: 0, color: "var(--achievement-gold)", diamond: false },
+  { left: 12, duration: 5.1, delay: 1.2, color: "var(--deca-gold)", diamond: true },
+  { left: 18, duration: 3.8, delay: 2.5, color: "var(--achievement-gold-muted)", diamond: false },
+  { left: 25, duration: 6.2, delay: 0.8, color: "var(--deca-gold-dark)", diamond: true },
+  { left: 32, duration: 4.5, delay: 3.1, color: "var(--achievement-gold)", diamond: false },
+  { left: 40, duration: 5.8, delay: 0.3, color: "var(--deca-gold)", diamond: true },
+  { left: 48, duration: 3.2, delay: 4.2, color: "var(--achievement-gold-muted)", diamond: false },
+  { left: 55, duration: 6.5, delay: 1.5, color: "var(--achievement-gold)", diamond: true },
+  { left: 62, duration: 4.0, delay: 2.8, color: "var(--deca-gold-dark)", diamond: false },
+  { left: 70, duration: 5.3, delay: 0.1, color: "var(--deca-gold)", diamond: true },
+  { left: 78, duration: 3.6, delay: 3.7, color: "var(--achievement-gold)", diamond: false },
+  { left: 85, duration: 6.0, delay: 1.0, color: "var(--achievement-gold-muted)", diamond: true },
+  { left: 92, duration: 4.8, delay: 4.5, color: "var(--deca-gold)", diamond: false },
+  { left: 8, duration: 5.5, delay: 2.2, color: "var(--achievement-gold)", diamond: true },
+  { left: 22, duration: 3.4, delay: 0.6, color: "var(--deca-gold-dark)", diamond: false },
+  { left: 38, duration: 6.3, delay: 3.3, color: "var(--achievement-gold-muted)", diamond: true },
+  { left: 52, duration: 4.1, delay: 1.8, color: "var(--achievement-gold)", diamond: false },
+  { left: 68, duration: 5.7, delay: 4.0, color: "var(--deca-gold)", diamond: true },
+  { left: 82, duration: 3.9, delay: 0.5, color: "var(--deca-gold-dark)", diamond: false },
+  { left: 95, duration: 6.1, delay: 2.9, color: "var(--achievement-gold-muted)", diamond: true },
+  { left: 15, duration: 4.6, delay: 3.5, color: "var(--achievement-gold)", diamond: false },
+  { left: 30, duration: 5.2, delay: 1.2, color: "var(--deca-gold)", diamond: true },
+  { left: 45, duration: 3.7, delay: 4.8, color: "var(--achievement-gold-muted)", diamond: false },
+  { left: 60, duration: 6.4, delay: 0.9, color: "var(--deca-gold-dark)", diamond: true },
+  { left: 75, duration: 4.3, delay: 2.4, color: "var(--achievement-gold)", diamond: false },
 ];
 
 function PodiumConfetti() {
+  const reducedMotion = usePrefersReducedMotion();
+  if (reducedMotion) return null;
+
   return (
     <div className="leaderboard-confetti-container" aria-hidden>
       {CONFETTI_PIECES.map((p, i) => (
@@ -146,10 +181,11 @@ export function LeaderboardClient({
   currentUserTier,
   tierProgress = { currentTier: "", nextTier: null, pointsNeeded: 0, progressPercent: 0 },
 }: LeaderboardClientProps) {
-  const router = useRouter();
+  const router = useProgressRouter();
   const searchParams = useSearchParams();
   const period = (searchParams.get("period") ?? "all") as string;
   const [searchQuery, setSearchQuery] = useState("");
+  const [isPeriodPending, startPeriodTransition] = useTransition();
 
   const safeEntries = Array.isArray(entries) ? entries : [];
 
@@ -164,16 +200,20 @@ export function LeaderboardClient({
   }, [safeEntries, searchQuery]);
 
   const updatePeriod = (p: string) => {
-    const next = new URLSearchParams(searchParams);
-    next.set("period", p);
-    router.push(`/leaderboard?${next.toString()}`);
+    if (p === period) return;
+    navigationProgress.start();
+    startPeriodTransition(() => {
+      const next = new URLSearchParams(searchParams);
+      next.set("period", p);
+      router.push(`/leaderboard?${next.toString()}`);
+    });
   };
 
   const top3 = safeEntries.slice(0, 3);
   const isSolo = safeEntries.length === 1;
 
   return (
-    <div className="space-y-6 animate-fade-in-up">
+    <div className="space-y-6">
       <PageHeader
         title="Leaderboard"
         description="See how you rank against your chapter members."
@@ -183,6 +223,7 @@ export function LeaderboardClient({
             value={period}
             onChange={updatePeriod}
             aria-label="Time range"
+            loading={isPeriodPending}
           />
         }
       />
@@ -268,7 +309,7 @@ export function LeaderboardClient({
           )}
           {safeEntries.length > 0 && (
             <div className="flex items-center gap-2 rounded-xl border border-[var(--gray-200)] bg-white px-4 py-2.5 shadow-sm transition hover:shadow-md">
-              <Award className="h-5 w-5 text-[#f59e0b]" />
+              <Award className="h-5 w-5 text-[var(--achievement-gold)]" />
               <span className="text-sm font-medium text-[var(--gray-700)]">
                 Top Performer: <strong className="text-[var(--gray-900)]">{safeEntries[0].full_name ?? "—"}</strong>
               </span>
@@ -322,37 +363,43 @@ export function LeaderboardClient({
               const rank = safeEntries.findIndex((e) => e.id === entry.id) + 1;
               const isCurrentUser = entry.id === currentUserId;
               const score = entry.engagement_score ?? 0;
-              const rowBg = index % 2 === 0 ? "bg-[#fafafa]" : "bg-white";
-
               return (
                 <tr
                   key={entry.id}
-                  className={`leaderboard-table-row border-b border-[var(--gray-100)] transition-colors duration-150 ${
+                  className={cn(
+                    "leaderboard-table-row border-b border-border transition-colors duration-150",
+                    index % 2 === 0 ? "bg-muted/30" : "bg-card",
                     isCurrentUser
-                      ? "bg-[#eff6ff] border-l-4 border-l-[#03396B]"
-                      : `${rowBg} hover:bg-[var(--deca-blue-light)]/40 hover:border-l-2 hover:border-l-[var(--deca-blue-muted)]`
-                  }`}
+                      ? "border-l-4 border-l-primary bg-[var(--deca-blue-light)]/50"
+                      : "hover:bg-muted hover:border-l-2 hover:border-l-[var(--deca-blue-muted)]"
+                  )}
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <td className="w-14 px-5 py-4">
                     {rank <= 3 ? (
                       <span
-                        className={`inline-flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold text-white ${
-                          rank === 1 ? "leaderboard-rank-badge-1" : rank === 2 ? "leaderboard-rank-badge-2" : "leaderboard-rank-badge-3"
-                        }`}
-                        style={{
-                          backgroundColor:
-                            rank === 1
-                              ? "#f59e0b"
-                              : rank === 2
-                                ? "#9ca3af"
-                                : "#b45309",
-                        }}
+                        className={cn(
+                          "inline-flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold tabular-nums text-white",
+                          rank === 1
+                            ? "leaderboard-rank-badge-1"
+                            : rank === 2
+                              ? "leaderboard-rank-badge-2"
+                              : "leaderboard-rank-badge-3"
+                        )}
+                        style={
+                          rank === 2
+                            ? { backgroundColor: "var(--tier-silver)" }
+                            : rank === 3
+                              ? { backgroundColor: "var(--tier-bronze)" }
+                              : undefined
+                        }
                       >
                         {rank}
                       </span>
                     ) : (
-                      <span className="text-sm font-semibold text-[var(--gray-600)]">#{rank}</span>
+                      <span className="text-sm font-semibold tabular-nums text-muted-foreground">
+                        #{rank}
+                      </span>
                     )}
                   </td>
                   <td className="px-5 py-4">
@@ -367,9 +414,7 @@ export function LeaderboardClient({
                         <p className="flex items-center gap-2 text-sm font-medium text-[var(--gray-900)]">
                           {entry.full_name ?? "Unknown"}
                           {isCurrentUser && (
-                            <span className="inline-flex rounded-full bg-[var(--deca-blue)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
-                              You
-                            </span>
+                            <Badge className="text-[10px] uppercase">You</Badge>
                           )}
                         </p>
                         {entry.email && (
@@ -447,7 +492,12 @@ function PodiumBlock({
         : "leaderboard-podium-bar leaderboard-podium-bar-3";
   const badgeClass =
     rank === 1 ? "leaderboard-rank-badge-1" : rank === 2 ? "leaderboard-rank-badge-2" : "leaderboard-rank-badge-3";
-  const badgeBg = rank === 1 ? "#f59e0b" : rank === 2 ? "#9ca3af" : "#b45309";
+  const badgeBg =
+    rank === 1
+      ? "var(--achievement-gold)"
+      : rank === 2
+        ? "var(--tier-silver)"
+        : "var(--tier-bronze)";
 
   return (
     <div
@@ -462,7 +512,10 @@ function PodiumBlock({
             style={{ animation: "leaderboard-crown-float 2s ease-in-out infinite" }}
             aria-hidden
           >
-            <Crown className="h-8 w-8 text-[#f59e0b]" fill="#f59e0b" />
+            <Crown
+              className="h-8 w-8 text-[var(--achievement-gold)]"
+              fill="var(--achievement-gold)"
+            />
           </div>
         )}
         <span

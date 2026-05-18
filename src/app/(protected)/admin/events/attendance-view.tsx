@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { QRCodeSVG } from "qrcode.react";
 import { X, Check, Download, QrCode } from "lucide-react";
@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import { parseEventDateTime } from "@/lib/utils";
 import { manualCheckIn } from "./actions";
 import { toast } from "sonner";
+import { useOptimisticAction } from "@/hooks/use-optimistic-action";
 import { QRModal } from "./qr-modal";
 
 const EVENT_TYPE_LABELS: Record<string, string> = {
@@ -49,28 +50,52 @@ export function AttendanceView({
   onClose,
   onUpdate,
 }: AttendanceViewProps) {
+  const [rows, setRows] = useState(attendance);
   const [showQRModal, setShowQRModal] = useState(false);
+
+  useEffect(() => {
+    setRows(attendance);
+  }, [attendance]);
+
   const checkInUrl =
     typeof window !== "undefined"
       ? `${window.location.origin}/checkin/${event.id}`
       : "";
 
-  const handleCheckIn = useCallback(
-    async (attendanceId: string) => {
-      const result = await manualCheckIn(attendanceId, event.id);
-      if (result.error) {
-        toast.error(result.error);
-        return;
-      }
-      toast.success("Member checked in");
-      onUpdate();
+  const { execute: runCheckIn } = useOptimisticAction({
+    action: (attendanceId: string) => manualCheckIn(attendanceId, event.id),
+    onOptimistic: (attendanceId) => {
+      let snapshot: AttendanceRecord[] | null = null;
+      setRows((prev) => {
+        snapshot = prev;
+        return prev.map((row) =>
+          row.id === attendanceId
+            ? {
+                ...row,
+                attended: true,
+                checked_in_at: new Date().toISOString(),
+              }
+            : row
+        );
+      });
+      return () => {
+        if (snapshot) setRows(snapshot);
+      };
     },
-    [event.id, onUpdate]
+    successToast: "Member checked in",
+    onSuccess: () => onUpdate(),
+  });
+
+  const handleCheckIn = useCallback(
+    (attendanceId: string) => {
+      void runCheckIn(attendanceId);
+    },
+    [runCheckIn]
   );
 
   const exportCsv = useCallback(() => {
     const headers = ["Name", "Email", "Status", "Checked In At"];
-    const rows = attendance.map((a) => [
+    const csvRows = rows.map((a) => [
       a.profile?.full_name ?? "—",
       a.profile?.email ?? "—",
       a.attended ? "Attended" : "RSVP'd",
@@ -78,7 +103,7 @@ export function AttendanceView({
         ? format(new Date(a.checked_in_at), "yyyy-MM-dd HH:mm")
         : "—",
     ]);
-    const csv = [headers.join(","), ...rows.map((r) => r.map((c) => `"${c}"`).join(","))].join("\n");
+    const csv = [headers.join(","), ...csvRows.map((r) => r.map((c) => `"${c}"`).join(","))].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -87,7 +112,7 @@ export function AttendanceView({
     a.click();
     URL.revokeObjectURL(url);
     toast.success("CSV exported");
-  }, [attendance, event.title]);
+  }, [rows, event.title]);
 
   const content = (
     <>
@@ -176,17 +201,17 @@ export function AttendanceView({
               eventId={event.id}
               eventTitle={event.title}
               checkInUrl={checkInUrl}
-              initialAttendedCount={attendance.filter((a) => a.attended).length}
+              initialAttendedCount={rows.filter((a) => a.attended).length}
               onClose={() => setShowQRModal(false)}
             />
           )}
 
           <h3 className="mb-3 font-medium text-gray-900">Attendance List</h3>
-          {attendance.length === 0 ? (
+          {rows.length === 0 ? (
             <p className="text-sm text-gray-500">No RSVPs yet</p>
           ) : (
             <ul className="divide-y divide-gray-200">
-              {attendance.map((a) => (
+              {rows.map((a) => (
                 <li
                   key={a.id}
                   className="flex items-center justify-between py-3"

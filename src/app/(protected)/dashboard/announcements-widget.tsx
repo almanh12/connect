@@ -6,11 +6,12 @@ import { format } from "date-fns";
 import { ChevronDown, ChevronUp, Megaphone } from "lucide-react";
 import type { Announcement } from "@/lib/types";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Badge } from "@/components/ui/badge";
 
 const PRIORITY_STRIPE: Record<string, string> = {
-  urgent: "bg-red-500",
-  normal: "bg-[#0072CE]",
-  fyi: "bg-gray-400",
+  urgent: "bg-destructive",
+  normal: "bg-primary",
+  fyi: "bg-muted-foreground/50",
 };
 
 function isNew(createdAt: string): boolean {
@@ -29,15 +30,13 @@ export function AnnouncementsWidget({ announcements, fullPage }: AnnouncementsWi
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+    <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-900">
-          Announcements
-        </h3>
+        <h3 className="text-sm font-semibold text-foreground">Announcements</h3>
         {!fullPage && (
           <Link
             href="/announcements"
-            className="text-xs font-medium text-[#0072CE] hover:underline"
+            className="text-xs font-medium text-primary hover:underline"
           >
             See All
           </Link>
@@ -62,43 +61,40 @@ export function AnnouncementsWidget({ announcements, fullPage }: AnnouncementsWi
             return (
               <li
                 key={ann.id}
-                className="flex overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm transition hover:border-gray-200"
+                className="flex overflow-hidden rounded-lg border border-border bg-card shadow-sm transition hover:border-border/80"
               >
                 <div className={`w-1 shrink-0 ${stripeColor}`} />
                 <button
                   type="button"
                   onClick={() => setExpandedId(expanded ? null : ann.id)}
-                  className="flex flex-1 flex-col items-start gap-1 p-4 text-left"
+                  className="flex min-h-11 flex-1 flex-col items-start gap-1 p-4 text-left"
                 >
                   <div className="flex w-full items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="text-sm font-medium text-gray-900">
-                          {ann.title}
-                        </p>
-                        {showNew && (
-                          <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
-                            New
-                          </span>
+                        <p className="text-sm font-medium text-foreground">{ann.title}</p>
+                        {showNew && <Badge variant="success">New</Badge>}
+                        {priority === "urgent" && (
+                          <Badge variant="destructive">Urgent</Badge>
                         )}
                       </div>
-                      <p className="mt-0.5 text-xs text-gray-500">
+                      <p className="mt-0.5 text-xs text-muted-foreground">
                         {format(new Date(ann.created_at), "MMM d, h:mm a")}
                       </p>
                     </div>
                     {expanded ? (
-                      <ChevronUp className="h-4 w-4 shrink-0 text-gray-400" />
+                      <ChevronUp className="h-4 w-4 shrink-0 text-muted-foreground" />
                     ) : (
-                      <ChevronDown className="h-4 w-4 shrink-0 text-gray-400" />
+                      <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
                     )}
                   </div>
                   {expanded && (
-                    <div className="mt-3 w-full rounded bg-gray-50 p-3 text-sm text-gray-700 whitespace-pre-wrap">
+                    <div className="mt-3 w-full whitespace-pre-wrap rounded-md bg-muted/50 p-3 text-sm text-foreground">
                       {ann.content}
                     </div>
                   )}
                   {!expanded && (
-                    <p className="mt-1 line-clamp-2 text-xs text-gray-500">
+                    <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
                       {ann.content}
                     </p>
                   )}

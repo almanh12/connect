@@ -55,7 +55,7 @@ export function ActivityFeed({ items }: ActivityFeedProps) {
               key={`${item.type}-${item.at}-${i}`}
               className="flex items-start gap-3 rounded-lg py-2"
             >
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#0072CE]/10 text-[#0072CE]">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <Icon className="h-4 w-4" />
               </div>
               <div className="min-w-0 flex-1">

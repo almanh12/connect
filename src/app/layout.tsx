@@ -1,10 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import { Toaster } from "sonner";
+import { Suspense } from "react";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { DisclaimerBanner } from "@/components/disclaimer-banner";
-import { SessionHandler } from "@/components/session-handler";
 import { NavigationProgress } from "@/components/navigation-progress";
+import { Providers } from "@/components/providers";
+import { SessionHandler } from "@/components/session-handler";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
@@ -62,15 +64,19 @@ export default function RootLayout({
       <body
         className={`${gotham.variable} font-gotham flex min-h-screen flex-col bg-[var(--gray-50)] text-[var(--gray-700)] font-normal`}
       >
-        <DisclaimerBanner />
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-          <ErrorBoundary>
-            <NavigationProgress />
-            <SessionHandler />
-            {children}
-            <Toaster position="top-center" duration={4000} toastOptions={{ style: { borderRadius: "0.5rem", fontSize: "0.875rem" } }} />
-          </ErrorBoundary>
-        </div>
+        <Providers>
+          <DisclaimerBanner />
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+            <ErrorBoundary>
+              <Suspense fallback={null}>
+                <NavigationProgress />
+              </Suspense>
+              <SessionHandler />
+              {children}
+              <Toaster position="top-center" duration={4000} />
+            </ErrorBoundary>
+          </div>
+        </Providers>
       </body>
     </html>
   );

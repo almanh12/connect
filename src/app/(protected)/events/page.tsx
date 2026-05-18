@@ -30,7 +30,7 @@ export default async function EventsPage() {
     profile?.role === "officer" ||
     profile?.role === "advisor";
 
-  const [eventsRes, attendanceRes, memberCountRes, registrationsRes, chapterMembersRes] =
+  const [eventsRes, attendanceRes, userRsvpRes, memberCountRes, registrationsRes, chapterMembersRes] =
     await Promise.all([
     supabase
       .from("events")
@@ -41,6 +41,7 @@ export default async function EventsPage() {
     isAdmin
       ? supabase.from("attendance").select("event_id, attended")
       : { data: [] as { event_id: string; attended: boolean }[] },
+    supabase.from("attendance").select("event_id").eq("user_id", user.id),
     isAdmin
       ? supabase
           .from("profiles")
@@ -88,6 +89,8 @@ export default async function EventsPage() {
   const chapterMembers =
     (chapterMembersRes as { data?: { id: string; full_name: string | null }[] })?.data ?? [];
 
+  const rsvpEventIds = (userRsvpRes.data ?? []).map((r) => r.event_id);
+
   const eventsWithMeta = events.map((e) => ({
     ...e,
     attended_count: attendedByEvent[e.id] ?? 0,
@@ -101,6 +104,7 @@ export default async function EventsPage() {
         events={eventsWithMeta}
         isAdmin={isAdmin}
         userId={user.id}
+        rsvpEventIds={rsvpEventIds}
         competitionRegistrations={(registrations as { id: string; user_id: string; event_code: string; event_name: string; competition_level: string; status: string; partner_id: string | null; created_at: string }[]).map((r) => ({
           id: r.id,
           user_id: r.user_id,

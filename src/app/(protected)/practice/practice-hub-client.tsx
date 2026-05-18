@@ -443,8 +443,8 @@ export function PracticeHubClient({
           onClick={() => setActiveTab("all-events")}
           className={`-mb-px border-b-2 border-transparent py-2.5 pr-6 text-sm font-medium transition ${
             activeTab === "all-events"
-              ? "text-[#2563eb]"
-              : "text-[var(--gray-400)] hover:text-[var(--gray-600)]"
+              ? "text-primary"
+              : "text-muted-foreground hover:text-foreground"
           }`}
         >
           All Events
@@ -455,8 +455,8 @@ export function PracticeHubClient({
           onClick={() => setActiveTab("practice-history")}
           className={`-mb-px border-b-2 border-transparent py-2.5 pr-6 text-sm font-medium transition ${
             activeTab === "practice-history"
-              ? "text-[#2563eb]"
-              : "text-[var(--gray-400)] hover:text-[var(--gray-600)]"
+              ? "text-primary"
+              : "text-muted-foreground hover:text-foreground"
           }`}
         >
           Practice History

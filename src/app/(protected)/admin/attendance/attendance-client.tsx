@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useRef, useLayoutEffect } from "react";
+import { useState, useRef, useLayoutEffect, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { parseEventDateTime } from "@/lib/utils";
 import {
@@ -25,6 +24,8 @@ import {
   awardBonusPoints,
 } from "./actions";
 import { toast } from "sonner";
+import { useOptimisticAction } from "@/hooks/use-optimistic-action";
+import { useProgressRouter } from "@/hooks/use-progress-router";
 import {
   LineChart,
   Line,
@@ -94,8 +95,13 @@ export function AttendanceClient({
   members,
   memberRates,
 }: AttendanceClientProps) {
-  const router = useRouter();
+  const router = useProgressRouter();
+  const [eventRows, setEventRows] = useState(events);
   const [expandedEvent, setExpandedEvent] = useState<string | null>(null);
+
+  useEffect(() => {
+    setEventRows(events);
+  }, [events]);
   const [awardPopover, setAwardPopover] = useState<{
     userId: string;
     userName: string;
@@ -117,36 +123,123 @@ export function AttendanceClient({
     }
   }, [activeTab]);
 
-  const handleMarkAttendance = async (
+  const patchEventAttendance = (
     eventId: string,
-    userId: string,
-    attended: boolean
+    updater: (map: Record<string, boolean>) => Record<string, boolean>
   ) => {
-    const result = await markAttendance(eventId, userId, attended);
-    if (result.error) toast.error(result.error);
-    else {
-      toast.success(attended ? "Marked present" : "Marked absent");
-      router.refresh();
-    }
+    setEventRows((prev) =>
+      prev.map((event) => {
+        if (event.id !== eventId) return event;
+        const attendance_map = updater({ ...event.attendance_map });
+        const present_count = Object.values(attendance_map).filter(Boolean).length;
+        return { ...event, attendance_map, present_count };
+      })
+    );
   };
 
-  const handleMarkAllPresent = async (eventId: string) => {
-    for (const m of members) {
-      await markAttendance(eventId, m.id, true);
-    }
-    toast.success("All marked present");
-    setExpandedEvent(null);
-    router.refresh();
+  const { execute: runMarkAttendance } = useOptimisticAction({
+    action: ({
+      eventId,
+      userId,
+      attended,
+    }: {
+      eventId: string;
+      userId: string;
+      attended: boolean;
+    }) => markAttendance(eventId, userId, attended),
+    onOptimistic: ({ eventId, userId, attended }) => {
+      let previousMap: Record<string, boolean> | null = null;
+      setEventRows((prev) =>
+        prev.map((event) => {
+          if (event.id !== eventId) return event;
+          previousMap = { ...event.attendance_map };
+          const attendance_map = { ...event.attendance_map, [userId]: attended };
+          const present_count = Object.values(attendance_map).filter(Boolean).length;
+          return { ...event, attendance_map, present_count };
+        })
+      );
+      return () => {
+        if (!previousMap) return;
+        patchEventAttendance(eventId, () => previousMap!);
+      };
+    },
+    successToast: false,
+    onSuccess: (_, { attended }) =>
+      toast.success(attended ? "Marked present" : "Marked absent"),
+  });
+
+  const handleMarkAttendance = (eventId: string, userId: string, attended: boolean) => {
+    void runMarkAttendance({ eventId, userId, attended });
   };
 
-  const handleMarkAllAbsent = async (eventId: string) => {
-    const result = await markAllAbsent(eventId);
-    if (result.error) toast.error(result.error);
-    else {
-      toast.success("All marked absent");
-      setExpandedEvent(null);
-      router.refresh();
-    }
+  const { execute: runMarkAllPresent, isPending: isMarkingAllPresent } =
+    useOptimisticAction({
+      action: async (eventId: string) => {
+        for (const m of members) {
+          const result = await markAttendance(eventId, m.id, true);
+          if (result.error) return result;
+        }
+        return { success: true };
+      },
+      onOptimistic: (eventId) => {
+        let snapshot: EventWithStats[] | null = null;
+        setEventRows((prev) => {
+          snapshot = prev;
+          return prev.map((event) => {
+            if (event.id !== eventId) return event;
+            const attendance_map = Object.fromEntries(
+              members.map((m) => [m.id, true])
+            );
+            return {
+              ...event,
+              attendance_map,
+              present_count: members.length,
+            };
+          });
+        });
+        return () => {
+          if (snapshot) setEventRows(snapshot);
+        };
+      },
+      successToast: "All marked present",
+      onSuccess: () => {
+        setExpandedEvent(null);
+        router.refresh();
+      },
+    });
+
+  const handleMarkAllPresent = (eventId: string) => {
+    void runMarkAllPresent(eventId);
+  };
+
+  const { execute: runMarkAllAbsent, isPending: isMarkingAllAbsent } =
+    useOptimisticAction({
+      action: (eventId: string) => markAllAbsent(eventId),
+      onOptimistic: (eventId) => {
+        let snapshot: EventWithStats[] | null = null;
+        setEventRows((prev) => {
+          snapshot = prev;
+          return prev.map((event) => {
+            if (event.id !== eventId) return event;
+            const attendance_map = Object.fromEntries(
+              members.map((m) => [m.id, false])
+            );
+            return { ...event, attendance_map, present_count: 0 };
+          });
+        });
+        return () => {
+          if (snapshot) setEventRows(snapshot);
+        };
+      },
+      successToast: "All marked absent",
+      onSuccess: () => {
+        setExpandedEvent(null);
+        router.refresh();
+      },
+    });
+
+  const handleMarkAllAbsent = (eventId: string) => {
+    void runMarkAllAbsent(eventId);
   };
 
   const handleAwardPoints = async (userId: string) => {
@@ -304,7 +397,7 @@ export function AttendanceClient({
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {events
+              {eventRows
                 .sort(
                   (a, b) =>
                     parseEventDateTime(b.start_time, b.date).getTime() -
@@ -385,7 +478,7 @@ export function AttendanceClient({
 
       {activeTab === "events" && (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 hidden">
-          {events.map((event) => {
+          {eventRows.map((event) => {
             const isExpanded = expandedEvent === event.id;
             const rate =
               event.total_members > 0
@@ -449,14 +542,16 @@ export function AttendanceClient({
                         <button
                           type="button"
                           onClick={() => handleMarkAllPresent(event.id)}
-                          className="rounded-lg bg-[#0072CE] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#004B87]"
+                          disabled={isMarkingAllPresent || isMarkingAllAbsent}
+                          className="rounded-lg bg-[#0072CE] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#004B87] disabled:opacity-50"
                         >
                           Mark All Present
                         </button>
                         <button
                           type="button"
                           onClick={() => handleMarkAllAbsent(event.id)}
-                          className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium hover:bg-gray-100"
+                          disabled={isMarkingAllPresent || isMarkingAllAbsent}
+                          className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium hover:bg-gray-100 disabled:opacity-50"
                         >
                           Mark All Absent
                         </button>

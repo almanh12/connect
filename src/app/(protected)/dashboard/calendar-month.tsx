@@ -326,7 +326,7 @@ export function CalendarMonth({
                     <button
                       type="button"
                       onClick={() => setSelectedEvent(e)}
-                      className="mt-2 rounded bg-[#0072CE] px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-[#004B87]"
+                      className="mt-2 min-h-11 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition hover:bg-[var(--deca-blue-dark)]"
                     >
                       View
                     </button>

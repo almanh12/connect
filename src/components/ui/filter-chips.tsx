@@ -1,5 +1,7 @@
 "use client";
 
+import { cn } from "@/lib/utils";
+
 export interface FilterChipOption {
   value: string;
   label: string;
@@ -19,7 +21,7 @@ function normalizeValue(v: string | null): string {
 
 /**
  * Filter chips for quick filtering. Selected chip has filled background.
- * Medium radius, subtle border. Keyboard focus states.
+ * Chip radius via --chip-radius. Keyboard focus states.
  */
 export function FilterChips({
   options,
@@ -41,12 +43,13 @@ export function FilterChips({
           <button
             key={opt.value || "__all__"}
             type="button"
-            onClick={() => onChange(isSelected ? null : (opt.value || null))}
-            className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--deca-blue)] focus-visible:ring-offset-1 ${
+            onClick={() => onChange(isSelected ? null : opt.value || null)}
+            className={cn(
+              "rounded-[var(--chip-radius)] border px-3 py-1.5 text-xs font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
               isSelected
                 ? "border-[var(--deca-blue)] bg-[var(--deca-blue-light)] text-[var(--deca-blue)]"
-                : "border-[var(--gray-200)] bg-white text-[var(--gray-600)] hover:border-[var(--gray-300)] hover:bg-[var(--gray-50)]"
-            }`}
+                : "border-border bg-card text-muted-foreground hover:border-border hover:bg-muted hover:text-foreground"
+            )}
           >
             {opt.label}
           </button>

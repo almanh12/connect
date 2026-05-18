@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { cn } from "@/lib/utils";
+
 import { Breadcrumbs, type BreadcrumbItem } from "./breadcrumbs";
+import { cn } from "@/lib/utils";
 
 interface PageHeaderProps {
   title: string;
@@ -24,7 +25,7 @@ export function PageHeader({
   breadcrumbs,
   backHref,
   action,
-  className = "",
+  className,
   compact = false,
 }: PageHeaderProps) {
   return (
@@ -34,7 +35,7 @@ export function PageHeader({
           {backHref && (
             <Link
               href={backHref}
-              className="flex items-center gap-1 rounded-[var(--radius-sm)] p-1.5 text-[var(--gray-500)] transition hover:bg-[var(--gray-100)] hover:text-[var(--gray-900)]"
+              className="flex items-center gap-1 rounded-[var(--radius-sm)] p-1.5 text-muted-foreground transition hover:bg-muted hover:text-foreground"
               aria-label="Go back"
               title="Go back"
             >
@@ -48,18 +49,18 @@ export function PageHeader({
       )}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--gray-900)] tracking-tight">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
             {title}
           </h1>
           {description && (
-            <p className="mt-1 text-sm text-[var(--gray-500)] max-w-[80ch]">
+            <p className="mt-1 max-w-[80ch] text-sm text-muted-foreground">
               {description}
             </p>
           )}
         </div>
         {action && <div className="shrink-0 sm:mt-0">{action}</div>}
       </div>
-      <div className={cn("h-px bg-[var(--gray-200)]", compact ? "mt-6" : "mt-8")} />
+      <div className={cn("h-px bg-border", compact ? "mt-6" : "mt-8")} />
     </header>
   );
 }

@@ -1,6 +1,7 @@
 import React from "react";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
+import { parseEventDateTime } from "@/lib/utils";
 import { redirect, notFound } from "next/navigation";
 import { EventDetailClient } from "./event-detail-client";
 
@@ -62,6 +63,8 @@ export default async function EventDetailPage({
   ]);
 
   const attendedCount = attendances?.filter((a) => a.attended).length ?? 0;
+  const hasRsvp = (attendances ?? []).some((a) => a.user_id === user.id);
+  const isPast = parseEventDateTime(event.start_time, event.date) < new Date();
 
   const attendees = (attendances ?? [])
     .map((a) => {
@@ -85,6 +88,8 @@ export default async function EventDetailPage({
       attendedCount={attendedCount}
       attendees={attendees}
       isOfficer={isOfficer}
+      hasRsvp={hasRsvp}
+      isPast={isPast}
     />
   );
 }

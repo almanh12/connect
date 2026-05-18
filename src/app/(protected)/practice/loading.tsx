@@ -1,5 +1,5 @@
-import { PageSkeleton } from "@/components/ui/page-skeleton";
+import { PracticeHubSkeleton } from "./practice-skeletons";
 
 export default function PracticeLoading() {
-  return <PageSkeleton />;
+  return <PracticeHubSkeleton />;
 }

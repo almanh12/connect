@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useProgressRouter } from "@/hooks/use-progress-router";
+import { navigationProgress } from "@/lib/navigation-progress";
 import Link from "next/link";
 import { format, differenceInDays, startOfDay } from "date-fns";
 import { parseEventDateTime } from "@/lib/utils";
@@ -24,8 +25,10 @@ import {
   MessageSquare,
   User,
 } from "lucide-react";
-import { StatCard } from "@/components/ui/stat-card";
+import { Badge } from "@/components/ui/badge";
 import { PanelCard } from "@/components/ui/panel-card";
+import { StatCard } from "@/components/ui/stat-card";
+import { DashboardQuickActionsGrid } from "./dashboard-quick-actions";
 import { EventRow } from "./event-row";
 import { LeaderboardRow } from "./leaderboard-row";
 
@@ -71,11 +74,14 @@ interface DashboardContentProps {
   competitionRegistrations?: CompetitionRegistrationDisplay[];
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  registered: "#6b7280",
-  confirmed: "#059669",
-  completed: "#2563eb",
-  withdrawn: "#ef4444",
+const STATUS_BADGE: Record<
+  string,
+  "secondary" | "success" | "default" | "destructive"
+> = {
+  registered: "secondary",
+  confirmed: "success",
+  completed: "default",
+  withdrawn: "destructive",
 };
 
 export function DashboardContent({
@@ -91,7 +97,7 @@ export function DashboardContent({
   topLeaderboard = [],
   competitionRegistrations = [],
 }: DashboardContentProps) {
-  const router = useRouter();
+  const router = useProgressRouter();
   const [pullStart, setPullStart] = useState(0);
   const [pullY, setPullY] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -113,7 +119,10 @@ export function DashboardContent({
   }, [pullStart]);
 
   const onPullEnd = useCallback(() => {
-    if (pullY > 60) router.refresh();
+    if (pullY > 60) {
+      navigationProgress.start();
+      router.refresh();
+    }
     setPullStart(0);
     setPullY(0);
   }, [pullY, router]);
@@ -138,11 +147,20 @@ export function DashboardContent({
   return (
     <div
       ref={containerRef}
-      className="dashboard-page max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen bg-[var(--gray-50)]"
+      className="dashboard-page relative max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen bg-[var(--gray-50)]"
       onTouchStart={onPullStart}
       onTouchMove={onPullMove}
       onTouchEnd={onPullEnd}
     >
+      {pullY > 0 && (
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-center"
+          style={{ height: pullY }}
+          aria-hidden
+        >
+          <div className="mt-2 h-1 w-12 rounded-full bg-[var(--deca-blue)] opacity-80" />
+        </div>
+      )}
       {/* ROW 1 — Welcome Banner */}
       <div className="hero-banner-v2 w-full mb-4">
         <div className="hero-bg-overlay hero-bg-vignette-left" aria-hidden />
@@ -171,48 +189,48 @@ export function DashboardContent({
             metric={`#${userRank} of ${totalMembers}`}
             label="Rank"
             icon={Trophy}
-            accentColor="#0077B6"
+            accentColor="blue"
           />
           <StatCard
             metric={String(eventsAttendedThisMonth)}
             label="Events Attended This Month"
             icon={Calendar}
-            accentColor="#10B981"
+            accentColor="success"
           />
         </div>
         {/* Right: Compact Announcements */}
-        <div
-          className="card rounded-[18px] bg-white border border-[var(--gray-200)] p-4"
-          style={{ borderTop: "4px solid #ef4444" }}
-        >
-          <div className="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-[var(--gray-200)]">
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--gray-500)]">
-              Announcements
-            </h2>
-            {isOfficer && (
+        <PanelCard
+          title="Announcements"
+          accentBorder
+          accentColor="warning"
+          accentSide="left"
+          className="!p-4"
+          rightAction={
+            isOfficer ? (
               <Link
                 href="/admin/announcements"
-                className="text-[11px] font-medium text-[var(--deca-blue)] hover:underline"
+                className="text-[11px] font-medium text-primary hover:underline"
               >
                 Post
               </Link>
-            )}
-          </div>
+            ) : undefined
+          }
+        >
           <ErrorBoundary variant="section">
             {displayAnnouncements.length === 0 ? (
-              <p className="text-sm text-[var(--gray-500)]">No announcements yet.</p>
+              <p className="text-sm text-muted-foreground">No announcements yet.</p>
             ) : (
               <ul className="space-y-2">
                 {displayAnnouncements.map((ann) => (
                   <li key={ann.id}>
                     <Link
                       href="/announcements"
-                      className="block py-0.5 -mx-1 px-1 rounded hover:bg-[var(--gray-100)]"
+                      className="-mx-1 block rounded-md px-1 py-0.5 hover:bg-muted"
                     >
-                      <p className="text-sm font-medium text-[var(--gray-900)] truncate">
+                      <p className="truncate text-sm font-medium text-foreground">
                         {ann.title}
                       </p>
-                      <p className="text-[11px] text-[var(--gray-500)]">
+                      <p className="text-[11px] text-muted-foreground">
                         {formatDistanceToNow(new Date(ann.created_at), { addSuffix: true })}
                       </p>
                     </Link>
@@ -221,7 +239,7 @@ export function DashboardContent({
               </ul>
             )}
           </ErrorBoundary>
-        </div>
+        </PanelCard>
       </div>
 
       {/* My Competition Events — shown when member has registrations */}
@@ -230,7 +248,7 @@ export function DashboardContent({
           <PanelCard
             title="My Competition Events"
             accentBorder
-            accentColor="#7c3aed"
+            accentColor="gold"
             accentSide="left"
             className="h-full"
           >
@@ -269,15 +287,15 @@ export function DashboardContent({
                           return <span className="text-[11px] text-[var(--gray-500)]">Individual</span>;
                         })()
                       )}
-                      <span
-                        className="text-[10px] font-medium px-1.5 py-0.5 rounded"
-                        style={{
-                          backgroundColor: `${STATUS_COLORS[reg.status?.toLowerCase() ?? "registered"]}20`,
-                          color: STATUS_COLORS[reg.status?.toLowerCase() ?? "registered"] ?? "#6b7280",
-                        }}
+                      <Badge
+                        variant={
+                          STATUS_BADGE[reg.status?.toLowerCase() ?? "registered"] ??
+                          "secondary"
+                        }
+                        className="text-[10px]"
                       >
                         {reg.status}
-                      </span>
+                      </Badge>
                     </div>
                   </Link>
                 </li>
@@ -297,7 +315,7 @@ export function DashboardContent({
       {/* ROW 3 — 2x2 CSS grid: Row 1 (Upcoming Events | Quick Actions), Row 2 (Recent Activity | Leaderboard). align-items: stretch makes each pair match height. */}
       <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-4">
         {/* Row 1 Col 1 — Upcoming Events */}
-        <PanelCard title="Upcoming Events" accentBorder accentColor="#03396B" accentSide="left" className="h-full">
+        <PanelCard title="Upcoming Events" accentBorder accentColor="blue" accentSide="left" className="h-full">
           {upcomingEvents.length === 0 ? (
             <div className="flex items-center justify-between gap-3 py-2">
               <p className="text-sm text-[var(--gray-500)]">No upcoming events</p>
@@ -350,46 +368,17 @@ export function DashboardContent({
         </PanelCard>
 
         {/* Row 1 Col 2 — Quick Actions */}
-        <PanelCard title="Quick Actions" accentBorder accentColor="#03396B" accentSide="right" className="flex h-full flex-col !p-4">
-          <div className="grid min-h-0 flex-1 grid-cols-2 grid-rows-[1fr_1fr] gap-2">
-            <Link
-              href="/events"
-              className="flex h-full min-h-0 flex-col cursor-pointer items-center justify-center gap-2 rounded-[12px] border border-[#bfdbfe] bg-[#eff6ff] px-2 py-3 transition-all duration-200 hover:scale-[1.02] hover:border-[#bfdbfe] hover:bg-[#dbeafe] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] dark:border-[#1e3a5f] dark:bg-[#1e293b] dark:hover:bg-[#1e3a5f]"
-            >
-              <Calendar className="h-8 w-8 shrink-0 text-[#2563eb]" />
-              <span className="text-[11px] font-medium text-[#2563eb]">Join Event</span>
-            </Link>
-            <Link
-              href="/practice"
-              className="flex h-full min-h-0 flex-col cursor-pointer items-center justify-center gap-2 rounded-[12px] border border-[#fde68a] bg-[#fefce8] px-2 py-3 transition-all duration-200 hover:scale-[1.02] hover:border-[#fde68a] hover:bg-[#fef9c3] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] dark:border-[#4a4514] dark:bg-[#2d2a0f] dark:hover:bg-[#4a4514]"
-            >
-              <Pencil className="h-8 w-8 shrink-0 text-[#ca8a04]" />
-              <span className="text-[11px] font-medium text-[#ca8a04]">Practice</span>
-            </Link>
-            <Link
-              href="/ai-chat"
-              className="flex h-full min-h-0 flex-col cursor-pointer items-center justify-center gap-2 rounded-[12px] border border-[#a7f3d0] bg-[#ecfdf5] px-2 py-3 transition-all duration-200 hover:scale-[1.02] hover:border-[#a7f3d0] hover:bg-[#d1fae5] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] dark:border-[#1a3d2e] dark:bg-[#1a2e25] dark:hover:bg-[#1a3d2e]"
-            >
-              <MessageSquare className="h-8 w-8 shrink-0 text-[#059669]" />
-              <span className="text-[11px] font-medium text-[#059669]">AI Chat</span>
-            </Link>
-            <Link
-              href="/settings/profile"
-              className="flex h-full min-h-0 flex-col cursor-pointer items-center justify-center gap-2 rounded-[12px] border border-[#fed7aa] bg-[#fff7ed] px-2 py-3 transition-all duration-200 hover:scale-[1.02] hover:border-[#fed7aa] hover:bg-[#ffedd5] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] dark:border-[#4a2d14] dark:bg-[#2d1f0f] dark:hover:bg-[#4a2d14]"
-            >
-              <User className="h-8 w-8 shrink-0 text-[#ea580c]" />
-              <span className="text-[11px] font-medium text-[#ea580c]">View Profile</span>
-            </Link>
-          </div>
+        <PanelCard title="Quick Actions" accentBorder accentColor="blue" accentSide="right" className="flex h-full flex-col !p-4">
+          <DashboardQuickActionsGrid />
         </PanelCard>
 
         {/* Row 2 Col 1 — Recent Activity */}
-        <PanelCard title="Recent Activity" accentBorder accentColor="#03396B" accentSide="left" className="h-full">
+        <PanelCard title="Recent Activity" accentBorder accentColor="blue" accentSide="left" className="h-full">
           <RecentActivityFeed items={recentActivity} />
         </PanelCard>
 
         {/* Row 2 Col 2 — Leaderboard */}
-        <PanelCard title="Leaderboard" href="/leaderboard" accentBorder accentColor="#03396B" accentSide="right" className="h-full">
+        <PanelCard title="Leaderboard" href="/leaderboard" accentBorder accentColor="blue" accentSide="right" className="h-full">
           {topLeaderboard.length === 0 ? (
             <p className="text-sm text-[var(--gray-500)] py-2">No members yet</p>
           ) : (

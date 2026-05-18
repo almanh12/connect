@@ -1,5 +1,5 @@
-import { PageSkeleton } from "@/components/ui/page-skeleton";
+import { LeaderboardSkeleton } from "./leaderboard-skeleton";
 
 export default function LeaderboardLoading() {
-  return <PageSkeleton />;
+  return <LeaderboardSkeleton />;
 }

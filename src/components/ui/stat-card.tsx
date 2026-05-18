@@ -2,16 +2,21 @@
 
 import type { LucideIcon } from "lucide-react";
 
+import {
+  ACCENT_TONE_STYLES,
+  type AccentTone,
+} from "@/components/ui/accent-tone";
+import { cn } from "@/lib/utils";
+
 interface StatCardProps {
   metric: string;
   label: string;
   icon: LucideIcon;
-  accentColor: string;
-  iconTint?: string;
+  accentColor: AccentTone;
 }
 
 /**
- * Stat card: white bg, subtle shadow, 16–20px radius, circular icon badge,
+ * Stat card: card bg, elevated shadow, panel radius, circular icon badge,
  * thin colored accent line on top, large bold metric, small uppercase label.
  */
 export function StatCard({
@@ -19,26 +24,34 @@ export function StatCard({
   label,
   icon: Icon,
   accentColor,
-  iconTint,
 }: StatCardProps) {
-  const bg = iconTint ?? (accentColor === "#0077B6" ? "#B8D9ED" : accentColor === "#10B981" ? "#A7F3D0" : accentColor === "#F59E0B" ? "#FDE68A" : "#E5E5E5");
+  const { accent, tint } = ACCENT_TONE_STYLES[accentColor];
+
   return (
     <div
-      className="stat-card rounded-[18px] bg-white border border-[#E8ECF0] p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)]"
-      style={{ borderTop: `4px solid ${accentColor}` } as React.CSSProperties}
+      className={cn(
+        "stat-card rounded-[var(--panel-radius)] border border-[var(--border-subtle,var(--border))] bg-card p-5 shadow-[var(--shadow-elevated)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-elevated)]"
+      )}
+      style={{ borderTop: `4px solid ${accent}` }}
     >
       <div
-        className="flex h-10 w-10 items-center justify-center rounded-full mb-3"
-        style={{ backgroundColor: bg }}
+        className="mb-3 flex h-10 w-10 items-center justify-center rounded-full"
+        style={{ backgroundColor: tint }}
       >
-        <Icon className="h-5 w-5" strokeWidth={1.5} style={{ color: accentColor }} />
+        <Icon
+          className="h-5 w-5"
+          strokeWidth={1.5}
+          style={{ color: accent }}
+        />
       </div>
-      <p className="text-[28px] font-bold leading-none text-[#1a1a1a]">
+      <p className="text-[28px] font-bold leading-none text-foreground">
         {metric}
       </p>
-      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#64748B] mt-1.5">
+      <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
         {label}
       </p>
     </div>
   );
 }
+
+export type { AccentTone };

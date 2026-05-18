@@ -32,6 +32,7 @@ import {
   PREPARED_EVENT_SCORING,
 } from "@/lib/ontario-deca-data";
 import { createClient as createSupabaseClient } from "@/lib/supabase/client";
+import { Button } from "@/components/ui/button";
 
 const PRACTICE_SUBMISSIONS_BUCKET = "practice-submissions";
 
@@ -616,7 +617,7 @@ export function EventPracticeClient({
     return (
       <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
         <div className="mb-4 flex flex-wrap items-center gap-2">
-          <span className="rounded bg-[#0072CE]/10 px-2 py-0.5 text-xs font-semibold text-[#0072CE]">
+          <span className="rounded bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
             {event.name}
           </span>
           <span className="text-xs text-gray-500">
@@ -653,7 +654,7 @@ export function EventPracticeClient({
       <div className="mx-auto max-w-3xl space-y-8">
         <Link
           href="/practice"
-          className="inline-flex items-center gap-2 text-sm font-medium text-[#0072CE] hover:underline"
+          className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-primary hover:underline"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Practice Hub
@@ -693,7 +694,7 @@ export function EventPracticeClient({
                   id="written-pdf"
                   type="file"
                   accept="application/pdf"
-                  className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-[#0072CE] file:px-4 file:py-2 file:text-sm file:font-medium file:text-white file:hover:bg-[#004B87]"
+                  className="mt-1 block w-full text-sm text-muted-foreground file:mr-4 file:min-h-11 file:rounded-lg file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-medium file:text-primary-foreground file:hover:bg-[var(--deca-blue-dark)]"
                 />
               </div>
               <div>
@@ -704,11 +705,11 @@ export function EventPracticeClient({
                   id="written-content"
                   rows={12}
                   placeholder="Paste your business plan, marketing campaign, operations research report, or project management submission here..."
-                  className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 focus:border-[#0072CE] focus:outline-none focus:ring-1 focus:ring-[#0072CE]"
+                  className="mt-1 block w-full rounded-lg border border-input px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </div>
             </div>
-            <button
+            <Button
               type="button"
               onClick={async () => {
                 const pdfInput = document.getElementById("written-pdf") as HTMLInputElement;
@@ -890,19 +891,16 @@ export function EventPracticeClient({
                 }
               }}
               disabled={isLoading}
-              className="mt-4 flex items-center gap-2 rounded-lg bg-[#0072CE] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#004B87] disabled:opacity-50"
+              loading={isLoading}
+              className="mt-4 min-h-11"
             >
-              {isLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <FileText className="h-4 w-4" />
-              )}
+              {!isLoading && <FileText className="h-4 w-4" />}
               {isLoading
                 ? preparedSubmitPhase === "uploading"
                   ? "Uploading PDF..."
                   : "Evaluating submission..."
                 : "Evaluate My Submission"}
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -1040,19 +1038,17 @@ export function EventPracticeClient({
                     </select>
                   </div>
                 </div>
-                <button
+                <Button
                   type="button"
                   onClick={startPractice}
                   disabled={isLoading}
-                  className="flex h-12 w-full items-center justify-center gap-2 rounded-[var(--radius-sm)] bg-[var(--deca-blue)] text-[15px] font-bold text-white transition hover:bg-[var(--deca-blue-dark)] disabled:opacity-50"
+                  loading={isLoading}
+                  size="lg"
+                  className="min-h-11 w-full text-[15px] font-bold"
                 >
-                  {isLoading ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                  ) : (
-                    <Play className="h-5 w-5" />
-                  )}
+                  {!isLoading && <Play className="h-5 w-5" />}
                   Start Practice
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -1131,13 +1127,14 @@ export function EventPracticeClient({
             </div>
           </div>
           <div className="flex justify-center">
-            <button
+            <Button
               type="button"
               onClick={startPresentation}
-              className="flex items-center gap-2 rounded-lg bg-[var(--deca-blue)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[var(--deca-blue-dark)]"
+              size="lg"
+              className="min-h-11 gap-2 px-6"
             >
               Ready to Present →
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -1215,14 +1212,11 @@ export function EventPracticeClient({
             </p>
             <div className="mt-3 space-y-2">
               <div className="flex flex-wrap items-center gap-2">
-                <button
+                <Button
                   type="button"
+                  variant={isRecording ? "destructive" : "outline"}
                   onClick={toggleRecording}
-                  className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition ${
-                    isRecording
-                      ? "bg-red-600 text-white shadow-md animate-pulse"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
+                  className={`min-h-11 gap-2 ${isRecording ? "animate-pulse shadow-md" : ""}`}
                 >
                   {isRecording ? (
                     <StopCircle className="h-4 w-4" />
@@ -1230,7 +1224,7 @@ export function EventPracticeClient({
                     <Mic className="h-4 w-4" />
                   )}
                   {isRecording ? "Stop Recording" : "Voice Input"}
-                </button>
+                </Button>
                 {isRecording && (
                   <span className="flex items-center gap-2 text-sm text-red-600">
                     <span className="relative flex h-2.5 w-2.5">
@@ -1250,19 +1244,16 @@ export function EventPracticeClient({
               className="mt-3 block min-h-[200px] w-full rounded-[var(--radius-sm)] border border-[var(--gray-200)] px-4 py-3 text-[15px] leading-[1.7] text-[var(--gray-900)] placeholder:text-[var(--gray-400)] focus:border-[var(--deca-blue)] focus:outline-none focus:ring-1 focus:ring-[var(--deca-blue)]"
             />
             <div className="mt-4 flex justify-end">
-              <button
+              <Button
                 type="button"
                 onClick={handleEndPractice}
                 disabled={isLoading}
-                className="flex items-center gap-2 rounded-lg bg-[var(--deca-blue)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--deca-blue-dark)] disabled:opacity-50"
+                loading={isLoading}
+                className="min-h-11 gap-2 px-5"
               >
-                {isLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Send className="h-4 w-4" />
-                )}
+                {!isLoading && <Send className="h-4 w-4" />}
                 Submit Response →
-              </button>
+              </Button>
             </div>
           </div>
         </div>
