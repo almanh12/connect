@@ -12,6 +12,8 @@ import {
   Award,
 } from "lucide-react";
 
+import { Avatar } from "@/components/avatar";
+
 const EASE = [0.42, 0, 0.58, 1] as const; // easeInOut
 const DURATION = 0.2;
 
@@ -272,6 +274,14 @@ function Segment({
 
 const MOCKUP_BASE = "flex-shrink-0 w-full sm:w-56 max-w-[240px] sm:max-w-none rounded-xl border border-slate-200/80 bg-white overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.08)]";
 
+/** Landing Members mockup — DECA-blue avatar tints (primary → light → navy → muted) */
+const MEMBER_AVATAR_BGS = [
+  "bg-[var(--deca-blue)]",
+  "bg-[#4BA3E3]",
+  "bg-[var(--deca-blue-dark)]",
+  "bg-[#6B8FA3]",
+] as const;
+
 function FeatureMockup({ feature }: { feature: (typeof FEATURES)[number] }) {
   const color = feature.accentHex;
 
@@ -325,7 +335,13 @@ function FeatureMockup({ feature }: { feature: (typeof FEATURES)[number] }) {
           <div className="p-2 space-y-1.5">
             {members.map((m, i) => (
               <div key={i} className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full flex-shrink-0" style={{ backgroundColor: `${color}30` }} />
+                <Avatar
+                  src={null}
+                  name={m.name}
+                  size={24}
+                  fallbackBg={MEMBER_AVATAR_BGS[i]}
+                  className="[&>div]:font-gotham [&>div]:font-bold"
+                />
                 <div className="flex-1 min-w-0">
                   <div className="text-[8px] font-medium text-slate-700 truncate">{m.name}</div>
                   <div className="text-[6px] text-slate-500">{m.role}</div>
@@ -453,8 +469,6 @@ function FeatureMockup({ feature }: { feature: (typeof FEATURES)[number] }) {
 }
 
 function PreviewPanel({ feature }: { feature: (typeof FEATURES)[number] }) {
-  const Icon = feature.icon;
-
   return (
     <motion.div
       initial={{ opacity: 0, x: -8 }}
@@ -464,14 +478,8 @@ function PreviewPanel({ feature }: { feature: (typeof FEATURES)[number] }) {
       className="rounded-xl border border-slate-200/90 bg-white shadow-[0_8px_32px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.03)] overflow-hidden"
     >
       <div className="flex flex-col sm:flex-row">
-        {/* Left: icon + UI mock */}
-        <div className="flex flex-row items-start gap-4 p-4 sm:p-5 border-b sm:border-b-0 sm:border-r border-slate-200/70 bg-gradient-to-br from-slate-50/80 to-white">
-          <div
-            className={`flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center shadow-sm bg-gradient-to-br ${feature.accent}`}
-            style={{ color: feature.accentHex }}
-          >
-            <Icon size={22} strokeWidth={1.75} />
-          </div>
+        {/* Left: UI mock */}
+        <div className="flex items-start justify-center p-4 sm:p-5 border-b sm:border-b-0 sm:border-r border-slate-200/70 bg-gradient-to-br from-slate-50/80 to-white">
           <FeatureMockup feature={feature} />
         </div>
 

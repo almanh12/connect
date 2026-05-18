@@ -674,13 +674,13 @@ tbody tr:hover {
 
 /* ── AI Chat ── */
 .ai-chat-message-enter {
-  animation: ai-chat-fade-in 0.3s ease-out forwards;
+  animation: ai-chat-fade-in 0.2s ease-out forwards;
 }
 
 @keyframes ai-chat-fade-in {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -701,7 +701,7 @@ tbody tr:hover {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #94a3b8;
+  background: var(--muted-foreground);
   display: inline-block;
   margin: 0 2px;
   animation: typingBounce 1.4s infinite ease-in-out;
@@ -713,12 +713,8 @@ tbody tr:hover {
   animation-delay: 0.4s;
 }
 
-/* AI Chat thinking bubble */
+/* AI Chat thinking indicator */
 .ai-thinking-bubble {
-  background: #e8ecf1;
-  border: 1px solid #d1d5db;
-  border-radius: 14px 14px 14px 4px;
-  padding: 10px 16px;
   display: inline-flex;
   gap: 4px;
   align-items: center;
@@ -729,7 +725,7 @@ tbody tr:hover {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #6b7280;
+  background: var(--muted-foreground);
   animation: thinking 1.4s infinite;
 }
 
@@ -785,22 +781,13 @@ tbody tr:hover {
   color: var(--text-secondary);
 }
 
-.ai-chat-input-box {
-  border: 1px solid #d1d5db;
-}
-
 .ai-chat-input-box:focus-within {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-}
-
-.ai-chat-suggestion-chip:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-lg), 0 0 0 2px color-mix(in srgb, var(--primary) 18%, transparent);
 }
 
 .ai-chat-send-btn {
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
 
 .ai-chat-send-btn:active:not(:disabled) {
