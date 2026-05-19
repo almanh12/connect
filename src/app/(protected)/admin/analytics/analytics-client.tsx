@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { format } from "date-fns";
 import ReactMarkdown from "react-markdown";
 import {
   LineChart,
@@ -51,8 +52,35 @@ function eventInRange(
   end: Date | null
 ): boolean {
   if (!start || !end) return true;
-  const d = parseEventDateTime(event.start_time, event.date).getTime();
-  return d >= start.getTime() && d <= end.getTime();
+  const d = parseEventDateTime(event.start_time, event.date);
+  let t = d.getTime();
+  if (Number.isNaN(t) && event.date) {
+    t = new Date(`${event.date}T12:00:00`).getTime();
+  }
+  if (Number.isNaN(t)) return true;
+  return t >= start.getTime() && t <= end.getTime();
+}
+
+type EventWithAttendance = {
+  id: string;
+  title: string;
+  date?: string | null;
+  start_time: string;
+  event_type: string | null;
+  present_count: number;
+  total_members: number;
+  attendance_map: Record<string, boolean>;
+};
+
+function buildAttendanceByEvent(
+  attendance: { event_id: string; user_id: string; attended: boolean }[]
+): Map<string, Record<string, boolean>> {
+  const map = new Map<string, Record<string, boolean>>();
+  for (const row of attendance) {
+    if (!map.has(row.event_id)) map.set(row.event_id, {});
+    map.get(row.event_id)![row.user_id] = row.attended;
+  }
+  return map;
 }
 
 type InsightSection = { title: string; content: string; type: "well" | "concerns" | "actions" };
@@ -79,7 +107,7 @@ function parseInsightsSections(text: string): { sections: InsightSection[]; fall
 }
 
 export function AnalyticsClient({ data }: AnalyticsClientProps) {
-  const [range, setRange] = useState<DateRange>("month");
+  const [range, setRange] = useState<DateRange>("all");
   const [insights, setInsights] = useState<string | null>(null);
   const [insightsGeneratedAt, setInsightsGeneratedAt] = useState<Date | null>(null);
   const [isLoadingInsights, setIsLoadingInsights] = useState(false);
@@ -89,41 +117,49 @@ export function AnalyticsClient({ data }: AnalyticsClientProps) {
 
   const { members, events, attendance, competitionEventIds, competitionRegistrations } = data;
 
-  const filteredEvents = useMemo(
-    () =>
-      bounds
-        ? events.filter((e) => eventInRange(e, bounds.start, bounds.end))
-        : events,
-    [events, bounds]
+  const attendanceByEvent = useMemo(
+    () => buildAttendanceByEvent(attendance),
+    [attendance]
   );
 
-  const filteredAttendance = useMemo(() => {
-    const eventIds = new Set(filteredEvents.map((e) => e.id));
-    return attendance.filter((a) => eventIds.has(a.event_id));
-  }, [attendance, filteredEvents]);
+  /** Same definition as /admin/attendance: any event with at least one attendance row */
+  const eventsWithAttendance = useMemo((): EventWithAttendance[] => {
+    const totalMembers = members.length;
+    return events
+      .filter((e) => {
+        const att = attendanceByEvent.get(e.id);
+        return att && Object.keys(att).length > 0;
+      })
+      .map((e) => {
+        const attendance_map = attendanceByEvent.get(e.id) ?? {};
+        const present_count = Object.values(attendance_map).filter(Boolean).length;
+        return {
+          ...e,
+          title: e.title ?? "Untitled event",
+          present_count,
+          total_members: totalMembers,
+          attendance_map,
+        };
+      });
+  }, [events, attendanceByEvent, members.length]);
 
-  // Events that have attendance recorded (completed events only)
-  const eventIdsWithAttendance = useMemo(() => {
-    const set = new Set<string>();
-    for (const a of filteredAttendance) set.add(a.event_id);
-    return set;
-  }, [filteredAttendance]);
-
-  const completedEvents = useMemo(
-    () => filteredEvents.filter((e) => eventIdsWithAttendance.has(e.id)),
-    [filteredEvents, eventIdsWithAttendance]
-  );
+  const chartEvents = useMemo(() => {
+    if (!bounds) return eventsWithAttendance;
+    return eventsWithAttendance.filter((e) =>
+      eventInRange(e, bounds.start, bounds.end)
+    );
+  }, [eventsWithAttendance, bounds]);
 
   const attendedByUser = useMemo(() => {
     const map = new Map<string, Set<string>>();
-    for (const a of filteredAttendance) {
+    for (const a of attendance) {
       if (a.attended) {
         if (!map.has(a.user_id)) map.set(a.user_id, new Set());
         map.get(a.user_id)!.add(a.event_id);
       }
     }
     return map;
-  }, [filteredAttendance]);
+  }, [attendance]);
 
   const lastActivityByUser = useMemo(() => {
     const map = new Map<string, Date>();
@@ -158,10 +194,10 @@ export function AnalyticsClient({ data }: AnalyticsClientProps) {
       return last && last >= thirtyDaysAgo;
     }).length;
 
-    const totalEventAttendances = filteredAttendance.filter((a) => a.attended).length;
-    const totalPossible = completedEvents.length * totalMembers;
+    const totalPresent = chartEvents.reduce((sum, e) => sum + e.present_count, 0);
+    const totalPossible = chartEvents.reduce((sum, e) => sum + e.total_members, 0);
     const avgAttendanceRate =
-      totalPossible > 0 ? (totalEventAttendances / totalPossible) * 100 : 0;
+      totalPossible > 0 ? (totalPresent / totalPossible) * 100 : 0;
 
     const compRsvps = attendance.filter(
       (a) => competitionEventIds.includes(a.event_id)
@@ -207,9 +243,7 @@ export function AnalyticsClient({ data }: AnalyticsClientProps) {
     members,
     lastActivityByUser,
     thirtyDaysAgo,
-    filteredAttendance,
-    completedEvents,
-    eventIdsWithAttendance,
+    chartEvents,
     attendance,
     competitionEventIds,
     competitionRegistrations,
@@ -217,80 +251,82 @@ export function AnalyticsClient({ data }: AnalyticsClientProps) {
   ]);
 
   const attendanceOverTime = useMemo(() => {
-    const byWeek = new Map<string, number>();
-    for (const e of completedEvents) {
-      const d = parseEventDateTime(e.start_time, e.date);
-      const weekStart = new Date(d);
-      weekStart.setDate(d.getDate() - d.getDay());
-      weekStart.setHours(0, 0, 0, 0);
-      const key = weekStart.toISOString().slice(0, 10);
-      const count = filteredAttendance.filter(
-        (a) => a.event_id === e.id && a.attended
-      ).length;
-      byWeek.set(key, (byWeek.get(key) ?? 0) + count);
-    }
-    return [...byWeek.entries()]
-      .sort((a, b) => a[0].localeCompare(b[0]))
-      .map(([week, count]) => ({
-        week: new Date(week + "T12:00:00").toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-        }),
-        attendees: count,
+    return chartEvents
+      .slice()
+      .sort(
+        (a, b) =>
+          parseEventDateTime(a.start_time, a.date).getTime() -
+          parseEventDateTime(b.start_time, b.date).getTime()
+      )
+      .map((e) => ({
+        week: format(parseEventDateTime(e.start_time, e.date), "MMM d"),
+        attendees: e.present_count,
+        rate:
+          e.total_members > 0
+            ? Math.round((e.present_count / e.total_members) * 1000) / 10
+            : 0,
       }));
-  }, [completedEvents, filteredAttendance]);
+  }, [chartEvents]);
 
   const eventPopularity = useMemo(() => {
-    const byType = new Map<string, { total: number; count: number }>();
-    for (const e of completedEvents) {
-      const type = e.event_type ?? "other";
-      const attended = filteredAttendance.filter(
-        (a) => a.event_id === e.id && a.attended
-      ).length;
-      const current = byType.get(type) ?? { total: 0, count: 0 };
-      byType.set(type, {
-        total: current.total + attended,
-        count: current.count + 1,
-      });
-    }
-    return [...byType.entries()].map(([type, { total, count }]) => ({
-      type: type.replace(/_/g, " "),
-      avgAttendance: count > 0 ? Math.round((total / count) * 10) / 10 : 0,
-    }));
-  }, [completedEvents, filteredAttendance]);
+    return chartEvents
+      .map((e) => ({
+        type: e.title,
+        avgAttendance:
+          e.total_members > 0
+            ? Math.round((e.present_count / e.total_members) * 1000) / 10
+            : 0,
+        present: e.present_count,
+      }))
+      .sort((a, b) => b.avgAttendance - a.avgAttendance);
+  }, [chartEvents]);
 
   const engagementDistribution = useMemo(() => {
-    let active = 0,
-      atRisk = 0,
-      inactive = 0;
+    if (chartEvents.length === 0) return [];
+
+    let high = 0;
+    let medium = 0;
+    let low = 0;
+
     for (const m of members) {
-      const last = lastActivityByUser.get(m.id);
-      if (!last) {
-        inactive++;
-      } else if (last >= fourteenDaysAgo) {
-        active++;
-      } else if (last >= thirtyDaysAgo) {
-        atRisk++;
-      } else {
-        inactive++;
-      }
+      const attended = chartEvents.filter((e) => e.attendance_map[m.id] === true).length;
+      const rate = (attended / chartEvents.length) * 100;
+      if (rate >= 75) high++;
+      else if (rate >= 50) medium++;
+      else low++;
     }
+
     return [
-      { name: "Active", value: active, color: ENGAGEMENT_COLORS.Active },
-      { name: "At-risk", value: atRisk, color: ENGAGEMENT_COLORS["At-risk"] },
-      { name: "Inactive", value: inactive, color: ENGAGEMENT_COLORS.Inactive },
+      { name: "High (75%+)", value: high, color: ENGAGEMENT_COLORS.Active },
+      { name: "Medium (50–74%)", value: medium, color: ENGAGEMENT_COLORS["At-risk"] },
+      { name: "Low (<50%)", value: low, color: ENGAGEMENT_COLORS.Inactive },
     ].filter((d) => d.value > 0);
-  }, [members, lastActivityByUser, fourteenDaysAgo, thirtyDaysAgo]);
+  }, [members, chartEvents]);
 
   const tierDistribution = useMemo(() => {
-    const byTier = new Map<string, number>();
-    for (const t of TIER_ORDER) byTier.set(t, 0);
+    const byTier = new Map<string, { sumRate: number; count: number }>();
+    for (const t of TIER_ORDER) byTier.set(t, { sumRate: 0, count: 0 });
+
     for (const m of members) {
       const tier = (m.tier ?? "bronze").toLowerCase();
-      byTier.set(tier, (byTier.get(tier) ?? 0) + 1);
+      if (!byTier.has(tier)) continue;
+      const attended = chartEvents.filter((e) => e.attendance_map[m.id] === true).length;
+      const rate =
+        chartEvents.length > 0 ? (attended / chartEvents.length) * 100 : 0;
+      const cur = byTier.get(tier)!;
+      cur.sumRate += rate;
+      cur.count += 1;
     }
-    return TIER_ORDER.map((t) => ({ tier: t, count: byTier.get(t) ?? 0 }));
-  }, [members]);
+
+    return TIER_ORDER.map((t) => {
+      const { sumRate, count } = byTier.get(t)!;
+      return {
+        tier: t,
+        count: count > 0 ? Math.round((sumRate / count) * 10) / 10 : 0,
+        members: count,
+      };
+    }).filter((d) => d.members > 0);
+  }, [members, chartEvents]);
 
   const funnelData = useMemo(() => {
     const signedUp = members.length;
@@ -386,7 +422,7 @@ export function AnalyticsClient({ data }: AnalyticsClientProps) {
       <div className="grid min-w-0 gap-6 lg:grid-cols-2">
         <ChartCard title="Attendance Over Time">
           {attendanceOverTime.length === 0 ? (
-            <ChartEmptyState message="No completed events with attendance in this period." />
+            <ChartEmptyState message="No events with attendance recorded in this period. Try expanding the date range." />
           ) : (
             <ChartContainer>
               <LineChart data={attendanceOverTime}>
@@ -408,14 +444,29 @@ export function AnalyticsClient({ data }: AnalyticsClientProps) {
 
         <ChartCard title="Event Popularity (Avg Attendance)">
           {eventPopularity.length === 0 ? (
-            <ChartEmptyState message="No event types with attendance data in this period." />
+            <ChartEmptyState message="No events with attendance data in this period. Try expanding the date range." />
           ) : (
             <ChartContainer>
-              <BarChart data={eventPopularity} layout="vertical" margin={{ left: 60 }}>
+              <BarChart data={eventPopularity} layout="vertical" margin={{ left: 12, right: 16 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke={CHART_GRID} />
-                <XAxis type="number" tick={{ fontSize: 11 }} />
-                <YAxis dataKey="type" type="category" width={80} tick={{ fontSize: 10 }} />
-                <Tooltip />
+                <XAxis
+                  type="number"
+                  tick={{ fontSize: 11 }}
+                  domain={[0, 100]}
+                  tickFormatter={(v) => `${v}%`}
+                />
+                <YAxis
+                  dataKey="type"
+                  type="category"
+                  width={120}
+                  tick={{ fontSize: 10 }}
+                />
+                <Tooltip
+                  formatter={(value: unknown) => [
+                    `${Number(value ?? 0).toFixed(0)}%`,
+                    "Attendance rate",
+                  ]}
+                />
                 <Bar dataKey="avgAttendance" fill={CHART_PRIMARY} radius={[0, 4, 4, 0]} />
               </BarChart>
             </ChartContainer>
@@ -448,20 +499,33 @@ export function AnalyticsClient({ data }: AnalyticsClientProps) {
           )}
         </ChartCard>
 
-        <ChartCard title="Engagement Score by Tier">
-          <ChartContainer>
-            <BarChart data={tierDistribution}>
-              <CartesianGrid strokeDasharray="3 3" stroke={CHART_GRID} />
-              <XAxis
-                dataKey="tier"
-                tick={{ fontSize: 11 }}
-                tickFormatter={(v) => formatTierForDisplay(v)}
-              />
-              <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
-              <Tooltip />
-              <Bar dataKey="count" fill={CHART_PRIMARY} radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ChartContainer>
+        <ChartCard title="Avg Attendance Rate by Tier">
+          {tierDistribution.length === 0 ? (
+            <ChartEmptyState message="No tier data for members with attendance in this period." />
+          ) : (
+            <ChartContainer>
+              <BarChart data={tierDistribution}>
+                <CartesianGrid strokeDasharray="3 3" stroke={CHART_GRID} />
+                <XAxis
+                  dataKey="tier"
+                  tick={{ fontSize: 11 }}
+                  tickFormatter={(v) => formatTierForDisplay(v)}
+                />
+                <YAxis
+                  tick={{ fontSize: 11 }}
+                  domain={[0, 100]}
+                  tickFormatter={(v) => `${v}%`}
+                />
+                <Tooltip
+                  formatter={(value: unknown) => [
+                    `${Number(value ?? 0).toFixed(0)}%`,
+                    "Avg attendance",
+                  ]}
+                />
+                <Bar dataKey="count" fill={CHART_PRIMARY} radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ChartContainer>
+          )}
         </ChartCard>
       </div>
 

@@ -109,6 +109,7 @@ export interface AnalyticsMember {
 
 export interface AnalyticsEvent {
   id: string;
+  title: string;
   date?: string | null;
   start_time: string;
   event_type: string | null;
@@ -171,14 +172,13 @@ export async function fetchAnalyticsData(
       .limit(500),
     supabase
       .from("events")
-      .select("id, date, start_time, event_type")
+      .select("id, title, date, start_time, event_type")
       .eq("chapter_id", chapterId)
-      .order("start_time", { ascending: false })
-      .limit(300),
+      .order("start_time", { ascending: false }),
     supabase
       .from("attendance")
       .select("event_id, user_id, attended")
-      .limit(5000),
+      .limit(10000),
     supabase
       .from("engagement_points")
       .select("user_id, points, source, reference_id, created_at")
@@ -196,8 +196,15 @@ export async function fetchAnalyticsData(
   ]);
 
   const members = membersRes.data ?? [];
-  const events = eventsRes.data ?? [];
-  const attendance = attendanceRes.data ?? [];
+  const events: AnalyticsEvent[] = (eventsRes.data ?? []).map((e) => ({
+    ...e,
+    title: e.title ?? "Untitled event",
+  }));
+  const eventIdSet = new Set(events.map((e) => e.id));
+  const memberIdSet = new Set(members.map((m) => m.id));
+  const attendance = (attendanceRes.data ?? []).filter(
+    (a) => eventIdSet.has(a.event_id) && memberIdSet.has(a.user_id)
+  );
   const engagementPoints = epRes.data ?? [];
   const manualPoints = mpRes.data ?? [];
   const competitionRegistrations = (compRegRes.data ?? []) as CompetitionRegistrationRow[];
