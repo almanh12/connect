@@ -41,6 +41,9 @@ const DATE_RANGE_OPTIONS: { value: DateRange; label: string }[] = [
 
 const TIER_ORDER = ["bronze", "silver", "gold", "platinum", "diamond"];
 const ENGAGEMENT_COLORS = { Active: "#22c55e", "At-risk": "#eab308", Inactive: "#ef4444" };
+/** Resolved hex for SVG — Recharts does not resolve CSS variables in fill/stroke */
+const CHART_PRIMARY = "#0072CE";
+const CHART_GRID = "#E2E5EA";
 
 function eventInRange(
   event: { date?: string | null; start_time: string },
@@ -380,80 +383,92 @@ export function AnalyticsClient({ data }: AnalyticsClientProps) {
       </div>
 
       {/* Charts */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid min-w-0 gap-6 lg:grid-cols-2">
         <ChartCard title="Attendance Over Time">
-          <ResponsiveContainer width="100%" height={280}>
-            <LineChart data={attendanceOverTime}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="week" tick={{ fontSize: 11 }} />
-              <YAxis tick={{ fontSize: 11 }} />
-              <Tooltip />
-              <Line
-                type="monotone"
-                dataKey="attendees"
-                stroke="#0072CE"
-                strokeWidth={2}
-                dot={{ r: 4 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          {attendanceOverTime.length === 0 ? (
+            <ChartEmptyState message="No completed events with attendance in this period." />
+          ) : (
+            <ChartContainer>
+              <LineChart data={attendanceOverTime}>
+                <CartesianGrid strokeDasharray="3 3" stroke={CHART_GRID} />
+                <XAxis dataKey="week" tick={{ fontSize: 11 }} />
+                <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
+                <Tooltip />
+                <Line
+                  type="monotone"
+                  dataKey="attendees"
+                  stroke={CHART_PRIMARY}
+                  strokeWidth={2}
+                  dot={{ r: 4, fill: CHART_PRIMARY }}
+                />
+              </LineChart>
+            </ChartContainer>
+          )}
         </ChartCard>
 
         <ChartCard title="Event Popularity (Avg Attendance)">
-          <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={eventPopularity} layout="vertical" margin={{ left: 60 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis type="number" tick={{ fontSize: 11 }} />
-              <YAxis dataKey="type" type="category" width={80} tick={{ fontSize: 10 }} />
-              <Tooltip />
-              <Bar dataKey="avgAttendance" fill="#0072CE" radius={[0, 4, 4, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          {eventPopularity.length === 0 ? (
+            <ChartEmptyState message="No event types with attendance data in this period." />
+          ) : (
+            <ChartContainer>
+              <BarChart data={eventPopularity} layout="vertical" margin={{ left: 60 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={CHART_GRID} />
+                <XAxis type="number" tick={{ fontSize: 11 }} />
+                <YAxis dataKey="type" type="category" width={80} tick={{ fontSize: 10 }} />
+                <Tooltip />
+                <Bar dataKey="avgAttendance" fill={CHART_PRIMARY} radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ChartContainer>
+          )}
         </ChartCard>
 
         <ChartCard title="Member Engagement Distribution">
-          <ResponsiveContainer width="100%" height={280}>
-            <PieChart>
-              <Pie
-                data={engagementDistribution}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={90}
-                paddingAngle={2}
-                dataKey="value"
-                label={({ name, value }) => `${name}: ${value}`}
-              >
-                {engagementDistribution.map((entry, i) => (
-                  <Cell key={i} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
+          {engagementDistribution.length === 0 ? (
+            <ChartEmptyState message="No member engagement data to display." />
+          ) : (
+            <ChartContainer>
+              <PieChart>
+                <Pie
+                  data={engagementDistribution}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={90}
+                  paddingAngle={2}
+                  dataKey="value"
+                  label={({ name, value }) => `${name}: ${value}`}
+                >
+                  {engagementDistribution.map((entry, i) => (
+                    <Cell key={i} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ChartContainer>
+          )}
         </ChartCard>
 
         <ChartCard title="Engagement Score by Tier">
-          <ResponsiveContainer width="100%" height={280}>
+          <ChartContainer>
             <BarChart data={tierDistribution}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="tier" tick={{ fontSize: 11 }} tickFormatter={(v) => formatTierForDisplay(v)} />
-              <YAxis tick={{ fontSize: 11 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke={CHART_GRID} />
+              <XAxis
+                dataKey="tier"
+                tick={{ fontSize: 11 }}
+                tickFormatter={(v) => formatTierForDisplay(v)}
+              />
+              <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
               <Tooltip />
-              <Bar dataKey="count" fill="#0072CE" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="count" fill={CHART_PRIMARY} radius={[4, 4, 0, 0]} />
             </BarChart>
-          </ResponsiveContainer>
+          </ChartContainer>
         </ChartCard>
       </div>
 
       <ChartCard title="New Member Funnel" className="lg:col-span-2">
-        <ResponsiveContainer width="100%" height={220}>
-          <BarChart
-            data={funnelData}
-            layout="vertical"
-            margin={{ left: 20 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+        <ChartContainer heightClass="h-[220px]">
+          <BarChart data={funnelData} layout="vertical" margin={{ left: 20 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke={CHART_GRID} />
             <XAxis type="number" tick={{ fontSize: 11 }} />
             <YAxis dataKey="name" type="category" width={140} tick={{ fontSize: 11 }} />
             <Tooltip />
@@ -464,7 +479,7 @@ export function AnalyticsClient({ data }: AnalyticsClientProps) {
               <LabelList dataKey="value" position="right" />
             </Bar>
           </BarChart>
-        </ResponsiveContainer>
+        </ChartContainer>
       </ChartCard>
 
       {/* AI Insights */}
@@ -648,6 +663,30 @@ function MetricCard({
   );
 }
 
+function ChartContainer({
+  children,
+  heightClass = "h-[300px]",
+}: {
+  children: React.ReactElement;
+  heightClass?: string;
+}) {
+  return (
+    <div className={`w-full min-w-0 ${heightClass}`}>
+      <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+        {children}
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+function ChartEmptyState({ message }: { message: string }) {
+  return (
+    <div className="flex h-[300px] w-full items-center justify-center rounded-lg border border-dashed border-gray-200 bg-gray-50 px-4 text-center text-sm text-gray-500">
+      {message}
+    </div>
+  );
+}
+
 function ChartCard({
   title,
   children,
@@ -658,7 +697,9 @@ function ChartCard({
   className?: string;
 }) {
   return (
-    <div className={`rounded-xl border border-gray-200 bg-white p-5 shadow-sm ${className}`}>
+    <div
+      className={`min-w-0 rounded-xl border border-gray-200 bg-white p-5 shadow-sm ${className}`}
+    >
       <h3 className="mb-4 text-sm font-semibold text-gray-900">{title}</h3>
       {children}
     </div>
