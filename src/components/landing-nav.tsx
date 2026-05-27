@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Menu, X } from "lucide-react";
 
 export function LandingNav() {
@@ -19,22 +18,16 @@ export function LandingNav() {
   return (
     <>
       <nav
-        className={`fixed left-0 right-0 z-50 h-20 bg-white border-b border-slate-100 transition-shadow duration-200 ${
+        className={`fixed left-0 right-0 top-0 z-50 h-20 bg-white border-b border-slate-100 transition-shadow duration-200 ${
           scrolled ? "shadow-sm" : ""
         }`}
-        style={{ top: "var(--disclaimer-banner-height, 0px)" }}
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-8 h-full flex justify-between items-center">
-          <Link href="/" className="flex-shrink-0">
-            <Image
-              src="/ontario-deca-logo.png"
-              alt="Ontario DECA"
-              width={120}
-              height={40}
-              className="h-10 w-auto object-contain object-left"
-              priority
-              sizes="120px"
-            />
+          <Link
+            href="/"
+            className="flex-shrink-0 font-gotham text-base font-bold tracking-tight text-slate-900"
+          >
+            Williams Business Council
           </Link>
 
           {/* Desktop nav */}
@@ -71,12 +64,7 @@ export function LandingNav() {
 
       {/* Mobile dropdown */}
       {mobileMenuOpen && (
-        <div
-          className="fixed left-0 right-0 z-40 md:hidden bg-white shadow-lg"
-          style={{
-            top: "calc(5rem + var(--disclaimer-banner-height, 0px))",
-          }}
-        >
+        <div className="fixed left-0 right-0 top-20 z-40 md:hidden bg-white shadow-lg">
           <div className="px-6 py-6 flex flex-col gap-4">
             <Link
               href="/login"

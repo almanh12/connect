@@ -17,7 +17,7 @@ export function SidebarLogo({ collapsed = false }: SidebarLogoProps) {
       title="DECA Engage"
     >
       <img
-        src="/deca-engage-logo.png"
+        src="/Untitled%20design-3.png"
         alt="DECA Engage"
         width={width}
         className="object-contain"

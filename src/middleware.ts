@@ -43,7 +43,11 @@ export async function middleware(request: NextRequest) {
       const redirectTo = request.nextUrl.searchParams.get("redirectTo");
       const target =
         redirectTo && redirectTo.startsWith("/") ? redirectTo : "/dashboard";
-      return NextResponse.redirect(new URL(target, request.url));
+      const res = NextResponse.redirect(new URL(target, request.url));
+      supabaseResponse.cookies.getAll().forEach((c) => {
+        res.cookies.set(c.name, c.value);
+      });
+      return res;
     }
     return supabaseResponse;
   }
@@ -53,7 +57,11 @@ export async function middleware(request: NextRequest) {
     const loginUrl = new URL("/login", request.url);
     const fullPath = pathname + (request.nextUrl.search ? request.nextUrl.search : "");
     loginUrl.searchParams.set("redirectTo", fullPath);
-    return NextResponse.redirect(loginUrl);
+    const res = NextResponse.redirect(loginUrl);
+    supabaseResponse.cookies.getAll().forEach((c) => {
+      res.cookies.set(c.name, c.value);
+    });
+    return res;
   }
 
   // Avoid loading the dashboard RSC for users who still need chapter setup (prevents error/flash before client redirect)

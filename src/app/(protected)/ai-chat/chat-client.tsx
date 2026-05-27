@@ -732,7 +732,7 @@ export function ChatClient({
               <div className="flex shrink-0 flex-col items-center space-y-6 pt-[10vh] text-center">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent shadow-[var(--shadow-brand)]">
                   <Image
-                    src="/deca-engage-logo.png"
+                    src="/Untitled%20design-3.png"
                     alt="DECA Engage"
                     width={36}
                     height={36}
@@ -812,7 +812,7 @@ export function ChatClient({
                         >
                           <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-accent">
                             <Image
-                              src="/deca-engage-logo.png"
+                              src="/Untitled%20design-3.png"
                               alt=""
                               width={20}
                               height={20}

@@ -39,11 +39,11 @@ const FEATURES = [
     accentActive: "from-[#0171BB]/40 to-[#0171BB]/18",
     accentHex: "#0171BB",
     description:
-      "Plan meetings, conferences, fundraisers, and chapter activities in one place.",
+      "Plan our meetings, conferences, fundraisers, and chapter activities in one place.",
     bullets: [
-      "Create and manage all chapter events",
-      "Track attendance and engagement",
-      "Share calendars and reminders",
+      "Create and manage our events",
+      "Track our attendance and engagement",
+      "Share our calendars and reminders",
     ],
     cta: "Explore Events",
     ctaHref: "/login",
@@ -57,11 +57,11 @@ const FEATURES = [
     accentActive: "from-[#0B5A8A]/40 to-[#0B5A8A]/18",
     accentHex: "#0B5A8A",
     description:
-      "Organize members, roles, participation, and communication across your chapter.",
+      "Organize our members, roles, participation, and communication.",
     bullets: [
-      "Manage members and roles",
-      "Track participation and engagement",
-      "Streamline chapter communication",
+      "Manage our members and roles",
+      "Track our participation and engagement",
+      "Streamline our chapter communication",
     ],
     cta: "See Members",
     ctaHref: "/login",
@@ -75,11 +75,11 @@ const FEATURES = [
     accentActive: "from-[#C8963E]/40 to-[#C8963E]/18",
     accentHex: "#C8963E",
     description:
-      "AI-powered roleplay, quiz, and competition prep tools to help members excel.",
+      "AI-powered roleplay, quiz, and competition prep tools so our members can excel.",
     bullets: [
-      "Roleplay and case practice",
+      "Roleplay and case practice for our events",
       "Quiz and knowledge checks",
-      "Competition-ready preparation",
+      "Competition-ready preparation for our members",
     ],
     cta: "See Practice Tools",
     ctaHref: "/login",
@@ -93,11 +93,11 @@ const FEATURES = [
     accentActive: "from-[#5B4A9E]/40 to-[#5B4A9E]/18",
     accentHex: "#5B4A9E",
     description:
-      "Track chapter engagement, participation, and growth with clear insights.",
+      "Track our chapter's engagement, participation, and growth with clear insights.",
     bullets: [
-      "Engagement and attendance trends",
-      "Participation metrics",
-      "Growth and activity reports",
+      "Our engagement and attendance trends",
+      "Our participation metrics",
+      "Our growth and activity reports",
     ],
     cta: "View Analytics",
     ctaHref: "/login",
@@ -111,11 +111,11 @@ const FEATURES = [
     accentActive: "from-[#0D9488]/40 to-[#0D9488]/18",
     accentHex: "#0D9488",
     description:
-      "Help students prepare faster and get instant support for competition prep.",
+      "Help our members prepare faster and get instant support for competition prep.",
     bullets: [
-      "Instant answers and guidance",
+      "Instant answers and guidance for our members",
       "Faster learning and prep",
-      "24/7 support for members",
+      "24/7 support for our members",
     ],
     cta: "Try AI Assistant",
     ctaHref: "/login",
@@ -129,11 +129,11 @@ const FEATURES = [
     accentActive: "from-[#B45309]/40 to-[#B45309]/18",
     accentHex: "#B45309",
     description:
-      "Showcase progress, results, and chapter performance to motivate members.",
+      "Showcase our members' progress and results.",
     bullets: [
-      "Points and rankings",
-      "Chapter performance highlights",
-      "Recognition and motivation",
+      "Points and rankings across our chapter",
+      "Highlights from our chapter performance",
+      "Recognition and motivation for our members",
     ],
     cta: "See Leaderboards",
     ctaHref: "/login",

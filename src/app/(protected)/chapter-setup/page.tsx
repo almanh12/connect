@@ -20,7 +20,7 @@ function ChapterSetupLayout({ children }: { children: React.ReactNode }) {
         className="mb-4 sm:mb-5 flex flex-col items-center transition-opacity hover:opacity-90"
       >
         <Image
-          src="/deca-engage-logo.png"
+          src="/Untitled%20design-3.png"
           alt="DECA Engage"
           width={220}
           height={64}

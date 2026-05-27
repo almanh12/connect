@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { Suspense } from "react";
 import { ErrorBoundary } from "@/components/error-boundary";
-import { DisclaimerBanner } from "@/components/disclaimer-banner";
 import { NavigationProgress } from "@/components/navigation-progress";
 import { Providers } from "@/components/providers";
 import { SessionHandler } from "@/components/session-handler";
@@ -65,7 +64,6 @@ export default function RootLayout({
         className={`${gotham.variable} font-gotham flex min-h-screen flex-col bg-[var(--gray-50)] text-[var(--gray-700)] font-normal`}
       >
         <Providers>
-          <DisclaimerBanner />
           <div className="flex min-h-0 min-w-0 flex-1 flex-col">
             <ErrorBoundary>
               <Suspense fallback={null}>

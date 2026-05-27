@@ -10,7 +10,14 @@ import { Loader2 } from "lucide-react";
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo") ?? "/dashboard";
+  const rawRedirectTo = searchParams.get("redirectTo");
+  const redirectTo =
+    rawRedirectTo &&
+    rawRedirectTo.startsWith("/") &&
+    !rawRedirectTo.startsWith("//") &&
+    rawRedirectTo !== "/"
+      ? rawRedirectTo
+      : "/dashboard";
   const supabase = createClient();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -53,8 +60,8 @@ function LoginForm() {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        router.push(redirectTo);
         router.refresh();
+        router.push(redirectTo);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Authentication failed");
@@ -70,11 +77,12 @@ function LoginForm() {
         className="mb-5 sm:mb-6 flex flex-col items-center transition-opacity hover:opacity-90"
       >
         <Image
-          src="/deca-engage-logo.png"
-          alt="DECA Engage"
+          src="/yungpanther.png"
+          alt="Williams Business Council Connect"
           width={220}
           height={64}
-          className="w-[160px] sm:w-[200px] h-auto object-contain"
+          priority
+          className="mx-auto h-auto w-[160px] object-contain sm:w-[200px]"
           sizes="(max-width: 640px) 160px, 200px"
         />
       </Link>
@@ -243,11 +251,12 @@ export default function LoginPage() {
       fallback={
         <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-white">
           <Image
-            src="/deca-engage-logo.png"
-            alt="DECA Engage"
+            src="/yungpanther.png"
+            alt="Williams Business Council Connect"
             width={160}
             height={48}
-            className="w-[140px] h-auto object-contain"
+            priority
+            className="mx-auto h-auto w-[140px] object-contain"
             sizes="140px"
           />
           <div className="h-1 w-16 animate-pulse rounded-full bg-[#0072CE]/30" />
