@@ -11,7 +11,7 @@ export default function GlobalLoading() {
         className="h-14 w-auto object-contain"
         sizes="64px"
       />
-      <span className="text-base font-bold text-[#1A1A2E]">Engage</span>
+      <span className="text-base font-bold text-[#1A1A2E]">Connect</span>
       <div className="mt-2 h-1 w-16 overflow-hidden rounded-full bg-gray-200">
         <div className="h-full w-1/2 animate-pulse rounded-full bg-[#0072CE]" />
       </div>

@@ -12,9 +12,9 @@ interface DecaLogoProps {
   width?: number;
   /** Height in pixels (default: width * 1.005 for aspect ratio) */
   height?: number;
-  /** Show "Engage" text below/beside */
+  /** Show "Connect" text below/beside */
   showText?: boolean;
-  /** Compact: diamond + "Engage" on same line (sidebar style) */
+  /** Compact: diamond + "Connect" on same line (sidebar style) */
   compact?: boolean;
   /** Link href - omit to render without link */
   href?: string;
@@ -58,7 +58,7 @@ export function DecaLogo({
             compact ? "text-sm sm:text-base" : "text-lg"
           } ${isWhite ? "text-white" : "text-[#1A1A2E]"}`}
         >
-          Engage
+          Connect
         </span>
       )}
     </div>
@@ -68,7 +68,7 @@ export function DecaLogo({
 
   if (href) {
     return (
-      <Link href={href} className={wrapperClass} title="DECA Engage">
+      <Link href={href} className={wrapperClass} title="WBC Connect">
         {content}
       </Link>
     );
