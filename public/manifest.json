@@ -1,7 +1,7 @@
 {
-  "name": "DECA Engage",
-  "short_name": "DECA Engage",
-  "description": "Supercharge your DECA chapter's engagement with AI",
+  "name": "WBC Connect",
+  "short_name": "WBC Connect",
+  "description": "Williams Business Council chapter platform",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

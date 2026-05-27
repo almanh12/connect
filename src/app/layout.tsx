@@ -23,21 +23,22 @@ const gotham = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: "DECA Engage",
-    template: "%s | DECA Engage",
+    default: "WBC Connect",
+    template: "%s | WBC Connect",
   },
-  description: "Supercharge your DECA chapter's engagement with AI-powered tools for events, attendance, and member management.",
-  keywords: ["DECA", "engagement", "chapter", "events", "attendance", "leaderboard"],
-  authors: [{ name: "DECA Engage" }],
+  description:
+    "Williams Business Council Connect — your chapter hub for events, attendance, practice, and member engagement.",
+  keywords: ["DECA", "Williams Business Council", "WBC", "chapter", "events", "attendance"],
+  authors: [{ name: "WBC Connect" }],
   openGraph: {
-    title: "DECA Engage",
-    description: "Supercharge your DECA chapter's engagement with AI",
+    title: "WBC Connect",
+    description: "Williams Business Council chapter platform",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "DECA Engage",
-    description: "Supercharge your DECA chapter's engagement with AI",
+    title: "WBC Connect",
+    description: "Williams Business Council chapter platform",
   },
   manifest: "/manifest.json",
 };

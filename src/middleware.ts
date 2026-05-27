@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { getSafeRedirectPath } from "@/lib/safe-redirect";
 import { updateSession } from "@/lib/supabase/middleware";
 import { enforceApiRateLimit } from "@/lib/security/rate-limit";
 
@@ -38,11 +39,19 @@ export async function middleware(request: NextRequest) {
 
   // Public paths - allow access
   if (PUBLIC_PATHS.includes(pathname)) {
+    if (user && pathname === "/") {
+      const res = NextResponse.redirect(new URL("/dashboard", request.url));
+      supabaseResponse.cookies.getAll().forEach((c) => {
+        res.cookies.set(c.name, c.value);
+      });
+      return res;
+    }
+
     // Redirect authenticated users away from login to dashboard
     if (user && pathname === "/login") {
-      const redirectTo = request.nextUrl.searchParams.get("redirectTo");
-      const target =
-        redirectTo && redirectTo.startsWith("/") ? redirectTo : "/dashboard";
+      const target = getSafeRedirectPath(
+        request.nextUrl.searchParams.get("redirectTo")
+      );
       const res = NextResponse.redirect(new URL(target, request.url));
       supabaseResponse.cookies.getAll().forEach((c) => {
         res.cookies.set(c.name, c.value);

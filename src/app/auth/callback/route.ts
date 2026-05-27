@@ -1,15 +1,12 @@
 import { createClient } from "@/lib/supabase/server";
 import { getPublicOrigin } from "@/lib/public-origin";
+import { getSafeRedirectPath } from "@/lib/safe-redirect";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
-  const rawRedirect = searchParams.get("redirectTo") ?? "/dashboard";
-  const redirectTo =
-    rawRedirect.startsWith("/") && !rawRedirect.startsWith("//")
-      ? rawRedirect
-      : "/dashboard";
+  const redirectTo = getSafeRedirectPath(searchParams.get("redirectTo"));
   const origin = getPublicOrigin(request);
 
   if (code) {

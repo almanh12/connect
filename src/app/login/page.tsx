@@ -3,21 +3,14 @@
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { getSafeRedirectPath } from "@/lib/safe-redirect";
 import { Loader2 } from "lucide-react";
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const rawRedirectTo = searchParams.get("redirectTo");
-  const redirectTo =
-    rawRedirectTo &&
-    rawRedirectTo.startsWith("/") &&
-    !rawRedirectTo.startsWith("//") &&
-    rawRedirectTo !== "/"
-      ? rawRedirectTo
-      : "/dashboard";
+  const redirectTo = getSafeRedirectPath(searchParams.get("redirectTo"));
   const supabase = createClient();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -60,8 +53,9 @@ function LoginForm() {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        router.refresh();
-        router.push(redirectTo);
+        // Full navigation so session cookies are sent before middleware runs
+        window.location.assign(redirectTo);
+        return;
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Authentication failed");
